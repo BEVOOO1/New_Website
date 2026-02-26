@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design — Bavly Badr</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+.hero-orb-1{width:600px;height:600px;background:radial-gradient(circle,rgba(120,140,255,.09) 0%,transparent 70%);top:-100px;right:-100px;animation:dd 15s ease-in-out infinite alternate;}
+.hero-orb-2{width:350px;height:350px;background:radial-gradient(circle,rgba(212,175,120,.07) 0%,transparent 70%);bottom:0;left:20%;animation:dd 10s ease-in-out infinite alternate-reverse;}
+@keyframes dd{from{transform:translate(0,0);}to{transform:translate(25px,20px);}}
+.filter-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:3rem;position:relative;z-index:2;}
+.filter-btn{padding:.5rem 1.3rem;border-radius:100px;border:1px solid var(--border);background:var(--glass);color:var(--text-muted);font-family:'Tenor Sans',sans-serif;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s;backdrop-filter:blur(10px);}
+.filter-btn:hover,.filter-btn.active{border-color:var(--border-gold);color:var(--gold);background:rgba(212,175,120,.08);}
+.masonry{columns:3;column-gap:1.2rem;position:relative;z-index:2;}
+.masonry-item{break-inside:avoid;margin-bottom:1.2rem;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--border);background:var(--glass-deep);position:relative;cursor:pointer;transition:all .4s cubic-bezier(.23,1,.32,1);}
+.masonry-item:hover{border-color:var(--border-gold);transform:scale(1.015);box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.masonry-item img{width:100%;display:block;transition:transform .5s;}
+.masonry-item:hover img{transform:scale(1.04);}
+.masonry-caption{position:absolute;bottom:0;left:0;right:0;padding:2.5rem 1.2rem 1.2rem;background:linear-gradient(to top,rgba(7,8,15,.9),transparent);opacity:0;transform:translateY(6px);transition:all .35s;}
+.masonry-item:hover .masonry-caption{opacity:1;transform:none;}
+.mc-title{font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.08em;color:var(--text);}
+.mc-sub{font-family:'Tenor Sans',sans-serif;font-size:.62rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-top:.2rem;}
+.masonry-ph{height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;background:var(--glass-deep);border:1px dashed rgba(212,175,120,.15);border-radius:var(--radius-md);}
+@media(max-width:768px){.masonry{columns:2;}}
+@media(max-width:480px){.masonry{columns:1;}}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas><div class="grain"></div>
+<nav class="nav" id="main-nav"><div class="nav-inner">
+  <a href="index.html" class="nav-logo">B<span>.</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a><a href="design.html" class="active">Design</a><a href="video.html">Video</a>
+    <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a><a href="blog.html">Blog</a>
+  </div>
+  <a href="admin.html" class="nav-admin-btn">⚙ Admin</a>
+  <button class="nav-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
+</div></nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html">Video</a>
+  <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a>
+  <a href="blog.html">Blog</a><a href="admin.html">⚙ Admin</a>
+</div>
+
+<section class="page-hero">
+  <div class="page-hero-bg">
+    <div class="page-hero-orb hero-orb-1"></div><div class="page-hero-orb hero-orb-2"></div>
+  </div>
+  <div class="wrapper">
+    <div class="section-label" style="animation:fadeUp .6s ease both;">Visual Design</div>
+    <h1 class="section-title" style="font-size:clamp(3rem,6vw,5rem);animation:fadeUp .7s .1s ease both;">Church Post<br><em>Design</em></h1>
+    <p style="font-size:.88rem;line-height:1.9;color:var(--text-dim);max-width:480px;margin-top:1.5rem;animation:fadeUp .7s .2s ease both;">Graphics and social media posts crafted for the church community. Sacred feeling, modern design language.</p>
+  </div>
+</section>
+<div class="divider"></div>
+
+<section style="padding:5rem 0 8rem;">
+  <div class="wrapper">
+    <div id="filter-row" class="filter-row reveal">
+      <button class="filter-btn active" data-cat="all">All Work</button>
+    </div>
+    <div id="gallery" class="masonry reveal">
+      <div style="display:flex;align-items:center;gap:.8rem;color:var(--text-dim);font-size:.8rem;">Loading...</div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer"><div class="wrapper footer-inner">
+  <span class="footer-name">Bavly Badr</span><span class="footer-copy">© 2025 · BEVO copyright reserved</span>
+  <div class="footer-links"><a href="https://github.com/BEVOOO1" target="_blank">GitHub</a><a href="admin.html">Admin</a></div>
+</div></footer>
+
+<script src="db.js"></script><script src="shared.js"></script>
+<script>
+let allItems = [];
+let activeFilter = 'all';
+
+function renderGallery(items) {
+  const filtered = activeFilter === 'all' ? items : items.filter(i => i.category === activeFilter);
+  const el = document.getElementById('gallery');
+
+  if (!filtered.length) {
+    el.innerHTML = `<div style="text-align:center;padding:4rem;color:var(--text-dim);">
+      <div style="font-size:2rem;margin-bottom:.8rem;opacity:.3;">🎨</div>
+      <div style="font-size:.82rem;letter-spacing:.1em;">No design posts yet. <a href="admin.html" style="color:var(--gold);">Add some in Admin →</a></div>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = filtered.map(item => {
+    if (item.image) {
+      return `<div class="masonry-item" data-lightbox="${item.image}" data-cat="${item.category||''}">
+        <img src="${item.image}" alt="${item.title}" loading="lazy">
+        <div class="masonry-caption">
+          <div class="mc-title">${item.title}</div>
+          <div class="mc-sub">${item.category||''}</div>
+        </div>
+      </div>`;
+    }
+    return `<div class="masonry-ph" data-cat="${item.category||''}">
+      <div style="font-size:1.8rem;opacity:.3;">🎨</div>
+      <div style="font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.08em;color:var(--text-muted);">${item.title}</div>
+      <div style="font-size:.62rem;color:var(--gold-dim);letter-spacing:.1em;text-transform:uppercase;">${item.category||''}</div>
+      <div style="font-size:.6rem;color:var(--text-dim);margin-top:.2rem;">Add image in admin</div>
+    </div>`;
+  }).join('');
+  initLightbox();
+}
+
+async function init() {
+  allItems = await DB.design.getAll();
+  // Build filter buttons
+  const cats = ['All Work', ...new Set(allItems.map(i=>i.category).filter(Boolean))];
+  const row = document.getElementById('filter-row');
+  row.innerHTML = cats.map((c,i) => `<button class="filter-btn ${i===0?'active':''}" data-cat="${c==='All Work'?'all':c}">${c}</button>`).join('');
+  row.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      row.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+      this.classList.add('active');
+      activeFilter = this.dataset.cat;
+      renderGallery(allItems);
+    });
+  });
+  renderGallery(allItems);
+}
+init();
+</script>
+</body></html>

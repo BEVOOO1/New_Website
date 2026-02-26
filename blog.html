@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Bavly Badr</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+.hero-orb-bl{width:600px;height:600px;background:radial-gradient(circle,rgba(180,140,255,.08) 0%,transparent 70%);top:-120px;right:-80px;animation:bld 16s ease-in-out infinite alternate;}
+@keyframes bld{from{transform:translate(0,0);}to{transform:translate(28px,18px);}}
+/* BLOG LIST */
+.blog-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;position:relative;z-index:2;}
+.blog-card{background:var(--glass-deep);border:1px solid var(--border);border-radius:var(--radius-md);padding:2rem;transition:all .4s cubic-bezier(.23,1,.32,1);cursor:pointer;text-decoration:none;display:block;}
+.blog-card:hover{border-color:var(--border-gold);transform:translateY(-5px);box-shadow:0 24px 70px rgba(0,0,0,.45);background:var(--glass);}
+.blog-card.featured{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center;}
+.bc-cat{font-family:'Tenor Sans',sans-serif;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem;}
+.bc-cat::before{content:'';width:16px;height:1px;background:var(--gold);}
+.bc-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:400;line-height:1.3;color:var(--text);margin-bottom:.6rem;}
+.blog-card.featured .bc-title{font-size:1.8rem;}
+.bc-excerpt{font-family:'Tenor Sans',sans-serif;font-size:.8rem;line-height:1.8;color:var(--text-dim);margin-bottom:1.2rem;}
+.bc-meta{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.bc-date{font-size:.68rem;letter-spacing:.08em;color:var(--text-dim);}
+.bc-read{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);opacity:0;transition:opacity .3s;}
+.blog-card:hover .bc-read{opacity:1;}
+.bc-tags{display:flex;gap:.4rem;flex-wrap:wrap;}
+
+/* POST READER */
+.post-reader{max-width:740px;margin:0 auto;position:relative;z-index:2;}
+.post-header{margin-bottom:3rem;}
+.post-back{display:inline-flex;align-items:center;gap:.5rem;font-family:'Tenor Sans',sans-serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dim);text-decoration:none;margin-bottom:2rem;transition:color .2s;}
+.post-back:hover{color:var(--gold);}
+.post-cat{font-family:'Tenor Sans',sans-serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem;}
+.post-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:400;line-height:1.1;color:var(--text);margin-bottom:.8rem;}
+.post-date{font-size:.72rem;color:var(--text-dim);letter-spacing:.08em;margin-bottom:2.5rem;}
+.post-divider{height:1px;background:linear-gradient(to right,var(--border-gold),transparent);margin-bottom:3rem;}
+.post-content{font-family:'Playfair Display',serif;font-size:1.05rem;line-height:1.9;color:var(--text-muted);}
+.post-content p{margin-bottom:1.5rem;}
+.post-content h2{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--text);margin:2.5rem 0 1rem;letter-spacing:.05em;}
+.post-content h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-style:italic;color:var(--gold);margin:2rem 0 .8rem;}
+.post-content strong{color:var(--text);font-weight:700;}
+.post-content em{font-style:italic;color:var(--gold-dim);}
+.post-content code{font-family:monospace;font-size:.82rem;background:rgba(255,255,255,.06);padding:.15rem .5rem;border-radius:4px;color:var(--gold-light);}
+.post-tags{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border);display:flex;gap:.5rem;flex-wrap:wrap;}
+
+@media(max-width:768px){.blog-grid{grid-template-columns:1fr;}.blog-card.featured{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas><div class="grain"></div>
+<nav class="nav" id="main-nav"><div class="nav-inner">
+  <a href="index.html" class="nav-logo">B<span>.</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html">Video</a>
+    <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a><a href="blog.html" class="active">Blog</a>
+  </div>
+  <a href="admin.html" class="nav-admin-btn">⚙ Admin</a>
+  <button class="nav-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
+</div></nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html">Video</a>
+  <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a>
+  <a href="blog.html">Blog</a><a href="admin.html">⚙ Admin</a>
+</div>
+
+<section class="page-hero"><div class="page-hero-bg"><div class="page-hero-orb hero-orb-bl"></div></div>
+  <div class="wrapper" id="hero-content">
+    <div class="section-label" style="animation:fadeUp .6s ease both;">Writing</div>
+    <h1 class="section-title" style="font-size:clamp(3rem,6vw,5rem);animation:fadeUp .7s .1s ease both;">The<br><em>Blog</em></h1>
+    <p style="font-size:.88rem;line-height:1.9;color:var(--text-dim);max-width:480px;margin-top:1.5rem;animation:fadeUp .7s .2s ease both;">Engineering write-ups, reflections on competitions, music thoughts, and everything in between.</p>
+  </div>
+</section>
+<div class="divider"></div>
+
+<section style="padding:5rem 0 8rem;"><div class="wrapper">
+  <div id="main-content"></div>
+</div></section>
+
+<footer class="footer"><div class="wrapper footer-inner">
+  <span class="footer-name">Bavly Badr</span><span class="footer-copy">© 2025 · BEVO copyright reserved</span>
+  <div class="footer-links"><a href="https://github.com/BEVOOO1" target="_blank">GitHub</a><a href="admin.html">Admin</a></div>
+</div></footer>
+
+<script src="db.js"></script><script src="shared.js"></script>
+<script>
+async function showList() {
+  const posts = await DB.blog.getAll();
+  const el = document.getElementById('main-content');
+  if (!posts.length) {
+    el.innerHTML = `<div style="text-align:center;padding:4rem;color:var(--text-dim);">
+      <div style="font-size:2rem;margin-bottom:.8rem;opacity:.3;">📝</div>
+      <div style="font-size:.82rem;">No blog posts yet. <a href="admin.html" style="color:var(--gold);">Write your first post →</a></div>
+    </div>`; return;
+  }
+  el.innerHTML = `<div class="blog-grid reveal">
+    ${posts.map((p,i)=>{
+      const tags = (p.tags||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('');
+      const isFirst = i===0;
+      return `<a class="blog-card${isFirst?' featured':''}" href="#${p.id}" onclick="showPost('${p.id}');return false;">
+        <div>
+          <div class="bc-cat">${p.category||'Blog'}</div>
+          <div class="bc-title">${p.title}</div>
+          <div class="bc-excerpt">${p.excerpt||''}</div>
+          <div class="bc-meta">
+            <span class="bc-date">${p.date||''}</span>
+            <span class="bc-read">Read →</span>
+          </div>
+          <div class="bc-tags" style="margin-top:.8rem">${tags}</div>
+        </div>
+      </a>`;
+    }).join('')}
+  </div>`;
+  initReveal();
+}
+
+async function showPost(id) {
+  const post = await DB.blog.get(id);
+  if (!post) { showList(); return; }
+  window.location.hash = id;
+
+  // Shrink hero
+  document.getElementById('hero-content').innerHTML = '';
+
+  const tags = (post.tags||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('');
+  document.getElementById('main-content').innerHTML = `
+    <div class="post-reader reveal">
+      <a class="post-back" href="#" onclick="window.location.hash='';showList();return false;">← Back to Blog</a>
+      <div class="post-header">
+        <div class="post-cat">${post.category||'Blog'}</div>
+        <h1 class="post-title">${post.title}</h1>
+        <div class="post-date">${post.date||''}</div>
+      </div>
+      <div class="post-divider"></div>
+      <div class="post-content">${post.content||'<p>No content yet.</p>'}</div>
+      ${tags ? `<div class="post-tags">${tags}</div>` : ''}
+    </div>`;
+  initReveal();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Check if URL has hash (direct link to post)
+const hash = window.location.hash.slice(1);
+if (hash) {
+  showPost(hash);
+} else {
+  showList();
+}
+</script>
+</body></html>

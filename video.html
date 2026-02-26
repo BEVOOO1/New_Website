@@ -1,0 +1,95 @@
+<!-- VIDEO PAGE -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video — Bavly Badr</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+.hero-orb-v{width:650px;height:650px;background:radial-gradient(circle,rgba(56,200,130,.08) 0%,transparent 70%);top:-120px;left:-120px;animation:vd 16s ease-in-out infinite alternate;}
+@keyframes vd{from{transform:translate(0,0);}to{transform:translate(30px,22px);}}
+.video-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;position:relative;z-index:2;}
+.video-card{border-radius:var(--radius-md);overflow:hidden;background:var(--glass-deep);border:1px solid var(--border);transition:all .45s cubic-bezier(.23,1,.32,1);}
+.video-card:hover{border-color:var(--border-gold);transform:translateY(-5px);box-shadow:0 24px 70px rgba(0,0,0,.5);}
+.video-card.featured{grid-column:1/-1;display:grid;grid-template-columns:1.2fr 1fr;}
+.video-thumb{position:relative;aspect-ratio:16/9;background:var(--glass);overflow:hidden;}
+.video-card.featured .video-thumb{aspect-ratio:unset;min-height:300px;}
+.video-thumb iframe{width:100%;height:100%;border:none;display:block;}
+.video-thumb-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem;background:linear-gradient(135deg,rgba(6,8,16,.7),rgba(12,18,30,.9));}
+.play-ring{width:60px;height:60px;border-radius:50%;background:rgba(212,175,120,.12);border:1px solid rgba(212,175,120,.3);display:flex;align-items:center;justify-content:center;font-size:1.4rem;backdrop-filter:blur(10px);transition:all .3s;}
+.video-card:hover .play-ring{background:rgba(212,175,120,.22);border-color:rgba(212,175,120,.55);transform:scale(1.08);}
+.video-info{padding:1.5rem 1.8rem;}
+.video-card.featured .video-info{padding:2.5rem 2rem;display:flex;flex-direction:column;justify-content:center;}
+.v-cat{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.v-cat::before{content:'';width:14px;height:1px;background:var(--gold);}
+.v-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:400;line-height:1.35;color:var(--text);margin-bottom:.6rem;}
+.video-card.featured .v-title{font-size:1.6rem;}
+.v-desc{font-family:'Tenor Sans',sans-serif;font-size:.78rem;line-height:1.75;color:var(--text-dim);margin-bottom:1.2rem;}
+.v-tags{display:flex;flex-wrap:wrap;gap:.4rem;}
+@media(max-width:768px){.video-grid{grid-template-columns:1fr;}.video-card.featured{grid-template-columns:1fr;}.video-card.featured .video-thumb{min-height:220px;}}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas><div class="grain"></div>
+<nav class="nav" id="main-nav"><div class="nav-inner">
+  <a href="index.html" class="nav-logo">B<span>.</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html" class="active">Video</a>
+    <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a><a href="blog.html">Blog</a>
+  </div>
+  <a href="admin.html" class="nav-admin-btn">⚙ Admin</a>
+  <button class="nav-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
+</div></nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html">Video</a>
+  <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a>
+  <a href="blog.html">Blog</a><a href="admin.html">⚙ Admin</a>
+</div>
+<section class="page-hero"><div class="page-hero-bg"><div class="page-hero-orb hero-orb-v"></div></div>
+  <div class="wrapper">
+    <div class="section-label" style="animation:fadeUp .6s ease both;">Motion & Film</div>
+    <h1 class="section-title" style="font-size:clamp(3rem,6vw,5rem);animation:fadeUp .7s .1s ease both;">Video<br><em>Editing</em></h1>
+    <p style="font-size:.88rem;line-height:1.9;color:var(--text-dim);max-width:480px;margin-top:1.5rem;animation:fadeUp .7s .2s ease both;">Cinematic storytelling through the edit. Church events, recaps, and creative short-form content.</p>
+  </div>
+</section>
+<div class="divider"></div>
+<section style="padding:5rem 0 8rem;"><div class="wrapper">
+  <div id="video-grid" class="video-grid reveal"></div>
+</div></section>
+<footer class="footer"><div class="wrapper footer-inner">
+  <span class="footer-name">Bavly Badr</span><span class="footer-copy">© 2025 · BEVO copyright reserved</span>
+  <div class="footer-links"><a href="https://github.com/BEVOOO1" target="_blank">GitHub</a><a href="admin.html">Admin</a></div>
+</div></footer>
+<script src="db.js"></script><script src="shared.js"></script>
+<script>
+async function init() {
+  const items = await DB.video.getAll();
+  const el = document.getElementById('video-grid');
+  if (!items.length) {
+    el.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--text-dim);">
+      <div style="font-size:2rem;margin-bottom:.8rem;opacity:.3;">🎬</div>
+      <div style="font-size:.82rem;">No videos yet. <a href="admin.html" style="color:var(--gold);">Add some in Admin →</a></div>
+    </div>`; return;
+  }
+  el.innerHTML = items.map((v, i) => {
+    const thumb = v.embedUrl
+      ? `<iframe src="${v.embedUrl}" allowfullscreen loading="lazy"></iframe>`
+      : `<div class="video-thumb-ph"><div class="play-ring">▶</div><div style="font-size:.65rem;letter-spacing:.12em;color:var(--text-dim);text-transform:uppercase;">${v.duration||'Add embed URL in admin'}</div></div>`;
+    const tags = (v.tags||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('');
+    const isFirst = i === 0;
+    return `<div class="video-card${isFirst?' featured':''}">
+      <div class="video-thumb">${thumb}</div>
+      <div class="video-info">
+        <div class="v-cat">${v.category||'Video'}</div>
+        <div class="v-title">${v.title}</div>
+        <div class="v-desc">${v.description||''}</div>
+        <div class="v-tags">${tags}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+init();
+</script>
+</body></html>

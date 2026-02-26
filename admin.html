@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Bavly CMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07080f;--bg2:#0a0c16;--panel:#0e1018;
+  --glass:rgba(255,255,255,.035);--glass2:rgba(255,255,255,.06);
+  --border:rgba(255,255,255,.07);--border-gold:rgba(212,175,120,.28);
+  --gold:#d4af78;--gold-light:#e8cfa0;--gold-dim:rgba(212,175,120,.45);
+  --text:#f0ece4;--text-muted:rgba(240,236,228,.55);--text-dim:rgba(240,236,228,.32);
+  --green:rgba(56,200,130,.9);--red:rgba(220,80,80,.9);--blue:rgba(100,160,255,.9);
+  --radius:12px;--sidebar:260px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'Tenor Sans',serif;}
+body{background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:fixed;left:0;top:0;z-index:100;overflow-y:auto;}
+.sidebar-brand{padding:1.8rem 1.5rem 1.4rem;border-bottom:1px solid var(--border);}
+.sidebar-logo{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:600;color:var(--text);text-decoration:none;display:block;}
+.sidebar-logo span{color:var(--gold);}
+.sidebar-sub{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);margin-top:.3rem;}
+.sidebar-nav{padding:1rem 0;flex:1;}
+.sidebar-section{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);padding:.6rem 1.5rem .4rem;margin-top:.5rem;}
+.sidebar-link{display:flex;align-items:center;gap:.8rem;padding:.75rem 1.5rem;color:var(--text-muted);text-decoration:none;font-size:.8rem;letter-spacing:.05em;transition:all .2s;border-left:2px solid transparent;cursor:pointer;background:none;border-top:none;border-right:none;border-bottom:none;width:100%;text-align:left;}
+.sidebar-link:hover{color:var(--text);background:rgba(255,255,255,.03);}
+.sidebar-link.active{color:var(--gold);background:rgba(212,175,120,.06);border-left-color:var(--gold);}
+.sidebar-link .sl-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
+.sidebar-link .sl-count{margin-left:auto;font-size:.65rem;background:rgba(212,175,120,.15);border:1px solid var(--border-gold);color:var(--gold);padding:.1rem .5rem;border-radius:100px;}
+.sidebar-footer{padding:1.2rem 1.5rem;border-top:1px solid var(--border);}
+.sidebar-footer a{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;padding:.5rem 0;transition:color .2s;}
+.sidebar-footer a:hover{color:var(--gold);}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar);flex:1;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+
+/* ── TOP BAR ── */
+.topbar{padding:1.2rem 2.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(7,8,15,.8);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:400;}
+.topbar-title em{font-style:italic;color:var(--gold);}
+.topbar-actions{display:flex;gap:.8rem;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.3rem;border-radius:8px;font-family:'Tenor Sans',sans-serif;font-size:.74rem;letter-spacing:.08em;cursor:pointer;transition:all .25s;border:1px solid var(--border);background:var(--glass);color:var(--text-muted);}
+.btn:hover{background:var(--glass2);color:var(--text);border-color:rgba(255,255,255,.15);}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#07080f;border-color:transparent;font-weight:700;}
+.btn-primary:hover{box-shadow:0 6px 24px rgba(212,175,120,.35);transform:translateY(-1px);}
+.btn-danger{border-color:rgba(220,80,80,.3);color:rgba(220,80,80,.7);}
+.btn-danger:hover{background:rgba(220,80,80,.1);color:rgba(220,80,80,1);border-color:rgba(220,80,80,.5);}
+
+/* ── CONTENT AREA ── */
+.content{padding:2rem 2.5rem;flex:1;}
+
+/* ── DASHBOARD ── */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:all .3s;cursor:pointer;}
+.stat-card:hover{border-color:var(--border-gold);transform:translateY(-2px);}
+.stat-icon{font-size:1.6rem;margin-bottom:.8rem;}
+.stat-num{font-family:'Cinzel',serif;font-size:2rem;font-weight:600;color:var(--gold);line-height:1;}
+.stat-label{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-top:.4rem;}
+
+/* ── TABLE ── */
+.table-wrap{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.table-head{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.table-head-title{font-family:'Cinzel',serif;font-size:.9rem;letter-spacing:.08em;color:var(--text);}
+.table-search{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:.5rem 1rem;font-family:'Tenor Sans',sans-serif;font-size:.78rem;color:var(--text);outline:none;transition:border .2s;width:200px;}
+.table-search:focus{border-color:var(--border-gold);}
+.table-search::placeholder{color:var(--text-dim);}
+table{width:100%;border-collapse:collapse;}
+th{font-family:'Tenor Sans',sans-serif;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);padding:.9rem 1.5rem;text-align:left;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);}
+td{padding:.9rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.035);font-size:.8rem;color:var(--text-muted);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.td-title{color:var(--text);font-size:.85rem;}
+.td-badge{display:inline-flex;padding:.2rem .7rem;border-radius:100px;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid;white-space:nowrap;}
+.badge-live{color:#38d9a9;border-color:rgba(56,217,169,.3);background:rgba(56,217,169,.07);}
+.badge-draft{color:var(--gold-dim);border-color:var(--border-gold);background:rgba(212,175,120,.06);}
+.badge-featured{color:#a78bfa;border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.07);}
+.td-actions{display:flex;gap:.4rem;align-items:center;}
+.action-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .7rem;font-size:.68rem;color:var(--text-dim);cursor:pointer;transition:all .2s;font-family:'Tenor Sans',sans-serif;letter-spacing:.05em;}
+.action-btn:hover{background:var(--glass2);color:var(--text);border-color:rgba(255,255,255,.15);}
+.action-btn.edit:hover{color:var(--gold);border-color:var(--border-gold);}
+.action-btn.del:hover{color:rgba(220,80,80,.9);border-color:rgba(220,80,80,.3);}
+.thumb-preview{width:44px;height:44px;border-radius:6px;object-fit:cover;border:1px solid var(--border);}
+.thumb-ph{width:44px;height:44px;border-radius:6px;background:var(--glass);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+
+/* ── MODAL / DRAWER ── */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(7,8,15,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:min(700px,95vw);max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6);}
+.modal-header{padding:1.8rem 2rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:400;}
+.modal-title em{font-style:italic;color:var(--gold);}
+.modal-close{background:none;border:1px solid var(--border);border-radius:6px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);transition:all .2s;font-size:1.1rem;}
+.modal-close:hover{background:var(--glass2);color:var(--text);}
+.modal-body{padding:1.8rem 2rem;}
+.modal-footer{padding:1.2rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.8rem;}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+.form-grid.single{grid-template-columns:1fr;}
+.field{display:flex;flex-direction:column;gap:.5rem;}
+.field.full{grid-column:1/-1;}
+.field label{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);}
+.field input,.field select,.field textarea{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;font-family:'Tenor Sans',sans-serif;font-size:.85rem;color:var(--text);outline:none;transition:border .2s;width:100%;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--border-gold);}
+.field input::placeholder,.field textarea::placeholder{color:var(--text-dim);}
+.field select option{background:var(--panel);}
+.field textarea{resize:vertical;min-height:100px;line-height:1.7;}
+.rich-textarea{min-height:200px;font-size:.82rem;}
+.field-hint{font-size:.65rem;color:var(--text-dim);margin-top:.2rem;}
+
+/* IMAGE UPLOAD AREA */
+.upload-area{border:1px dashed rgba(212,175,120,.25);border-radius:10px;padding:2rem;text-align:center;cursor:pointer;transition:all .3s;position:relative;}
+.upload-area:hover{border-color:var(--border-gold);background:rgba(212,175,120,.03);}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-area-icon{font-size:1.5rem;margin-bottom:.5rem;opacity:.4;}
+.upload-area-text{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);}
+.upload-preview{max-width:100%;max-height:180px;border-radius:8px;margin-top:.8rem;object-fit:contain;display:none;}
+
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:.8rem 0;}
+.toggle-label{font-size:.78rem;color:var(--text-muted);}
+.toggle{position:relative;width:42px;height:24px;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:100px;cursor:pointer;transition:.3s;border:1px solid var(--border);}
+.toggle input:checked+.toggle-track{background:rgba(212,175,120,.4);border-color:var(--border-gold);}
+.toggle-track::before{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:var(--text-dim);bottom:3px;left:3px;transition:.3s;}
+.toggle input:checked+.toggle-track::before{transform:translateX(18px);background:var(--gold);}
+
+/* RICH TEXT TOOLBAR */
+.rich-toolbar{display:flex;gap:.3rem;flex-wrap:wrap;padding:.5rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;}
+.rich-btn{background:none;border:1px solid var(--border);border-radius:4px;padding:.2rem .6rem;font-size:.75rem;color:var(--text-dim);cursor:pointer;transition:all .2s;font-family:'Tenor Sans',sans-serif;}
+.rich-btn:hover{background:var(--glass2);color:var(--text);}
+.rich-field{border-top-left-radius:0;border-top-right-radius:0;}
+
+/* TABS */
+.tabs{display:flex;gap:.3rem;margin-bottom:1.5rem;border-bottom:1px solid var(--border);padding-bottom:0;}
+.tab{padding:.7rem 1.2rem;font-family:'Tenor Sans',sans-serif;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;}
+.tab:hover{color:var(--text-muted);}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* EMPTY */
+.table-empty{padding:4rem;text-align:center;color:var(--text-dim);}
+.table-empty-icon{font-size:2.5rem;margin-bottom:.8rem;opacity:.3;}
+.table-empty-text{font-size:.8rem;letter-spacing:.1em;}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:9999;padding:.9rem 1.6rem;border-radius:10px;font-family:'Tenor Sans',sans-serif;font-size:.8rem;letter-spacing:.05em;backdrop-filter:blur(12px);box-shadow:0 8px 30px rgba(0,0,0,.4);transition:all .3s;pointer-events:none;}
+
+/* CONFIRM DIALOG */
+.confirm-dialog{position:fixed;inset:0;z-index:600;background:rgba(7,8,15,.8);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}
+.confirm-dialog.open{display:flex;}
+.confirm-box{background:var(--panel);border:1px solid rgba(220,80,80,.3);border-radius:14px;padding:2rem;max-width:380px;text-align:center;}
+.confirm-icon{font-size:2rem;margin-bottom:1rem;}
+.confirm-title{font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:.5rem;}
+.confirm-text{font-size:.8rem;color:var(--text-dim);margin-bottom:1.5rem;line-height:1.6;}
+.confirm-actions{display:flex;gap:.8rem;justify-content:center;}
+
+/* RESPONSIVE SIDEBAR */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);transition:transform .3s;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .form-grid{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  .stats-grid{grid-template-columns:1fr;}
+  .content{padding:1.5rem;}
+  .topbar{padding:1rem 1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <a href="index.html" class="sidebar-logo">B<span>.</span> Admin</a>
+    <div class="sidebar-sub">Content Management</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Overview</div>
+    <button class="sidebar-link active" data-panel="dashboard">
+      <span class="sl-icon">📊</span> Dashboard
+    </button>
+
+    <div class="sidebar-section">Content</div>
+    <button class="sidebar-link" data-panel="design">
+      <span class="sl-icon">🎨</span> Design Posts
+      <span class="sl-count" id="cnt-design">0</span>
+    </button>
+    <button class="sidebar-link" data-panel="video">
+      <span class="sl-icon">🎬</span> Video Works
+      <span class="sl-count" id="cnt-video">0</span>
+    </button>
+    <button class="sidebar-link" data-panel="violin">
+      <span class="sl-icon">🎻</span> Violin
+      <span class="sl-count" id="cnt-violin">0</span>
+    </button>
+    <button class="sidebar-link" data-panel="competitions">
+      <span class="sl-icon">🏆</span> Competitions
+      <span class="sl-count" id="cnt-competitions">0</span>
+    </button>
+    <button class="sidebar-link" data-panel="blog">
+      <span class="sl-icon">📝</span> Blog Posts
+      <span class="sl-count" id="cnt-blog">0</span>
+    </button>
+    <button class="sidebar-link" data-panel="projects">
+      <span class="sl-icon">⚙️</span> Projects
+      <span class="sl-count" id="cnt-projects">0</span>
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="index.html" target="_blank">← View Portfolio</a>
+    <a href="#" id="exportBtn">Export Data (JSON)</a>
+    <a href="#" id="resetBtn" style="color:rgba(220,80,80,.5);">Reset to Defaults</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard <em>Overview</em></div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary" id="addBtn" style="display:none">+ Add New</button>
+    </div>
+  </div>
+  <div class="content" id="content-area">
+    <div class="loading-state" style="display:flex;align-items:center;justify-content:center;padding:5rem;gap:.8rem;color:rgba(240,236,228,.32)">
+      Loading...
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Add Item</div>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn" id="modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="modal-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div class="confirm-dialog" id="confirmDialog">
+  <div class="confirm-box">
+    <div class="confirm-icon">🗑</div>
+    <div class="confirm-title">Delete this item?</div>
+    <div class="confirm-text">This cannot be undone. The item will be permanently removed from your portfolio.</div>
+    <div class="confirm-actions">
+      <button class="btn" id="confirmNo">Cancel</button>
+      <button class="btn btn-danger" id="confirmYes">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="db.js"></script>
+<script>
+/* ════════════════════════════════════════
+   ADMIN CMS — main.js (inline)
+════════════════════════════════════════ */
+
+// ── STATE ──
+let currentPanel = 'dashboard';
+let editingId = null;
+let deleteCallback = null;
+let allData = {};
+
+// ── PANEL CONFIG ──
+const PANELS = {
+  dashboard: { title: 'Dashboard <em>Overview</em>', hasAdd: false },
+  design:    { title: 'Design <em>Posts</em>',      hasAdd: true,  addLabel: 'Add Design Post' },
+  video:     { title: 'Video <em>Works</em>',       hasAdd: true,  addLabel: 'Add Video' },
+  violin:    { title: 'Violin <em>Performances</em>',hasAdd: true,  addLabel: 'Add Performance' },
+  competitions:{ title: 'Competitions &amp; <em>Initiatives</em>', hasAdd: true, addLabel: 'Add Competition' },
+  blog:      { title: 'Blog <em>Posts</em>',        hasAdd: true,  addLabel: 'New Blog Post' },
+  projects:  { title: 'Software <em>Projects</em>', hasAdd: true,  addLabel: 'Add Project' },
+};
+
+// ── TOAST ──
+function toast(msg, type='info') {
+  const el = document.createElement('div');
+  const bg = {info:'rgba(100,160,255,.88)',success:'rgba(56,200,130,.88)',error:'rgba(220,80,80,.88)'};
+  el.className = 'toast';
+  el.style.background = bg[type]||bg.info;
+  el.style.color = '#fff';
+  el.textContent = msg;
+  el.style.opacity = '0'; el.style.transform = 'translateY(8px)';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='1';el.style.transform='translateY(0)';},10);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},2800);
+}
+
+// ── CONFIRM ──
+function confirm(cb) {
+  deleteCallback = cb;
+  document.getElementById('confirmDialog').classList.add('open');
+}
+document.getElementById('confirmNo').onclick = () => { document.getElementById('confirmDialog').classList.remove('open'); deleteCallback = null; };
+document.getElementById('confirmYes').onclick = () => {
+  document.getElementById('confirmDialog').classList.remove('open');
+  if (deleteCallback) { deleteCallback(); deleteCallback = null; }
+};
+
+// ── MODAL ──
+const modal = document.getElementById('modal');
+function openModal(title, bodyHTML, onSave) {
+  document.getElementById('modal-title').innerHTML = title;
+  document.getElementById('modal-body').innerHTML = bodyHTML;
+  modal.classList.add('open');
+  document.getElementById('modal-save').onclick = onSave;
+  // Image preview
+  const fileInput = modal.querySelector('input[type=file]');
+  if (fileInput) {
+    fileInput.addEventListener('change', function() {
+      const preview = modal.querySelector('.upload-preview');
+      if (this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+        reader.readAsDataURL(this.files[0]);
+      }
+    });
+  }
+}
+function closeModal() { modal.classList.remove('open'); editingId = null; }
+document.getElementById('modal-close').onclick = closeModal;
+document.getElementById('modal-cancel').onclick = closeModal;
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+// ── NAV ──
+document.querySelectorAll('.sidebar-link').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentPanel = btn.dataset.panel;
+    document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cfg = PANELS[currentPanel];
+    document.getElementById('topbar-title').innerHTML = cfg.title;
+    const addBtn = document.getElementById('addBtn');
+    addBtn.style.display = cfg.hasAdd ? '' : 'none';
+    addBtn.textContent = '+ ' + (cfg.addLabel||'Add New');
+    renderPanel(currentPanel);
+  });
+});
+
+document.getElementById('addBtn').onclick = () => openForm(currentPanel, null);
+
+// ── LOAD COUNTS ──
+async function loadCounts() {
+  const keys = ['design','video','violin','competitions','blog','projects'];
+  for (const k of keys) {
+    const col = await DB[k].getAll();
+    allData[k] = col;
+    document.getElementById('cnt-'+k).textContent = col.length;
+  }
+}
+
+// ── RENDER PANEL ──
+async function renderPanel(panel) {
+  const area = document.getElementById('content-area');
+  area.innerHTML = '<div style="display:flex;align-items:center;gap:.8rem;padding:3rem;color:rgba(240,236,228,.32);font-size:.8rem;letter-spacing:.1em;">Loading...</div>';
+
+  if (panel === 'dashboard') { renderDashboard(); return; }
+
+  const items = await DB[panel].getAll();
+  allData[panel] = items;
+  document.getElementById('cnt-'+panel).textContent = items.length;
+
+  const renderers = { design: renderDesignTable, video: renderVideoTable, violin: renderViolinTable, competitions: renderCompTable, blog: renderBlogTable, projects: renderProjectTable };
+  if (renderers[panel]) renderers[panel](items);
+}
+
+// ── DASHBOARD ──
+async function renderDashboard() {
+  await loadCounts();
+  const area = document.getElementById('content-area');
+  const total = Object.values(allData).reduce((s,a)=>s+a.length,0);
+  area.innerHTML = `
+    <div style="margin-bottom:1.5rem;">
+      <div style="font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:.4rem;">Welcome back, <em style="color:var(--gold)">Bavly</em></div>
+      <div style="font-size:.8rem;color:var(--text-dim);letter-spacing:.05em;">${total} total items across all sections</div>
+    </div>
+    <div class="stats-grid">
+      ${[
+        ['🎨','design','Design Posts'],['🎬','video','Video Works'],['🎻','violin','Violin'],
+        ['🏆','competitions','Competitions'],['📝','blog','Blog Posts'],['⚙️','projects','Projects']
+      ].map(([icon,key,label])=>`
+        <div class="stat-card" onclick="document.querySelector('[data-panel=${key}]').click()">
+          <div class="stat-icon">${icon}</div>
+          <div class="stat-num">${allData[key]?.length||0}</div>
+          <div class="stat-label">${label}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div style="margin-top:2rem;padding:1.5rem 2rem;background:var(--panel);border:1px solid var(--border);border-radius:12px;">
+      <div style="font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.8rem;">Quick Guide</div>
+      <div style="font-size:.82rem;line-height:1.9;color:var(--text-dim);">
+        Click any section in the sidebar to manage content. Use <strong style="color:var(--text-muted)">+ Add New</strong> to create entries.
+        All changes are saved automatically and appear live on your portfolio pages.
+        Use <strong style="color:var(--text-muted)">Export Data</strong> to back up your content as JSON.
+      </div>
+    </div>
+  `;
+}
+
+// ── DESIGN TABLE ──
+function renderDesignTable(items) {
+  document.getElementById('content-area').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="table-head-title">Design Posts (${items.length})</div>
+        <input class="table-search" placeholder="Search..." oninput="filterTable(this,'design-tbody')">
+      </div>
+      <table>
+        <thead><tr>
+          <th>Preview</th><th>Title</th><th>Category</th><th>Date</th><th>Featured</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="design-tbody">
+          ${items.length ? items.map(i=>`
+            <tr data-search="${i.title.toLowerCase()} ${i.category?.toLowerCase()||''}">
+              <td>${i.image?`<img class="thumb-preview" src="${i.image}">`:`<div class="thumb-ph">🎨</div>`}</td>
+              <td><div class="td-title">${i.title}</div></td>
+              <td><span class="td-badge badge-draft">${i.category||'—'}</span></td>
+              <td>${i.date||'—'}</td>
+              <td>${i.featured?'<span class="td-badge badge-featured">★ Yes</span>':'—'}</td>
+              <td><div class="td-actions">
+                <button class="action-btn edit" onclick="openForm('design','${i.id}')">Edit</button>
+                <button class="action-btn del" onclick="deleteItem('design','${i.id}')">Delete</button>
+              </div></td>
+            </tr>`).join('') : `<tr><td colspan="6"><div class="table-empty"><div class="table-empty-icon">🎨</div><div class="table-empty-text">No design posts yet. Click + Add New to create one.</div></div></td></tr>`}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── VIDEO TABLE ──
+function renderVideoTable(items) {
+  document.getElementById('content-area').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="table-head-title">Video Works (${items.length})</div>
+        <input class="table-search" placeholder="Search..." oninput="filterTable(this,'video-tbody')">
+      </div>
+      <table>
+        <thead><tr><th>Title</th><th>Category</th><th>Duration</th><th>Date</th><th>Featured</th><th>Actions</th></tr></thead>
+        <tbody id="video-tbody">
+          ${items.length ? items.map(i=>`
+            <tr data-search="${i.title.toLowerCase()} ${i.category?.toLowerCase()||''}">
+              <td><div class="td-title">${i.title}</div><div style="font-size:.7rem;color:var(--text-dim);margin-top:.2rem;">${i.embedUrl?'🔗 Has embed':'⚠ No embed yet'}</div></td>
+              <td><span class="td-badge badge-draft">${i.category||'—'}</span></td>
+              <td>${i.duration||'—'}</td>
+              <td>${i.date||'—'}</td>
+              <td>${i.featured?'<span class="td-badge badge-featured">★ Yes</span>':'—'}</td>
+              <td><div class="td-actions">
+                <button class="action-btn edit" onclick="openForm('video','${i.id}')">Edit</button>
+                <button class="action-btn del" onclick="deleteItem('video','${i.id}')">Delete</button>
+              </div></td>
+            </tr>`).join('') : `<tr><td colspan="6"><div class="table-empty"><div class="table-empty-icon">🎬</div><div class="table-empty-text">No videos yet.</div></div></td></tr>`}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── VIOLIN TABLE ──
+function renderViolinTable(items) {
+  document.getElementById('content-area').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="table-head-title">Violin Performances (${items.length})</div>
+        <input class="table-search" placeholder="Search..." oninput="filterTable(this,'violin-tbody')">
+      </div>
+      <table>
+        <thead><tr><th>Title</th><th>Composer</th><th>Type</th><th>Date</th><th>Media</th><th>Actions</th></tr></thead>
+        <tbody id="violin-tbody">
+          ${items.length ? items.map(i=>`
+            <tr data-search="${i.title.toLowerCase()} ${i.composer?.toLowerCase()||''}">
+              <td><div class="td-title">${i.title}</div></td>
+              <td>${i.composer||'—'}</td>
+              <td><span class="td-badge badge-draft">${i.type||'—'}</span></td>
+              <td>${i.date||'—'}</td>
+              <td>${i.mediaUrl?'<span class="td-badge badge-live">🔗 Linked</span>':'—'}</td>
+              <td><div class="td-actions">
+                <button class="action-btn edit" onclick="openForm('violin','${i.id}')">Edit</button>
+                <button class="action-btn del" onclick="deleteItem('violin','${i.id}')">Delete</button>
+              </div></td>
+            </tr>`).join('') : `<tr><td colspan="6"><div class="table-empty"><div class="table-empty-icon">🎻</div><div class="table-empty-text">No violin performances yet.</div></div></td></tr>`}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── COMPETITIONS TABLE ──
+function renderCompTable(items) {
+  document.getElementById('content-area').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="table-head-title">Competitions (${items.length})</div>
+        <input class="table-search" placeholder="Search..." oninput="filterTable(this,'comp-tbody')">
+      </div>
+      <table>
+        <thead><tr><th>Icon</th><th>Title</th><th>Scope</th><th>Year</th><th>Outcome</th><th>Actions</th></tr></thead>
+        <tbody id="comp-tbody">
+          ${items.length ? items.map(i=>`
+            <tr data-search="${i.title.toLowerCase()}">
+              <td style="font-size:1.4rem;">${i.icon||'🏆'}</td>
+              <td><div class="td-title">${i.title}</div></td>
+              <td><span style="font-size:.72rem;color:var(--text-dim);">${i.scope||'—'}</span></td>
+              <td>${i.year||'—'}</td>
+              <td><span class="td-badge badge-live">${i.outcome||'Participant'}</span></td>
+              <td><div class="td-actions">
+                <button class="action-btn edit" onclick="openForm('competitions','${i.id}')">Edit</button>
+                <button class="action-btn del" onclick="deleteItem('competitions','${i.id}')">Delete</button>
+              </div></td>
+            </tr>`).join('') : `<tr><td colspan="6"><div class="table-empty"><div class="table-empty-icon">🏆</div><div class="table-empty-text">No competitions yet.</div></div></td></tr>`}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── BLOG TABLE ──
+function renderBlogTable(items) {
+  document.getElementById('content-area').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="table-head-title">Blog Posts (${items.length})</div>
+        <input class="table-search" placeholder="Search..." oninput="filterTable(this,'blog-tbody')">
+      </div>
+      <table>
+        <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Featured</th><th>Actions</th></tr></thead>
+        <tbody id="blog-tbody">
+          ${items.length ? items.map(i=>`
+            <tr data-search="${i.title.toLowerCase()} ${i.category?.toLowerCase()||''}">
+              <td>
+                <div class="td-title">${i.title}</div>
+                <div style="font-size:.7rem;color:var(--text-dim);margin-top:.2rem;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.excerpt||''}</div>
+              </td>
+              <td><span class="td-badge badge-draft">${i.category||'—'}</span></td>
+              <td>${i.date||'—'}</td>
+              <td>${i.featured?'<span class="td-badge badge-featured">★ Yes</span>':'—'}</td>
+              <td><div class="td-actions">
+                <button class="action-btn edit" onclick="openForm('blog','${i.id}')">Edit</button>
+                <button class="action-btn del" onclick="deleteItem('blog','${i.id}')">Delete</button>
+              </div></td>
+            </tr>`).join('') : `<tr><td colspan="5"><div class="table-empty"><div class="table-empty-icon">📝</div><div class="table-empty-text">No blog posts yet.</div></div></td></tr>`}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── PROJECTS TABLE ──
+function renderProjectTable(items) {
+  document.getElementById('content-area').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="table-head-title">Software Projects (${items.length})</div>
+        <input class="table-search" placeholder="Search..." oninput="filterTable(this,'proj-tbody')">
+      </div>
+      <table>
+        <thead><tr><th>Icon</th><th>Title</th><th>Status</th><th>Tech Stack</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="proj-tbody">
+          ${items.length ? items.map(i=>`
+            <tr data-search="${i.title.toLowerCase()}">
+              <td style="font-size:1.4rem;">${i.icon||'⚙️'}</td>
+              <td>
+                <div class="td-title">${i.title}</div>
+                <div style="font-size:.7rem;color:var(--text-dim);margin-top:.2rem;">${i.subtitle||''}</div>
+              </td>
+              <td><span class="td-badge ${i.status==='live'?'badge-live':'badge-draft'}">${i.statusLabel||i.status}</span></td>
+              <td><div style="font-size:.7rem;color:var(--text-dim);">${(i.techStack||[]).join(', ')||'—'}</div></td>
+              <td>${i.date||'—'}</td>
+              <td><div class="td-actions">
+                <button class="action-btn edit" onclick="openForm('projects','${i.id}')">Edit</button>
+                <button class="action-btn del" onclick="deleteItem('projects','${i.id}')">Delete</button>
+              </div></td>
+            </tr>`).join('') : `<tr><td colspan="6"><div class="table-empty"><div class="table-empty-icon">⚙️</div><div class="table-empty-text">No projects yet.</div></div></td></tr>`}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── FILTER TABLE ──
+function filterTable(input, tbodyId) {
+  const q = input.value.toLowerCase();
+  document.querySelectorAll(`#${tbodyId} tr[data-search]`).forEach(row => {
+    row.style.display = row.dataset.search.includes(q) ? '' : 'none';
+  });
+}
+
+// ── DELETE ITEM ──
+function deleteItem(collection, id) {
+  confirm(async () => {
+    await DB[collection].delete(id);
+    toast('Item deleted', 'success');
+    renderPanel(collection);
+    loadCounts();
+  });
+}
+
+// ── FORMS ──
+async function openForm(collection, id) {
+  editingId = id;
+  let item = id ? await DB[collection].get(id) : null;
+  const isEdit = !!item;
+  const modalTitle = isEdit ? `Edit <em>${collection}</em>` : `Add <em>${PANELS[collection]?.addLabel?.replace('Add ','')}</em>`;
+
+  const forms = { design: formDesign, video: formVideo, violin: formViolin, competitions: formCompetition, blog: formBlog, projects: formProject };
+  const bodyHTML = forms[collection] ? forms[collection](item) : '<p>Form not available</p>';
+
+  openModal(modalTitle, bodyHTML, async () => {
+    const data = collectForm(collection);
+    if (!data) return;
+    if (isEdit) {
+      await DB[collection].update(id, data);
+      toast('Updated successfully', 'success');
+    } else {
+      await DB[collection].add(data);
+      toast('Added successfully', 'success');
+    }
+    closeModal();
+    renderPanel(collection);
+    loadCounts();
+  });
+}
+
+// ── FORM BUILDERS ──
+function formDesign(i={}) {
+  return `<div class="form-grid">
+    <div class="field full">
+      <label>Title *</label>
+      <input id="f_title" value="${i.title||''}" placeholder="Post title">
+    </div>
+    <div class="field">
+      <label>Category</label>
+      <select id="f_category">
+        ${['Social Posts','Event Graphics','Typography','Announcements','Holiday Graphics','Other'].map(c=>`<option ${i.category===c?'selected':''}>${c}</option>`).join('')}
+      </select>
+    </div>
+    <div class="field">
+      <label>Date</label>
+      <input id="f_date" type="date" value="${i.date||''}">
+    </div>
+    <div class="field full">
+      <label>Tags (comma separated)</label>
+      <input id="f_tags" value="${(i.tags||[]).join(', ')}" placeholder="Church, Instagram, Holiday">
+    </div>
+    <div class="field full">
+      <label>Image URL or Upload</label>
+      <input id="f_image" value="${i.image||''}" placeholder="https://... or leave blank to upload">
+      <div class="upload-area" style="margin-top:.5rem">
+        <input type="file" id="f_imageFile" accept="image/*">
+        <div class="upload-area-icon">📁</div>
+        <div class="upload-area-text">Click to upload image</div>
+        <img class="upload-preview" ${i.image?`src="${i.image}" style="display:block"`:'style="display:none"'}>
+      </div>
+      <div class="field-hint">Upload converts to base64 and stores locally.</div>
+    </div>
+    <div class="field full">
+      <div class="toggle-row">
+        <span class="toggle-label">Featured on homepage</span>
+        <label class="toggle"><input id="f_featured" type="checkbox" ${i.featured?'checked':''}><div class="toggle-track"></div></label>
+      </div>
+    </div>
+  </div>`;
+}
+
+function formVideo(i={}) {
+  return `<div class="form-grid">
+    <div class="field full"><label>Title *</label><input id="f_title" value="${i.title||''}" placeholder="Video title"></div>
+    <div class="field"><label>Category</label>
+      <select id="f_category">${['Church Event','Event Recap','Short Film','Documentary','Highlight Reel','Other'].map(c=>`<option ${i.category===c?'selected':''}>${c}</option>`).join('')}</select>
+    </div>
+    <div class="field"><label>Duration (e.g. 3:24)</label><input id="f_duration" value="${i.duration||''}" placeholder="2:30"></div>
+    <div class="field full"><label>YouTube / Vimeo Embed URL</label><input id="f_embedUrl" value="${i.embedUrl||''}" placeholder="https://www.youtube.com/embed/VIDEO_ID"></div>
+    <div class="field full"><label>Thumbnail URL</label><input id="f_thumbnail" value="${i.thumbnail||''}" placeholder="https://..."></div>
+    <div class="field full"><label>Description</label><textarea id="f_description" rows="3">${i.description||''}</textarea></div>
+    <div class="field"><label>Date</label><input id="f_date" type="date" value="${i.date||''}"></div>
+    <div class="field">
+      <div class="toggle-row"><span class="toggle-label">Featured</span><label class="toggle"><input id="f_featured" type="checkbox" ${i.featured?'checked':''}><div class="toggle-track"></div></label></div>
+    </div>
+    <div class="field full"><label>Tags (comma separated)</label><input id="f_tags" value="${(i.tags||[]).join(', ')}" placeholder="Church, Cinematic, Color Grade"></div>
+  </div>`;
+}
+
+function formViolin(i={}) {
+  return `<div class="form-grid">
+    <div class="field full"><label>Piece Title *</label><input id="f_title" value="${i.title||''}" placeholder="Canon in D"></div>
+    <div class="field"><label>Composer</label><input id="f_composer" value="${i.composer||''}" placeholder="Johann Pachelbel"></div>
+    <div class="field"><label>Performance Type</label>
+      <select id="f_type">${['Performance','Recital','Church Music','Practice','Competition','Recording'].map(t=>`<option ${i.type===t?'selected':''}>${t}</option>`).join('')}</select>
+    </div>
+    <div class="field full"><label>Description</label><textarea id="f_description" rows="3">${i.description||''}</textarea></div>
+    <div class="field full"><label>Audio / Video URL (YouTube, SoundCloud, etc.)</label><input id="f_mediaUrl" value="${i.mediaUrl||''}" placeholder="https://..."></div>
+    <div class="field"><label>Date</label><input id="f_date" type="date" value="${i.date||''}"></div>
+    <div class="field">
+      <div class="toggle-row"><span class="toggle-label">Featured</span><label class="toggle"><input id="f_featured" type="checkbox" ${i.featured?'checked':''}><div class="toggle-track"></div></label></div>
+    </div>
+  </div>`;
+}
+
+function formCompetition(i={}) {
+  return `<div class="form-grid">
+    <div class="field full"><label>Competition Title *</label><input id="f_title" value="${i.title||''}" placeholder="NASA Space Apps Challenge"></div>
+    <div class="field"><label>Icon (emoji)</label><input id="f_icon" value="${i.icon||'🏆'}" placeholder="🏆" maxlength="4"></div>
+    <div class="field"><label>Year</label><input id="f_year" value="${i.year||''}" placeholder="2024"></div>
+    <div class="field full"><label>Scope / Category</label><input id="f_scope" value="${i.scope||''}" placeholder="International · Innovation"></div>
+    <div class="field"><label>Outcome / Award</label><input id="f_outcome" value="${i.outcome||''}" placeholder="Participant / 1st Place / Finalist"></div>
+    <div class="field full"><label>Description</label><textarea id="f_description" rows="3">${i.description||''}</textarea></div>
+    <div class="field full"><label>What I Learned</label><textarea id="f_learned" rows="3">${i.learned||''}</textarea></div>
+  </div>`;
+}
+
+function formBlog(i={}) {
+  return `<div class="form-grid">
+    <div class="field full"><label>Post Title *</label><input id="f_title" value="${i.title||''}" placeholder="How I built the Church Points System"></div>
+    <div class="field"><label>Category</label>
+      <select id="f_category">${['Engineering','Design','Music','Competitions','Personal','Reflection','Other'].map(c=>`<option ${i.category===c?'selected':''}>${c}</option>`).join('')}</select>
+    </div>
+    <div class="field"><label>Date</label><input id="f_date" type="date" value="${i.date||''}"></div>
+    <div class="field full"><label>Excerpt (shown in listings)</label><textarea id="f_excerpt" rows="2">${i.excerpt||''}</textarea></div>
+    <div class="field full">
+      <label>Content (HTML supported)</label>
+      <div class="rich-toolbar">
+        ${[['B','<strong>','</strong>'],['I','<em>','</em>'],['H2','<h2>','</h2>'],['H3','<h3>','</h3>'],['P','<p>','</p>'],['Code','<code>','</code>']].map(([l,o,c])=>`<button type="button" class="rich-btn" onclick="wrapSelection('f_content','${o}','${c}')">${l}</button>`).join('')}
+      </div>
+      <textarea id="f_content" class="rich-field" rows="10">${i.content||''}</textarea>
+      <div class="field-hint">Use HTML tags for formatting. &lt;p&gt; for paragraphs, &lt;strong&gt; for bold, etc.</div>
+    </div>
+    <div class="field full"><label>Tags (comma separated)</label><input id="f_tags" value="${(i.tags||[]).join(', ')}" placeholder="Engineering, Web Dev"></div>
+    <div class="field full">
+      <div class="toggle-row"><span class="toggle-label">Featured post</span><label class="toggle"><input id="f_featured" type="checkbox" ${i.featured?'checked':''}><div class="toggle-track"></div></label></div>
+    </div>
+  </div>`;
+}
+
+function formProject(i={}) {
+  return `<div class="form-grid">
+    <div class="field full"><label>Project Title *</label><input id="f_title" value="${i.title||''}" placeholder="Church Points System"></div>
+    <div class="field"><label>Subtitle</label><input id="f_subtitle" value="${i.subtitle||''}" placeholder="Full-Stack Web Platform"></div>
+    <div class="field"><label>Icon (emoji)</label><input id="f_icon" value="${i.icon||'⚙️'}" placeholder="⚙️" maxlength="4"></div>
+    <div class="field"><label>Status</label>
+      <select id="f_status"><option value="live" ${i.status==='live'?'selected':''}>Live & Deployed</option><option value="complete" ${i.status==='complete'?'selected':''}>Completed</option><option value="progress" ${i.status==='progress'?'selected':''}>In Progress</option><option value="concept" ${i.status==='concept'?'selected':''}>Concept</option></select>
+    </div>
+    <div class="field"><label>Status Label</label><input id="f_statusLabel" value="${i.statusLabel||''}" placeholder="Live & Deployed"></div>
+    <div class="field"><label>Date</label><input id="f_date" type="date" value="${i.date||''}"></div>
+    <div class="field full"><label>Description</label><textarea id="f_description" rows="3">${i.description||''}</textarea></div>
+    <div class="field full"><label>Tech Stack (comma separated)</label><input id="f_techStack" value="${(i.techStack||[]).join(', ')}" placeholder="HTML/CSS/JS, PostgreSQL, Node.js"></div>
+    <div class="field full"><label>Key Features (one per line)</label><textarea id="f_features" rows="4">${(i.features||[]).join('\n')}</textarea></div>
+    <div class="field"><label>GitHub URL</label><input id="f_github" value="${(i.links||{}).github||''}" placeholder="https://github.com/..."></div>
+    <div class="field"><label>Live URL</label><input id="f_live" value="${(i.links||{}).live||''}" placeholder="https://..."></div>
+    <div class="field full">
+      <div class="toggle-row"><span class="toggle-label">Featured project</span><label class="toggle"><input id="f_featured" type="checkbox" ${i.featured?'checked':''}><div class="toggle-track"></div></label></div>
+    </div>
+  </div>`;
+}
+
+// ── COLLECT FORM DATA ──
+function collectForm(collection) {
+  const g = id => document.getElementById(id);
+  const gv = id => { const el = g(id); return el ? el.value.trim() : ''; };
+  const gb = id => { const el = g(id); return el ? el.checked : false; };
+
+  // Handle image upload
+  const fileInput = g('f_imageFile');
+  if (fileInput && fileInput.files[0]) {
+    // Already handled by preview — use preview src
+    const preview = document.querySelector('.upload-preview');
+    if (preview && preview.src) document.getElementById('f_image') && (document.getElementById('f_image').value = preview.src);
+  }
+
+  const maps = {
+    design: () => ({ title: gv('f_title'), category: gv('f_category'), date: gv('f_date'), tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean), image: gv('f_image'), featured: gb('f_featured') }),
+    video: () => ({ title: gv('f_title'), category: gv('f_category'), duration: gv('f_duration'), embedUrl: gv('f_embedUrl'), thumbnail: gv('f_thumbnail'), description: gv('f_description'), date: gv('f_date'), featured: gb('f_featured'), tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean) }),
+    violin: () => ({ title: gv('f_title'), composer: gv('f_composer'), type: gv('f_type'), description: gv('f_description'), mediaUrl: gv('f_mediaUrl'), date: gv('f_date'), featured: gb('f_featured') }),
+    competitions: () => ({ title: gv('f_title'), icon: gv('f_icon')||'🏆', year: gv('f_year'), scope: gv('f_scope'), outcome: gv('f_outcome'), description: gv('f_description'), learned: gv('f_learned') }),
+    blog: () => ({ title: gv('f_title'), category: gv('f_category'), date: gv('f_date'), excerpt: gv('f_excerpt'), content: gv('f_content'), tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean), featured: gb('f_featured') }),
+    projects: () => ({ title: gv('f_title'), subtitle: gv('f_subtitle'), icon: gv('f_icon')||'⚙️', status: gv('f_status'), statusLabel: gv('f_statusLabel'), date: gv('f_date'), description: gv('f_description'), techStack: gv('f_techStack').split(',').map(t=>t.trim()).filter(Boolean), features: gv('f_features').split('\n').map(t=>t.trim()).filter(Boolean), links: { github: gv('f_github'), live: gv('f_live') }, featured: gb('f_featured') }),
+  };
+
+  const fn = maps[collection];
+  if (!fn) return null;
+  const data = fn();
+  if (!data.title) { toast('Title is required', 'error'); return null; }
+  return data;
+}
+
+// ── RICH TEXT HELPER ──
+function wrapSelection(id, open, close) {
+  const ta = document.getElementById(id);
+  if (!ta) return;
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const selected = ta.value.substring(start, end);
+  ta.value = ta.value.substring(0,start) + open + selected + close + ta.value.substring(end);
+  ta.focus();
+}
+
+// ── EXPORT ──
+document.getElementById('exportBtn').onclick = async (e) => {
+  e.preventDefault();
+  const data = await DB.exportAll();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'bavly-portfolio-data.json'; a.click();
+  URL.revokeObjectURL(url);
+  toast('Data exported!', 'success');
+};
+
+// ── RESET ──
+document.getElementById('resetBtn').onclick = async (e) => {
+  e.preventDefault();
+  confirm(async () => {
+    await DB.resetAll();
+    toast('Reset to default data', 'info');
+    loadCounts();
+    renderPanel(currentPanel);
+  });
+};
+
+// ── INIT ──
+renderPanel('dashboard');
+</script>
+</body>
+</html>

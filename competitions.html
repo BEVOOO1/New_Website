@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Competitions — Bavly Badr</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+.hero-orb-c{width:650px;height:650px;background:radial-gradient(circle,rgba(212,175,120,.1) 0%,transparent 70%);top:-150px;right:-150px;animation:cd 18s ease-in-out infinite alternate;}
+@keyframes cd{from{transform:translate(0,0) scale(1);}to{transform:translate(30px,20px) scale(1.07);}}
+.comp-card{display:grid;grid-template-columns:80px 1fr;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--border);background:var(--glass-deep);transition:all .4s cubic-bezier(.23,1,.32,1);margin-bottom:1.2rem;}
+.comp-card:hover{border-color:var(--border-gold);transform:translateX(6px);box-shadow:-6px 0 40px rgba(0,0,0,.3);}
+.comp-icon-col{display:flex;align-items:center;justify-content:center;font-size:2rem;background:var(--glass);border-right:1px solid var(--border);transition:background .3s;}
+.comp-card:hover .comp-icon-col{background:rgba(212,175,120,.06);}
+.comp-body{padding:1.8rem 2rem;display:flex;justify-content:space-between;align-items:center;gap:2rem;flex-wrap:wrap;}
+.comp-scope{font-family:'Tenor Sans',sans-serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.5rem;}
+.comp-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:400;color:var(--text);margin-bottom:.4rem;}
+.comp-desc{font-family:'Tenor Sans',sans-serif;font-size:.8rem;line-height:1.75;color:var(--text-dim);max-width:520px;}
+.comp-right{display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;flex-shrink:0;}
+.comp-outcome{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.1em;padding:.45rem 1.2rem;border-radius:100px;border:1px solid var(--border-gold);background:rgba(212,175,120,.07);color:var(--gold);}
+.comp-year{font-family:'Tenor Sans',sans-serif;font-size:.68rem;letter-spacing:.08em;color:var(--text-dim);}
+.learned-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-top:3rem;}
+.learned-card{padding:1.8rem;border-radius:var(--radius-md);background:var(--glass-deep);border:1px solid var(--border);transition:all .3s;}
+.learned-card:hover{border-color:var(--border-gold);background:var(--glass);transform:translateY(-3px);}
+.lc-comp{font-family:'Tenor Sans',sans-serif;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.8rem;}
+.lc-title{font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;color:var(--text);margin-bottom:.6rem;}
+.lc-body{font-family:'Tenor Sans',sans-serif;font-size:.78rem;line-height:1.75;color:var(--text-dim);}
+@media(max-width:768px){.comp-body{flex-direction:column;align-items:flex-start;}.comp-right{align-items:flex-start;}.learned-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas><div class="grain"></div>
+<nav class="nav" id="main-nav"><div class="nav-inner">
+  <a href="index.html" class="nav-logo">B<span>.</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html">Video</a>
+    <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html" class="active">Competitions</a><a href="blog.html">Blog</a>
+  </div>
+  <a href="admin.html" class="nav-admin-btn">⚙ Admin</a>
+  <button class="nav-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
+</div></nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html">Video</a>
+  <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a>
+  <a href="blog.html">Blog</a><a href="admin.html">⚙ Admin</a>
+</div>
+<section class="page-hero"><div class="page-hero-bg"><div class="page-hero-orb hero-orb-c"></div></div>
+  <div class="wrapper">
+    <div class="section-label" style="animation:fadeUp .6s ease both;">Engagement</div>
+    <h1 class="section-title" style="font-size:clamp(3rem,6vw,5rem);animation:fadeUp .7s .1s ease both;">Competitions &amp;<br><em>Initiatives</em></h1>
+    <p style="font-size:.88rem;line-height:1.9;color:var(--text-dim);max-width:480px;margin-top:1.5rem;animation:fadeUp .7s .2s ease both;">Putting knowledge to the test in competitive and collaborative environments worldwide.</p>
+  </div>
+</section>
+<div class="divider"></div>
+<section style="padding:5rem 0 8rem;"><div class="wrapper">
+  <div class="section-label reveal">Competition Record</div>
+  <div id="comp-list" class="reveal"></div>
+  <div id="learned-section"></div>
+</div></section>
+<footer class="footer"><div class="wrapper footer-inner">
+  <span class="footer-name">Bavly Badr</span><span class="footer-copy">© 2025 · BEVO copyright reserved</span>
+  <div class="footer-links"><a href="https://github.com/BEVOOO1" target="_blank">GitHub</a><a href="admin.html">Admin</a></div>
+</div></footer>
+<script src="db.js"></script><script src="shared.js"></script>
+<script>
+async function init() {
+  const items = await DB.competitions.getAll();
+  const listEl = document.getElementById('comp-list');
+  const learnedEl = document.getElementById('learned-section');
+  if (!items.length) {
+    listEl.innerHTML = `<div style="text-align:center;padding:4rem;color:var(--text-dim);">
+      <div style="font-size:2rem;margin-bottom:.8rem;opacity:.3;">🏆</div>
+      <div style="font-size:.82rem;">No competitions yet. <a href="admin.html" style="color:var(--gold);">Add some in Admin →</a></div>
+    </div>`; return;
+  }
+  listEl.innerHTML = items.map(c=>`
+    <div class="comp-card">
+      <div class="comp-icon-col">${c.icon||'🏆'}</div>
+      <div class="comp-body">
+        <div>
+          <div class="comp-scope">${c.scope||''}</div>
+          <div class="comp-title">${c.title}</div>
+          <div class="comp-desc">${c.description||''}</div>
+        </div>
+        <div class="comp-right">
+          <span class="comp-outcome">${c.outcome||'Participant'}</span>
+          <span class="comp-year">${c.year||''}</span>
+        </div>
+      </div>
+    </div>`).join('');
+
+  const withLearned = items.filter(i=>i.learned);
+  if (withLearned.length) {
+    learnedEl.innerHTML = `
+      <div style="margin-top:4rem">
+        <div class="section-label reveal">What I Gained</div>
+        <div class="learned-grid reveal">
+          ${withLearned.map(c=>`
+            <div class="learned-card">
+              <div class="lc-comp">${c.title}</div>
+              <div class="lc-title">${c.outcome||'Participation'}</div>
+              <div class="lc-body">${c.learned}</div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+    initReveal();
+  }
+}
+init();
+</script>
+</body></html>
