@@ -1,8 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bavly Badr</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Bavly Badr — Computer Engineering student, Church Designer, Video Editor & Violinist. Portfolio of software projects, design work, and music.">
+<meta name="theme-color" content="#07080f">
+<meta property="og:title" content="Bavly Badr — Portfolio">
+<meta property="og:description" content="Engineer, Designer & Musician. Portfolio of software, design, video, and violin.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<title>Bavly Badr — Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
@@ -101,7 +108,7 @@
         <div class="portrait-card">
           <div class="portrait-glow"></div>
           <div class="portrait-frame">
-            <img src="myimage.jpg" alt="Bavly Badr">
+            <img src="myimage.jpg" alt="Bavly Badr" loading="lazy" decoding="async">
             <div class="portrait-badges">
               <span class="pbadge">Computer Engineering</span>
               <span class="pbadge">Church Designer &amp; Editor</span>
@@ -152,10 +159,10 @@ async function loadRecent() {
   const el = document.getElementById('recent-posts');
   if (!posts.length) { el.innerHTML = `<div style="grid-column:1/-1;color:var(--text-dim);font-size:.82rem;padding:1rem 0;">No blog posts yet. <a href="admin.html" style="color:var(--gold);">Add one in the admin panel →</a></div>`; return; }
   el.innerHTML = posts.slice(0,4).map(p=>`
-    <a class="recent-card" href="blog.html#${p.id}">
-      <div class="rc-type">${p.category||'Blog'}</div>
-      <div class="rc-title">${p.title}</div>
-      <div class="rc-date">${p.date||''}</div>
+    <a class="recent-card" href="blog.html#${escAttr(p.id)}">
+      <div class="rc-type">${sanitizeHTML(p.category||'Blog')}</div>
+      <div class="rc-title">${sanitizeHTML(p.title)}</div>
+      <div class="rc-date">${sanitizeHTML(p.date||'')}</div>
     </a>`).join('');
   initReveal();
 }

@@ -133,6 +133,9 @@ function openLightbox(src, title, sub) {
   document.getElementById('lb-sub').textContent = sub;
   document.getElementById('design-lightbox').classList.add('open');
 }
+function lbOpen(el) {
+  openLightbox(el.dataset.lbSrc, el.dataset.lbTitle, el.dataset.lbSub);
+}
 document.getElementById('lb-close').onclick = () => document.getElementById('design-lightbox').classList.remove('open');
 document.getElementById('design-lightbox').addEventListener('click', function(e) {
   if (e.target === this || e.target.id === 'lb-img') this.classList.remove('open');
@@ -156,7 +159,7 @@ function renderGallery(items) {
     const tags = (item.tags||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('');
 
     const thumbContent = item.image
-      ? `<img src="${item.image}" alt="${item.title}" loading="lazy">
+      ? `<img src="${escAttr(item.image)}" alt="${escAttr(item.title)}" loading="lazy" decoding="async">
          <div class="dc-overlay">
            <div class="dc-overlay-inner">
              <span class="dc-view-label">View Full</span>
@@ -168,14 +171,14 @@ function renderGallery(items) {
            <div class="dc-ph-hint">Add image in admin</div>
          </div>`;
 
-    return `<div class="design-card${isFeatured?' featured':''}" data-cat="${item.category||''}" ${item.image?`onclick="openLightbox('${item.image}','${item.title.replace(/'/g,"\\'")}','${(item.category||'').replace(/'/g,"\\'")}')"`:''}">
+    return `<div class="design-card${isFeatured?' featured':''}" data-cat="${escAttr(item.category||'')}" ${item.image?`data-lb-src="${escAttr(item.image)}" data-lb-title="${escAttr(item.title)}" data-lb-sub="${escAttr(item.category||'')}" onclick="lbOpen(this)"`:''}">
       <div class="dc-thumb">${thumbContent}</div>
       <div class="dc-info">
-        <div class="dc-cat">${item.category||'Design'}</div>
-        <div class="dc-title">${item.title}</div>
-        ${item.description?`<div class="dc-desc">${item.description}</div>`:''}
+        <div class="dc-cat">${sanitizeHTML(item.category||'Design')}</div>
+        <div class="dc-title">${sanitizeHTML(item.title)}</div>
+        ${item.description?`<div class="dc-desc">${sanitizeHTML(item.description)}</div>`:''}
         <div class="dc-meta">
-          <span class="dc-date">${item.date||''}</span>
+          <span class="dc-date">${sanitizeHTML(item.date||'')}</span>
           <div class="dc-tags">${tags}</div>
         </div>
       </div>

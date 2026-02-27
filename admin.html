@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
 <title>Admin — Bavly CMS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
@@ -17,9 +18,25 @@
   --radius:12px;--sidebar:260px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;font-family:'Tenor Sans',serif;}
+html,body{height:100%;font-family:'Tenor Sans',serif;-webkit-font-smoothing:antialiased;}
 body{background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow:hidden;}
 
+/* ── LOCK SCREEN ── */
+.lock-screen{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.lock-screen.hidden{display:none;}
+.lock-card{background:var(--panel);border:1px solid var(--border-gold);border-radius:20px;padding:3rem 3.5rem;text-align:center;max-width:380px;width:90%;box-shadow:0 30px 80px rgba(0,0,0,.6);}
+.lock-logo{font-family:'Cinzel',serif;font-size:2rem;font-weight:600;color:var(--text);margin-bottom:.3rem;}
+.lock-logo span{color:var(--gold);}
+.lock-sub{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:2.5rem;}
+.lock-label{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.6rem;text-align:left;}
+.lock-input{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.2rem;font-family:'Tenor Sans',sans-serif;font-size:1.1rem;letter-spacing:.4em;color:var(--text);outline:none;text-align:center;transition:border .2s;margin-bottom:.6rem;}
+.lock-input:focus{border-color:var(--border-gold);}
+.lock-btn{width:100%;padding:.9rem;border-radius:100px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;color:#07080f;font-family:'Tenor Sans',sans-serif;font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:all .25s;margin-top:.4rem;}
+.lock-btn:hover{box-shadow:0 8px 30px rgba(212,175,120,.35);transform:translateY(-1px);}
+.lock-err{font-size:.72rem;color:rgba(220,80,80,.85);margin-top:.6rem;min-height:1.2rem;text-align:center;}
+.lock-hint{font-size:.62rem;color:var(--text-dim);margin-top:1.5rem;letter-spacing:.05em;}
+
+/* ── SIDEBAR ── */
 .sidebar{width:var(--sidebar);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:fixed;left:0;top:0;z-index:100;overflow-y:auto;}
 .sidebar-brand{padding:1.8rem 1.5rem 1.4rem;border-bottom:1px solid var(--border);}
 .sidebar-logo{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:600;color:var(--text);text-decoration:none;display:block;}
@@ -36,6 +53,7 @@ body{background:var(--bg);color:var(--text);display:flex;min-height:100vh;overfl
 .sidebar-footer a{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;padding:.5rem 0;transition:color .2s;}
 .sidebar-footer a:hover{color:var(--gold);}
 
+/* ── MAIN ── */
 .main{margin-left:var(--sidebar);flex:1;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
 .topbar{padding:1.2rem 2.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(7,8,15,.8);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50;}
 .topbar-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:400;}
@@ -48,9 +66,9 @@ body{background:var(--bg);color:var(--text);display:flex;min-height:100vh;overfl
 .btn-danger{border-color:rgba(220,80,80,.3);color:rgba(220,80,80,.7);}
 .btn-danger:hover{background:rgba(220,80,80,.1);color:rgba(220,80,80,1);border-color:rgba(220,80,80,.5);}
 .btn-sm{padding:.4rem .9rem;font-size:.68rem;}
-
 .content{padding:2rem 2.5rem;flex:1;}
 
+/* ── STATS ── */
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;}
 .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:all .3s;cursor:pointer;}
 .stat-card:hover{border-color:var(--border-gold);transform:translateY(-2px);}
@@ -58,6 +76,7 @@ body{background:var(--bg);color:var(--text);display:flex;min-height:100vh;overfl
 .stat-num{font-family:'Cinzel',serif;font-size:2rem;font-weight:600;color:var(--gold);line-height:1;}
 .stat-label{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-top:.4rem;}
 
+/* ── TABLE ── */
 .table-wrap{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
 .table-head{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
 .table-head-title{font-family:'Cinzel',serif;font-size:.9rem;letter-spacing:.08em;color:var(--text);}
@@ -82,7 +101,8 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .thumb-preview{width:44px;height:44px;border-radius:6px;object-fit:cover;border:1px solid var(--border);}
 .thumb-ph{width:44px;height:44px;border-radius:6px;background:var(--glass);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
 
-.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(7,8,15,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(7,8,15,.75);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:1rem;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:min(780px,96vw);max-height:92vh;overflow-y:auto;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6);}
 .modal-header{padding:1.8rem 2rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--panel);z-index:10;}
@@ -93,6 +113,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .modal-body{padding:1.8rem 2rem;}
 .modal-footer{padding:1.2rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.8rem;position:sticky;bottom:0;background:var(--panel);}
 
+/* ── FORMS ── */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
 .field{display:flex;flex-direction:column;gap:.5rem;}
 .field.full{grid-column:1/-1;}
@@ -104,22 +125,23 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .field textarea{resize:vertical;min-height:90px;line-height:1.7;}
 .rich-textarea{min-height:200px;font-size:.82rem;}
 .field-hint{font-size:.65rem;color:var(--text-dim);margin-top:.2rem;}
-
-/* SECTION DIVIDER in form */
 .form-section{grid-column:1/-1;border-top:1px solid var(--border);padding-top:1.2rem;margin-top:.5rem;}
 .form-section-title{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;}
 .form-section-title::before{content:'';width:16px;height:1px;background:var(--gold);}
 
-/* IMAGE UPLOAD */
-.upload-area{border:1px dashed rgba(212,175,120,.25);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .3s;position:relative;background:rgba(212,175,120,.02);}
-.upload-area:hover{border-color:var(--border-gold);background:rgba(212,175,120,.05);}
+/* ── UPLOAD AREA ── */
+.upload-area{border:2px dashed rgba(212,175,120,.25);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .3s;position:relative;background:rgba(212,175,120,.02);}
+.upload-area:hover,.upload-area.dragover{border-color:var(--border-gold);background:rgba(212,175,120,.06);}
 .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.upload-area-icon{font-size:1.4rem;margin-bottom:.4rem;opacity:.4;}
+.upload-area-icon{font-size:1.6rem;margin-bottom:.5rem;opacity:.4;}
 .upload-area-text{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);}
 .upload-area-sub{font-size:.62rem;color:var(--text-dim);margin-top:.3rem;opacity:.6;}
-.upload-preview{max-width:100%;max-height:160px;border-radius:8px;margin-top:.8rem;object-fit:contain;border:1px solid var(--border);}
+.upload-preview{max-width:100%;max-height:160px;border-radius:8px;margin-top:.8rem;object-fit:contain;border:1px solid var(--border);display:none;}
+.upload-progress{margin-top:.5rem;height:3px;background:rgba(255,255,255,.08);border-radius:100px;overflow:hidden;display:none;}
+.upload-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));width:0;transition:width .3s;border-radius:100px;}
+.upload-size-info{font-size:.62rem;color:var(--text-dim);margin-top:.3rem;}
 
-/* DYNAMIC LIST (PDFs, extra links, images) */
+/* ── DYNAMIC LISTS ── */
 .dyn-list{display:flex;flex-direction:column;gap:.6rem;margin-top:.6rem;}
 .dyn-item{display:flex;align-items:center;gap:.6rem;padding:.7rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;}
 .dyn-item-info{flex:1;min-width:0;}
@@ -135,14 +157,14 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .add-row .btn-add{background:rgba(212,175,120,.1);border:1px solid var(--border-gold);border-radius:8px;padding:.6rem 1rem;font-size:.72rem;color:var(--gold);cursor:pointer;white-space:nowrap;transition:all .2s;font-family:'Tenor Sans',sans-serif;}
 .add-row .btn-add:hover{background:rgba(212,175,120,.2);}
 
-/* IMAGE MULTI GALLERY */
+/* ── IMAGE GALLERY ── */
 .img-gallery-preview{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:.6rem;}
 .img-gallery-thumb{aspect-ratio:1;border-radius:8px;overflow:hidden;position:relative;border:1px solid var(--border);}
 .img-gallery-thumb img{width:100%;height:100%;object-fit:cover;}
 .img-gallery-thumb .img-remove{position:absolute;top:.25rem;right:.25rem;background:rgba(7,8,15,.8);border:1px solid rgba(220,80,80,.4);border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;color:rgba(220,80,80,.8);cursor:pointer;transition:all .2s;}
 .img-gallery-thumb .img-remove:hover{background:rgba(220,80,80,.2);}
 
-/* TOGGLE */
+/* ── TOGGLE ── */
 .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:.8rem 0;}
 .toggle-label{font-size:.78rem;color:var(--text-muted);}
 .toggle{position:relative;width:42px;height:24px;}
@@ -152,25 +174,31 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .toggle-track::before{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:var(--text-dim);bottom:3px;left:3px;transition:.3s;}
 .toggle input:checked+.toggle-track::before{transform:translateX(18px);background:var(--gold);}
 
-/* RICH TEXT TOOLBAR */
+/* ── RICH TEXT TOOLBAR ── */
 .rich-toolbar{display:flex;gap:.3rem;flex-wrap:wrap;padding:.5rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;}
 .rich-btn{background:none;border:1px solid var(--border);border-radius:4px;padding:.2rem .6rem;font-size:.75rem;color:var(--text-dim);cursor:pointer;transition:all .2s;font-family:'Tenor Sans',sans-serif;}
 .rich-btn:hover{background:var(--glass2);color:var(--text);}
 .rich-field{border-top-left-radius:0;border-top-right-radius:0;}
 
-.table-empty{padding:4rem;text-align:center;color:var(--text-dim);}
-.table-empty-icon{font-size:2.5rem;margin-bottom:.8rem;opacity:.3;}
-.table-empty-text{font-size:.8rem;letter-spacing:.1em;}
-
-.toast{position:fixed;bottom:2rem;right:2rem;z-index:9999;padding:.9rem 1.6rem;border-radius:10px;font-family:'Tenor Sans',sans-serif;font-size:.8rem;letter-spacing:.05em;backdrop-filter:blur(12px);box-shadow:0 8px 30px rgba(0,0,0,.4);transition:all .3s;pointer-events:none;}
-
+/* ── CONFIRM DIALOG ── */
 .confirm-dialog{position:fixed;inset:0;z-index:600;background:rgba(7,8,15,.8);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}
 .confirm-dialog.open{display:flex;}
-.confirm-box{background:var(--panel);border:1px solid rgba(220,80,80,.3);border-radius:14px;padding:2rem;max-width:380px;text-align:center;}
+.confirm-box{background:var(--panel);border:1px solid rgba(220,80,80,.3);border-radius:14px;padding:2rem;max-width:380px;width:90%;text-align:center;}
 .confirm-icon{font-size:2rem;margin-bottom:1rem;}
 .confirm-title{font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:.5rem;}
 .confirm-text{font-size:.8rem;color:var(--text-dim);margin-bottom:1.5rem;line-height:1.6;}
 .confirm-actions{display:flex;gap:.8rem;justify-content:center;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:9999;padding:.9rem 1.6rem;border-radius:10px;font-family:'Tenor Sans',sans-serif;font-size:.8rem;letter-spacing:.05em;backdrop-filter:blur(12px);box-shadow:0 8px 30px rgba(0,0,0,.4);transition:all .3s;pointer-events:none;max-width:320px;}
+
+/* ── EMPTY TABLE ── */
+.table-empty{padding:4rem;text-align:center;color:var(--text-dim);}
+.table-empty-icon{font-size:2.5rem;margin-bottom:.8rem;opacity:.3;}
+.table-empty-text{font-size:.8rem;letter-spacing:.1em;}
+
+/* ── MOBILE SIDEBAR TOGGLE ── */
+.sidebar-toggle{display:none;position:fixed;bottom:1.5rem;left:1.5rem;z-index:300;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;cursor:pointer;font-size:1.1rem;box-shadow:0 6px 20px rgba(212,175,120,.4);}
 
 @media(max-width:900px){
   .sidebar{transform:translateX(-100%);transition:transform .3s;}
@@ -179,6 +207,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
   .stats-grid{grid-template-columns:1fr 1fr;}
   .form-grid{grid-template-columns:1fr;}
   .add-row{grid-template-columns:1fr auto;}
+  .sidebar-toggle{display:flex;align-items:center;justify-content:center;}
 }
 @media(max-width:600px){
   .stats-grid{grid-template-columns:1fr;}
@@ -190,6 +219,20 @@ tr:hover td{background:rgba(255,255,255,.02);}
 </head>
 <body>
 
+<!-- ── LOCK SCREEN ── -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-logo">B<span>.</span> Admin</div>
+    <div class="lock-sub">Content Management</div>
+    <div class="lock-label">Enter Access PIN</div>
+    <input class="lock-input" type="password" id="pinInput" maxlength="6" placeholder="••••••" autocomplete="off">
+    <button class="lock-btn" id="pinBtn">Enter Admin</button>
+    <div class="lock-err" id="pinErr"></div>
+    <div class="lock-hint">PIN is set in admin.html — change before publishing</div>
+  </div>
+</div>
+
+<!-- ── SIDEBAR ── -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
     <a href="index.html" class="sidebar-logo">B<span>.</span> Admin</a>
@@ -210,8 +253,11 @@ tr:hover td{background:rgba(255,255,255,.02);}
     <a href="index.html" target="_blank">← View Portfolio</a>
     <a href="#" id="exportBtn">Export Data (JSON)</a>
     <a href="#" id="resetBtn" style="color:rgba(220,80,80,.5);">Reset to Defaults</a>
+    <a href="#" id="lockBtn" style="color:rgba(212,175,120,.4);">🔒 Lock Admin</a>
   </div>
 </aside>
+
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
 
 <div class="main">
   <div class="topbar">
@@ -221,31 +267,31 @@ tr:hover td{background:rgba(255,255,255,.02);}
     </div>
   </div>
   <div class="content" id="content-area">
-    <div style="display:flex;align-items:center;justify-content:center;padding:5rem;color:var(--text-dim);">Loading...</div>
+    <div style="display:flex;align-items:center;justify-content:center;padding:5rem;color:var(--text-dim);">Loading…</div>
   </div>
 </div>
 
 <!-- MODAL -->
-<div class="modal-overlay" id="modal">
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true">
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title" id="modal-title">Add Item</div>
-      <button class="modal-close" id="modal-close">✕</button>
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
     </div>
     <div class="modal-body" id="modal-body"></div>
     <div class="modal-footer">
       <button class="btn" id="modal-cancel">Cancel</button>
-      <button class="btn btn-primary" id="modal-save">Save</button>
+      <button class="btn btn-primary" id="modal-save">Save Changes</button>
     </div>
   </div>
 </div>
 
 <!-- CONFIRM -->
-<div class="confirm-dialog" id="confirmDialog">
+<div class="confirm-dialog" id="confirmDialog" role="alertdialog" aria-modal="true">
   <div class="confirm-box">
     <div class="confirm-icon">🗑</div>
     <div class="confirm-title">Delete this item?</div>
-    <div class="confirm-text">This cannot be undone. The item will be permanently removed from your portfolio.</div>
+    <div class="confirm-text">This cannot be undone. The item will be permanently removed.</div>
     <div class="confirm-actions">
       <button class="btn" id="confirmNo">Cancel</button>
       <button class="btn btn-danger" id="confirmYes">Delete</button>
@@ -255,47 +301,123 @@ tr:hover td{background:rgba(255,255,255,.02);}
 
 <script src="db.js"></script>
 <script>
+'use strict';
+
+// ── PIN AUTHENTICATION ──
+// CHANGE THIS PIN BEFORE PUBLISHING
+const ADMIN_PIN = '2025';
+const SESSION_KEY = 'bavly_admin_auth';
+const SESSION_TTL = 2 * 60 * 60 * 1000; // 2 hours
+
+function checkAuth() {
+  try {
+    const s = sessionStorage.getItem(SESSION_KEY);
+    if (!s) return false;
+    const { ts } = JSON.parse(s);
+    return (Date.now() - ts) < SESSION_TTL;
+  } catch { return false; }
+}
+
+function setAuth() {
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ts: Date.now() }));
+}
+
+function clearAuth() {
+  sessionStorage.removeItem(SESSION_KEY);
+}
+
+const lockScreen = document.getElementById('lockScreen');
+const pinInput   = document.getElementById('pinInput');
+const pinBtn     = document.getElementById('pinBtn');
+const pinErr     = document.getElementById('pinErr');
+let pinAttempts  = 0;
+const MAX_ATTEMPTS = 5;
+
+function unlock() {
+  lockScreen.classList.add('hidden');
+  renderPanel('dashboard');
+}
+
+if (checkAuth()) {
+  unlock();
+}
+
+function tryPin() {
+  const val = pinInput.value.trim();
+  if (!val) return;
+  if (pinAttempts >= MAX_ATTEMPTS) {
+    pinErr.textContent = `Too many attempts. Reload the page to try again.`;
+    pinInput.disabled = true;
+    pinBtn.disabled = true;
+    return;
+  }
+  if (val === ADMIN_PIN) {
+    setAuth();
+    pinErr.textContent = '';
+    unlock();
+  } else {
+    pinAttempts++;
+    pinInput.value = '';
+    pinInput.focus();
+    const left = MAX_ATTEMPTS - pinAttempts;
+    pinErr.textContent = left > 0
+      ? `Incorrect PIN. ${left} attempt${left !== 1 ? 's' : ''} remaining.`
+      : `Too many attempts. Reload the page.`;
+    if (pinAttempts >= MAX_ATTEMPTS) {
+      pinInput.disabled = true;
+      pinBtn.disabled = true;
+    }
+  }
+}
+
+pinBtn.addEventListener('click', tryPin);
+pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryPin(); });
+
+document.getElementById('lockBtn').addEventListener('click', e => {
+  e.preventDefault();
+  clearAuth();
+  window.location.reload();
+});
+
 // ── STATE ──
 let currentPanel = 'dashboard';
 let editingId = null;
 let deleteCallback = null;
 let allData = {};
-
-// Temp in-memory for dynamic lists (images, pdfs, extraLinks)
-let tempImages = [];
-let tempPdfs = [];
-let tempExtraLinks = [];
-let tempVideoLinks = [];
+let tempImages = [], tempPdfs = [], tempExtraLinks = [], tempVideoLinks = [];
 
 const PANELS = {
-  dashboard:    { title: 'Dashboard <em>Overview</em>',           hasAdd: false },
-  design:       { title: 'Design <em>Posts</em>',                 hasAdd: true,  addLabel: 'Add Design Post' },
-  video:        { title: 'Video <em>Works</em>',                  hasAdd: true,  addLabel: 'Add Video' },
-  violin:       { title: 'Violin <em>Performances</em>',          hasAdd: true,  addLabel: 'Add Performance' },
-  competitions: { title: 'Competitions &amp; <em>Initiatives</em>',hasAdd: true,  addLabel: 'Add Competition' },
-  blog:         { title: 'Blog <em>Posts</em>',                   hasAdd: true,  addLabel: 'New Blog Post' },
-  projects:     { title: 'Software <em>Projects</em>',            hasAdd: true,  addLabel: 'Add Project' },
+  dashboard:    { title: 'Dashboard <em>Overview</em>',              hasAdd: false },
+  design:       { title: 'Design <em>Posts</em>',                    hasAdd: true, addLabel: 'Add Design Post' },
+  video:        { title: 'Video <em>Works</em>',                     hasAdd: true, addLabel: 'Add Video' },
+  violin:       { title: 'Violin <em>Performances</em>',             hasAdd: true, addLabel: 'Add Performance' },
+  competitions: { title: 'Competitions &amp; <em>Initiatives</em>',  hasAdd: true, addLabel: 'Add Competition' },
+  blog:         { title: 'Blog <em>Posts</em>',                      hasAdd: true, addLabel: 'New Blog Post' },
+  projects:     { title: 'Software <em>Projects</em>',               hasAdd: true, addLabel: 'Add Project' },
 };
 
 // ── TOAST ──
-function toast(msg, type='info') {
+function toast(msg, type = 'info') {
   const el = document.createElement('div');
-  const bg = {info:'rgba(100,160,255,.88)',success:'rgba(56,200,130,.88)',error:'rgba(220,80,80,.88)'};
+  const bg = { info: 'rgba(100,160,255,.9)', success: 'rgba(56,200,130,.9)', error: 'rgba(220,80,80,.9)', warning: 'rgba(255,180,50,.9)' };
   el.className = 'toast';
-  el.style.cssText = `background:${bg[type]||bg.info};color:#fff;`;
-  el.textContent = msg;
-  el.style.opacity = '0'; el.style.transform = 'translateY(8px)';
+  el.setAttribute('role', 'status');
+  el.style.cssText = `background:${bg[type]||bg.info};color:#fff;opacity:0;transform:translateY(8px);`;
+  el.textContent = String(msg).slice(0, 200);
   document.body.appendChild(el);
-  setTimeout(()=>{el.style.opacity='1';el.style.transform='translateY(0)';},10);
-  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},2800);
+  requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 2800);
 }
 
-// ── CONFIRM DIALOG ──
-function showConfirm(cb) {
+// ── CONFIRM ──
+function confirm(cb) {
   deleteCallback = cb;
   document.getElementById('confirmDialog').classList.add('open');
 }
-document.getElementById('confirmNo').onclick = () => { document.getElementById('confirmDialog').classList.remove('open'); deleteCallback = null; };
+document.getElementById('confirmNo').onclick = () => {
+  document.getElementById('confirmDialog').classList.remove('open');
+  deleteCallback = null;
+};
 document.getElementById('confirmYes').onclick = () => {
   document.getElementById('confirmDialog').classList.remove('open');
   if (deleteCallback) { deleteCallback(); deleteCallback = null; }
@@ -303,29 +425,53 @@ document.getElementById('confirmYes').onclick = () => {
 
 // ── MODAL ──
 const modal = document.getElementById('modal');
+
 function openModal(title, bodyHTML, onSave) {
   document.getElementById('modal-title').innerHTML = title;
   document.getElementById('modal-body').innerHTML = bodyHTML;
   modal.classList.add('open');
   document.getElementById('modal-save').onclick = onSave;
-  // Wire file inputs for image previews
+
+  // Wire file inputs for single-image previews with optimization
   modal.querySelectorAll('input[type=file][data-preview]').forEach(inp => {
-    inp.addEventListener('change', function() {
-      const previewId = this.dataset.preview;
-      if (this.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => {
-          const prev = document.getElementById(previewId);
-          if (prev) { prev.src = e.target.result; prev.style.display = 'block'; }
-          // Also update hidden url field if exists
-          const urlField = document.getElementById(this.dataset.urlfield);
-          if (urlField) urlField.value = e.target.result;
-        };
-        reader.readAsDataURL(this.files[0]);
+    inp.addEventListener('change', async function () {
+      const file = this.files[0];
+      if (!file) return;
+      const previewId   = this.dataset.preview;
+      const urlFieldId  = this.dataset.urlfield;
+      const progressEl  = this.closest('.upload-area')?.querySelector('.upload-progress');
+      const sizeInfoEl  = this.closest('.upload-area')?.querySelector('.upload-size-info');
+
+      try {
+        // Show progress
+        if (progressEl) { progressEl.style.display = 'block'; }
+        if (progressEl) progressEl.querySelector('.upload-progress-fill').style.width = '30%';
+
+        const dataUrl = await DB.upload.processImage(file, 1200, 1200, 0.82);
+
+        if (progressEl) progressEl.querySelector('.upload-progress-fill').style.width = '100%';
+        setTimeout(() => { if (progressEl) progressEl.style.display = 'none'; }, 600);
+
+        const prev = document.getElementById(previewId);
+        if (prev) { prev.src = dataUrl; prev.style.display = 'block'; }
+
+        const urlField = document.getElementById(urlFieldId);
+        if (urlField) urlField.value = dataUrl;
+
+        // Show compressed size
+        const kb = Math.round(dataUrl.length * .75 / 1024);
+        if (sizeInfoEl) sizeInfoEl.textContent = `Compressed: ~${kb} KB`;
+
+        toast('Image uploaded & optimized', 'success');
+      } catch (err) {
+        if (progressEl) progressEl.style.display = 'none';
+        toast(err.message || 'Upload failed', 'error');
+        this.value = '';
       }
     });
   });
 }
+
 function closeModal() {
   modal.classList.remove('open');
   editingId = null;
@@ -334,8 +480,9 @@ function closeModal() {
 document.getElementById('modal-close').onclick = closeModal;
 document.getElementById('modal-cancel').onclick = closeModal;
 modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
 
-// ── NAV ──
+// ── SIDEBAR NAV ──
 document.querySelectorAll('.sidebar-link').forEach(btn => {
   btn.addEventListener('click', () => {
     currentPanel = btn.dataset.panel;
@@ -345,11 +492,19 @@ document.querySelectorAll('.sidebar-link').forEach(btn => {
     document.getElementById('topbar-title').innerHTML = cfg.title;
     const addBtn = document.getElementById('addBtn');
     addBtn.style.display = cfg.hasAdd ? '' : 'none';
-    addBtn.textContent = '+ ' + (cfg.addLabel||'Add New');
+    addBtn.textContent = '+ ' + (cfg.addLabel || 'Add New');
+    // Close sidebar on mobile
+    if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
     renderPanel(currentPanel);
   });
 });
+
 document.getElementById('addBtn').onclick = () => openForm(currentPanel, null);
+
+// Mobile sidebar
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+});
 
 // ── COUNTS ──
 async function loadCounts() {
@@ -357,37 +512,38 @@ async function loadCounts() {
   for (const k of keys) {
     const col = await DB[k].getAll();
     allData[k] = col;
-    document.getElementById('cnt-'+k).textContent = col.length;
+    const el = document.getElementById('cnt-' + k);
+    if (el) el.textContent = col.length;
   }
 }
 
 // ── RENDER PANEL ──
 async function renderPanel(panel) {
   const area = document.getElementById('content-area');
-  area.innerHTML = '<div style="display:flex;align-items:center;gap:.8rem;padding:3rem;color:rgba(240,236,228,.32);font-size:.8rem;">Loading...</div>';
-  if (panel === 'dashboard') { renderDashboard(); return; }
+  area.innerHTML = '<div style="display:flex;align-items:center;gap:.8rem;padding:3rem;color:rgba(240,236,228,.32);font-size:.8rem;">Loading…</div>';
+  if (panel === 'dashboard') { await renderDashboard(); return; }
   const items = await DB[panel].getAll();
   allData[panel] = items;
-  document.getElementById('cnt-'+panel).textContent = items.length;
-  const renderers = { design: renderDesignTable, video: renderVideoTable, violin: renderViolinTable, competitions: renderCompTable, blog: renderBlogTable, projects: renderProjectTable };
-  if (renderers[panel]) renderers[panel](items);
+  const cnt = document.getElementById('cnt-' + panel);
+  if (cnt) cnt.textContent = items.length;
+  const r = { design: renderDesignTable, video: renderVideoTable, violin: renderViolinTable, competitions: renderCompTable, blog: renderBlogTable, projects: renderProjectTable };
+  if (r[panel]) r[panel](items);
 }
 
 // ── DASHBOARD ──
 async function renderDashboard() {
   await loadCounts();
-  const area = document.getElementById('content-area');
-  const total = Object.values(allData).reduce((s,a)=>s+a.length,0);
-  area.innerHTML = `
+  const total = Object.values(allData).reduce((s, a) => s + a.length, 0);
+  document.getElementById('content-area').innerHTML = `
     <div style="margin-bottom:1.5rem;">
       <div style="font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:.4rem;">Welcome back, <em style="color:var(--gold)">Bavly</em></div>
       <div style="font-size:.8rem;color:var(--text-dim);">${total} total items across all sections</div>
     </div>
     <div class="stats-grid">
-      ${[['🎨','design','Design Posts'],['🎬','video','Video Works'],['🎻','violin','Violin'],['🏆','competitions','Competitions'],['📝','blog','Blog Posts'],['⚙️','projects','Projects']].map(([icon,key,label])=>`
+      ${[['🎨','design','Design Posts'],['🎬','video','Video Works'],['🎻','violin','Violin'],['🏆','competitions','Competitions'],['📝','blog','Blog Posts'],['⚙️','projects','Projects']].map(([icon,key,label]) => `
         <div class="stat-card" onclick="document.querySelector('[data-panel=${key}]').click()">
           <div class="stat-icon">${icon}</div>
-          <div class="stat-num">${allData[key]?.length||0}</div>
+          <div class="stat-num">${allData[key]?.length || 0}</div>
           <div class="stat-label">${label}</div>
         </div>`).join('')}
     </div>
@@ -395,10 +551,20 @@ async function renderDashboard() {
       <div style="font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.8rem;">Quick Guide</div>
       <div style="font-size:.82rem;line-height:1.9;color:var(--text-dim);">
         Click any section to manage content. Use <strong style="color:var(--text-muted)">+ Add New</strong> to create entries.
-        Projects support <strong style="color:var(--text-muted)">images (upload or URL)</strong>, <strong style="color:var(--text-muted)">PDF documents</strong>, and <strong style="color:var(--text-muted)">custom links</strong>.
-        Design posts support image upload. All changes save automatically and appear live on portfolio pages.
+        Images are automatically <strong style="color:var(--text-muted)">compressed & optimized</strong> on upload (max 1200px, WebP).
+        Projects support <strong style="color:var(--text-muted)">images, PDF links, and custom links</strong>. Changes save instantly.
       </div>
     </div>`;
+}
+
+// ── XSS-SAFE ESCAPE FOR TEMPLATE LITERALS ──
+function esc(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 // ── TABLE RENDERERS ──
@@ -406,19 +572,19 @@ function renderDesignTable(items) {
   document.getElementById('content-area').innerHTML = `
     <div class="table-wrap">
       <div class="table-head"><div class="table-head-title">Design Posts (${items.length})</div>
-        <input class="table-search" placeholder="Search..." oninput="filterTable(this,'design-tbody')"></div>
+        <input class="table-search" placeholder="Search…" oninput="filterTable(this,'design-tbody')"></div>
       <table><thead><tr><th>Preview</th><th>Title</th><th>Category</th><th>Date</th><th>Featured</th><th>Actions</th></tr></thead>
       <tbody id="design-tbody">
         ${items.length ? items.map(i=>`
-          <tr data-search="${i.title.toLowerCase()} ${i.category?.toLowerCase()||''}">
-            <td>${i.image?`<img class="thumb-preview" src="${i.image}">`:`<div class="thumb-ph">🎨</div>`}</td>
-            <td><div class="td-title">${i.title}</div></td>
-            <td><span class="td-badge badge-draft">${i.category||'—'}</span></td>
-            <td>${i.date||'—'}</td>
+          <tr data-search="${esc(i.title).toLowerCase()} ${esc(i.category||'').toLowerCase()}">
+            <td>${i.image?`<img class="thumb-preview" src="${esc(i.image)}" loading="lazy" alt="">`:`<div class="thumb-ph">🎨</div>`}</td>
+            <td><div class="td-title">${esc(i.title)}</div></td>
+            <td><span class="td-badge badge-draft">${esc(i.category||'—')}</span></td>
+            <td>${esc(i.date||'—')}</td>
             <td>${i.featured?'<span class="td-badge badge-featured">★ Yes</span>':'—'}</td>
             <td><div class="td-actions">
-              <button class="action-btn edit" onclick="openForm('design','${i.id}')">Edit</button>
-              <button class="action-btn del" onclick="deleteItem('design','${i.id}')">Delete</button>
+              <button class="action-btn edit" onclick="openForm('design','${esc(i.id)}')">Edit</button>
+              <button class="action-btn del" onclick="deleteItem('design','${esc(i.id)}')">Delete</button>
             </div></td>
           </tr>`).join('') : `<tr><td colspan="6"><div class="table-empty"><div class="table-empty-icon">🎨</div><div class="table-empty-text">No design posts yet. Click + Add New.</div></div></td></tr>`}
       </tbody></table></div>`;
@@ -428,18 +594,18 @@ function renderVideoTable(items) {
   document.getElementById('content-area').innerHTML = `
     <div class="table-wrap">
       <div class="table-head"><div class="table-head-title">Video Works (${items.length})</div>
-        <input class="table-search" placeholder="Search..." oninput="filterTable(this,'video-tbody')"></div>
+        <input class="table-search" placeholder="Search…" oninput="filterTable(this,'video-tbody')"></div>
       <table><thead><tr><th>Title</th><th>Category</th><th>Duration</th><th>Embed</th><th>Actions</th></tr></thead>
       <tbody id="video-tbody">
         ${items.length ? items.map(i=>`
-          <tr data-search="${i.title.toLowerCase()} ${i.category?.toLowerCase()||''}">
-            <td><div class="td-title">${i.title}</div></td>
-            <td><span class="td-badge badge-draft">${i.category||'—'}</span></td>
-            <td>${i.duration||'—'}</td>
+          <tr data-search="${esc(i.title).toLowerCase()} ${esc(i.category||'').toLowerCase()}">
+            <td><div class="td-title">${esc(i.title)}</div></td>
+            <td><span class="td-badge badge-draft">${esc(i.category||'—')}</span></td>
+            <td>${esc(i.duration||'—')}</td>
             <td>${i.embedUrl?'<span class="td-badge badge-live">✓ Set</span>':'<span style="color:var(--text-dim);font-size:.72rem;">None</span>'}</td>
             <td><div class="td-actions">
-              <button class="action-btn edit" onclick="openForm('video','${i.id}')">Edit</button>
-              <button class="action-btn del" onclick="deleteItem('video','${i.id}')">Delete</button>
+              <button class="action-btn edit" onclick="openForm('video','${esc(i.id)}')">Edit</button>
+              <button class="action-btn del" onclick="deleteItem('video','${esc(i.id)}')">Delete</button>
             </div></td>
           </tr>`).join('') : `<tr><td colspan="5"><div class="table-empty"><div class="table-empty-icon">🎬</div><div class="table-empty-text">No videos yet.</div></div></td></tr>`}
       </tbody></table></div>`;
@@ -449,19 +615,19 @@ function renderViolinTable(items) {
   document.getElementById('content-area').innerHTML = `
     <div class="table-wrap">
       <div class="table-head"><div class="table-head-title">Violin Performances (${items.length})</div>
-        <input class="table-search" placeholder="Search..." oninput="filterTable(this,'violin-tbody')"></div>
+        <input class="table-search" placeholder="Search…" oninput="filterTable(this,'violin-tbody')"></div>
       <table><thead><tr><th>Title</th><th>Composer</th><th>Type</th><th>Date</th><th>Media</th><th>Actions</th></tr></thead>
       <tbody id="violin-tbody">
         ${items.length ? items.map(i=>`
-          <tr data-search="${i.title.toLowerCase()} ${i.composer?.toLowerCase()||''}">
-            <td><div class="td-title">${i.title}</div></td>
-            <td>${i.composer||'—'}</td>
-            <td><span class="td-badge badge-draft">${i.type||'—'}</span></td>
-            <td>${i.date||'—'}</td>
+          <tr data-search="${esc(i.title).toLowerCase()} ${esc(i.composer||'').toLowerCase()}">
+            <td><div class="td-title">${esc(i.title)}</div></td>
+            <td>${esc(i.composer||'—')}</td>
+            <td><span class="td-badge badge-draft">${esc(i.type||'—')}</span></td>
+            <td>${esc(i.date||'—')}</td>
             <td>${i.mediaUrl?'<span class="td-badge badge-live">🔗 Linked</span>':'—'}</td>
             <td><div class="td-actions">
-              <button class="action-btn edit" onclick="openForm('violin','${i.id}')">Edit</button>
-              <button class="action-btn del" onclick="deleteItem('violin','${i.id}')">Delete</button>
+              <button class="action-btn edit" onclick="openForm('violin','${esc(i.id)}')">Edit</button>
+              <button class="action-btn del" onclick="deleteItem('violin','${esc(i.id)}')">Delete</button>
             </div></td>
           </tr>`).join('') : `<tr><td colspan="6"><div class="table-empty"><div class="table-empty-icon">🎻</div><div class="table-empty-text">No performances yet.</div></div></td></tr>`}
       </tbody></table></div>`;
@@ -471,19 +637,19 @@ function renderCompTable(items) {
   document.getElementById('content-area').innerHTML = `
     <div class="table-wrap">
       <div class="table-head"><div class="table-head-title">Competitions (${items.length})</div>
-        <input class="table-search" placeholder="Search..." oninput="filterTable(this,'comp-tbody')"></div>
+        <input class="table-search" placeholder="Search…" oninput="filterTable(this,'comp-tbody')"></div>
       <table><thead><tr><th>Icon</th><th>Title</th><th>Scope</th><th>Year</th><th>Outcome</th><th>Actions</th></tr></thead>
       <tbody id="comp-tbody">
         ${items.length ? items.map(i=>`
-          <tr data-search="${i.title.toLowerCase()}">
+          <tr data-search="${esc(i.title).toLowerCase()}">
             <td style="font-size:1.4rem;">${i.icon||'🏆'}</td>
-            <td><div class="td-title">${i.title}</div></td>
-            <td><span style="font-size:.72rem;color:var(--text-dim);">${i.scope||'—'}</span></td>
-            <td>${i.year||'—'}</td>
-            <td><span class="td-badge badge-live">${i.outcome||'Participant'}</span></td>
+            <td><div class="td-title">${esc(i.title)}</div></td>
+            <td><span style="font-size:.72rem;color:var(--text-dim);">${esc(i.scope||'—')}</span></td>
+            <td>${esc(i.year||'—')}</td>
+            <td><span class="td-badge badge-live">${esc(i.outcome||'Participant')}</span></td>
             <td><div class="td-actions">
-              <button class="action-btn edit" onclick="openForm('competitions','${i.id}')">Edit</button>
-              <button class="action-btn del" onclick="deleteItem('competitions','${i.id}')">Delete</button>
+              <button class="action-btn edit" onclick="openForm('competitions','${esc(i.id)}')">Edit</button>
+              <button class="action-btn del" onclick="deleteItem('competitions','${esc(i.id)}')">Delete</button>
             </div></td>
           </tr>`).join('') : `<tr><td colspan="6"><div class="table-empty"><div class="table-empty-icon">🏆</div><div class="table-empty-text">No competitions yet.</div></div></td></tr>`}
       </tbody></table></div>`;
@@ -493,21 +659,21 @@ function renderBlogTable(items) {
   document.getElementById('content-area').innerHTML = `
     <div class="table-wrap">
       <div class="table-head"><div class="table-head-title">Blog Posts (${items.length})</div>
-        <input class="table-search" placeholder="Search..." oninput="filterTable(this,'blog-tbody')"></div>
+        <input class="table-search" placeholder="Search…" oninput="filterTable(this,'blog-tbody')"></div>
       <table><thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Featured</th><th>Actions</th></tr></thead>
       <tbody id="blog-tbody">
         ${items.length ? items.map(i=>`
-          <tr data-search="${i.title.toLowerCase()} ${i.category?.toLowerCase()||''}">
+          <tr data-search="${esc(i.title).toLowerCase()} ${esc(i.category||'').toLowerCase()}">
             <td>
-              <div class="td-title">${i.title}</div>
-              <div style="font-size:.7rem;color:var(--text-dim);margin-top:.2rem;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.excerpt||''}</div>
+              <div class="td-title">${esc(i.title)}</div>
+              <div style="font-size:.7rem;color:var(--text-dim);margin-top:.2rem;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(i.excerpt||'')}</div>
             </td>
-            <td><span class="td-badge badge-draft">${i.category||'—'}</span></td>
-            <td>${i.date||'—'}</td>
+            <td><span class="td-badge badge-draft">${esc(i.category||'—')}</span></td>
+            <td>${esc(i.date||'—')}</td>
             <td>${i.featured?'<span class="td-badge badge-featured">★ Yes</span>':'—'}</td>
             <td><div class="td-actions">
-              <button class="action-btn edit" onclick="openForm('blog','${i.id}')">Edit</button>
-              <button class="action-btn del" onclick="deleteItem('blog','${i.id}')">Delete</button>
+              <button class="action-btn edit" onclick="openForm('blog','${esc(i.id)}')">Edit</button>
+              <button class="action-btn del" onclick="deleteItem('blog','${esc(i.id)}')">Delete</button>
             </div></td>
           </tr>`).join('') : `<tr><td colspan="5"><div class="table-empty"><div class="table-empty-icon">📝</div><div class="table-empty-text">No blog posts yet.</div></div></td></tr>`}
       </tbody></table></div>`;
@@ -517,22 +683,22 @@ function renderProjectTable(items) {
   document.getElementById('content-area').innerHTML = `
     <div class="table-wrap">
       <div class="table-head"><div class="table-head-title">Software Projects (${items.length})</div>
-        <input class="table-search" placeholder="Search..." oninput="filterTable(this,'proj-tbody')"></div>
+        <input class="table-search" placeholder="Search…" oninput="filterTable(this,'proj-tbody')"></div>
       <table><thead><tr><th>Icon</th><th>Title</th><th>Status</th><th>Images</th><th>PDFs</th><th>Actions</th></tr></thead>
       <tbody id="proj-tbody">
         ${items.length ? items.map(i=>`
-          <tr data-search="${i.title.toLowerCase()}">
+          <tr data-search="${esc(i.title).toLowerCase()}">
             <td style="font-size:1.4rem;">${i.icon||'⚙️'}</td>
             <td>
-              <div class="td-title">${i.title}</div>
-              <div style="font-size:.7rem;color:var(--text-dim);margin-top:.2rem;">${i.subtitle||''}</div>
+              <div class="td-title">${esc(i.title)}</div>
+              <div style="font-size:.7rem;color:var(--text-dim);margin-top:.2rem;">${esc(i.subtitle||'')}</div>
             </td>
-            <td><span class="td-badge ${i.status==='live'?'badge-live':'badge-draft'}">${i.statusLabel||i.status}</span></td>
+            <td><span class="td-badge ${i.status==='live'?'badge-live':'badge-draft'}">${esc(i.statusLabel||i.status||'')}</span></td>
             <td><span style="font-size:.75rem;color:${(i.images||[]).length?'var(--gold)':'var(--text-dim)'};">${(i.images||[]).length} img</span></td>
             <td><span style="font-size:.75rem;color:${(i.pdfs||[]).length?'var(--gold)':'var(--text-dim)'};">${(i.pdfs||[]).length} pdf</span></td>
             <td><div class="td-actions">
-              <button class="action-btn edit" onclick="openForm('projects','${i.id}')">Edit</button>
-              <button class="action-btn del" onclick="deleteItem('projects','${i.id}')">Delete</button>
+              <button class="action-btn edit" onclick="openForm('projects','${esc(i.id)}')">Edit</button>
+              <button class="action-btn del" onclick="deleteItem('projects','${esc(i.id)}')">Delete</button>
             </div></td>
           </tr>`).join('') : `<tr><td colspan="6"><div class="table-empty"><div class="table-empty-icon">⚙️</div><div class="table-empty-text">No projects yet.</div></div></td></tr>`}
       </tbody></table></div>`;
@@ -548,10 +714,10 @@ function filterTable(input, tbodyId) {
 
 // ── DELETE ──
 function deleteItem(collection, id) {
-  showConfirm(async () => {
+  confirm(async () => {
     await DB[collection].delete(id);
     toast('Item deleted', 'success');
-    renderPanel(collection);
+    await renderPanel(collection);
     loadCounts();
   });
 }
@@ -562,11 +728,11 @@ function renderImageList(listId, items) {
   if (!el) return;
   if (!items.length) { el.innerHTML = '<div style="font-size:.7rem;color:var(--text-dim);padding:.4rem 0;">No images added yet.</div>'; return; }
   el.innerHTML = items.map((img, idx) => {
-    const url = typeof img === 'string' ? img : img.url;
-    const label = typeof img === 'string' ? 'Image '+(idx+1) : (img.label||'Image '+(idx+1));
+    const url   = typeof img === 'string' ? img : img.url;
+    const label = typeof img === 'string' ? 'Image '+(idx+1) : (img.label || 'Image '+(idx+1));
     return `<div class="img-gallery-thumb">
-      <img src="${url}" alt="${label}">
-      <button class="img-remove" onclick="removeImage(${idx},'${listId}')" title="Remove">✕</button>
+      <img src="${esc(url)}" alt="${esc(label)}" loading="lazy">
+      <button class="img-remove" onclick="removeImage(${idx},'${listId}')" title="Remove" type="button">✕</button>
     </div>`;
   }).join('');
 }
@@ -578,26 +744,39 @@ function removeImage(idx, listId) {
 
 function addImageFromUrl(urlInputId, listId) {
   const urlEl = document.getElementById(urlInputId);
-  const url = urlEl.value.trim();
+  const url   = urlEl.value.trim();
   if (!url) { toast('Enter an image URL first', 'error'); return; }
+  // Basic URL validation
+  if (!url.startsWith('https://') && !url.startsWith('http://')) {
+    toast('Please enter a valid https:// URL', 'error');
+    return;
+  }
   tempImages.push({ url, label: 'Screenshot' });
   urlEl.value = '';
   renderImageList(listId, tempImages);
   toast('Image added', 'success');
 }
 
-function addImageFromUpload(fileInputId, listId) {
-  const inp = document.getElementById(fileInputId);
+async function addImageFromUpload(fileInputId, listId) {
+  const inp  = document.getElementById(fileInputId);
   const file = inp.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    tempImages.push({ url: e.target.result, label: file.name });
+
+  const uploadArea   = inp.closest('.upload-area');
+  const progressWrap = uploadArea?.nextElementSibling;
+
+  try {
+    toast('Processing image…', 'info');
+    const dataUrl = await DB.upload.processImage(file, 1200, 1200, 0.82);
+    tempImages.push({ url: dataUrl, label: file.name });
     inp.value = '';
     renderImageList(listId, tempImages);
-    toast('Image uploaded', 'success');
-  };
-  reader.readAsDataURL(file);
+    const kb = Math.round(dataUrl.length * .75 / 1024);
+    toast(`Image added (~${kb} KB compressed)`, 'success');
+  } catch(err) {
+    toast(err.message || 'Upload failed', 'error');
+    inp.value = '';
+  }
 }
 
 // ── PDF HELPERS ──
@@ -608,10 +787,10 @@ function renderPdfList() {
   el.innerHTML = `<div class="dyn-list">${tempPdfs.map((p,i) => `
     <div class="dyn-item">
       <div class="dyn-item-info">
-        <div class="dyn-item-label">📄 ${p.label||'Document'}</div>
-        <div class="dyn-item-url">${p.url}</div>
+        <div class="dyn-item-label">📄 ${esc(p.label||'Document')}</div>
+        <div class="dyn-item-url">${esc(p.url)}</div>
       </div>
-      <button class="dyn-remove" onclick="removePdf(${i})">✕</button>
+      <button class="dyn-remove" type="button" onclick="removePdf(${i})">✕</button>
     </div>`).join('')}</div>`;
 }
 
@@ -619,16 +798,16 @@ function removePdf(idx) { tempPdfs.splice(idx,1); renderPdfList(); }
 
 function addPdf() {
   const label = document.getElementById('pdf-label').value.trim();
-  const url = document.getElementById('pdf-url').value.trim();
+  const url   = document.getElementById('pdf-url').value.trim();
   if (!url) { toast('Enter a PDF URL', 'error'); return; }
   tempPdfs.push({ label: label||'Document', url });
   document.getElementById('pdf-label').value = '';
-  document.getElementById('pdf-url').value = '';
+  document.getElementById('pdf-url').value   = '';
   renderPdfList();
   toast('PDF link added', 'success');
 }
 
-// ── EXTRA LINKS HELPERS ──
+// ── EXTRA LINKS ──
 function renderExtraLinks() {
   const el = document.getElementById('extralinks-list');
   if (!el) return;
@@ -636,22 +815,20 @@ function renderExtraLinks() {
   el.innerHTML = `<div class="dyn-list">${tempExtraLinks.map((l,i) => `
     <div class="dyn-item">
       <div class="dyn-item-info">
-        <div class="dyn-item-label">🔗 ${l.label||l.url}</div>
-        <div class="dyn-item-url">${l.url}</div>
+        <div class="dyn-item-label">🔗 ${esc(l.label||l.url)}</div>
+        <div class="dyn-item-url">${esc(l.url)}</div>
       </div>
-      <button class="dyn-remove" onclick="removeExtraLink(${i})">✕</button>
+      <button class="dyn-remove" type="button" onclick="removeExtraLink(${i})">✕</button>
     </div>`).join('')}</div>`;
 }
-
 function removeExtraLink(idx) { tempExtraLinks.splice(idx,1); renderExtraLinks(); }
-
 function addExtraLink() {
   const label = document.getElementById('elink-label').value.trim();
-  const url = document.getElementById('elink-url').value.trim();
+  const url   = document.getElementById('elink-url').value.trim();
   if (!url) { toast('Enter a URL', 'error'); return; }
   tempExtraLinks.push({ label: label||url, url });
   document.getElementById('elink-label').value = '';
-  document.getElementById('elink-url').value = '';
+  document.getElementById('elink-url').value   = '';
   renderExtraLinks();
   toast('Link added', 'success');
 }
@@ -664,77 +841,81 @@ function renderVideoLinks() {
   el.innerHTML = `<div class="dyn-list">${tempVideoLinks.map((l,i) => `
     <div class="dyn-item">
       <div class="dyn-item-info">
-        <div class="dyn-item-label">🔗 ${l.label||l.url}</div>
-        <div class="dyn-item-url">${l.url}</div>
+        <div class="dyn-item-label">🔗 ${esc(l.label||l.url)}</div>
+        <div class="dyn-item-url">${esc(l.url)}</div>
       </div>
-      <button class="dyn-remove" onclick="removeVideoLink(${i})">✕</button>
+      <button class="dyn-remove" type="button" onclick="removeVideoLink(${i})">✕</button>
     </div>`).join('')}</div>`;
 }
-
 function removeVideoLink(idx) { tempVideoLinks.splice(idx,1); renderVideoLinks(); }
-
 function addVideoLink() {
   const label = document.getElementById('vlink-label').value.trim();
-  const url = document.getElementById('vlink-url').value.trim();
+  const url   = document.getElementById('vlink-url').value.trim();
   if (!url) { toast('Enter a URL', 'error'); return; }
   tempVideoLinks.push({ label: label||'Watch', url });
   document.getElementById('vlink-label').value = '';
-  document.getElementById('vlink-url').value = '';
+  document.getElementById('vlink-url').value   = '';
   renderVideoLinks();
   toast('Link added', 'success');
 }
 
 // ── OPEN FORM ──
 async function openForm(collection, id) {
-  try {
-    editingId = id;
-    let item = id ? await DB[collection].get(id) : null;
-    const isEdit = !!item;
+  editingId = id;
+  const item = id ? await DB[collection].get(id) : null;
+  const isEdit = !!item;
 
-    // Reset temp state
-    tempImages = item?.images ? JSON.parse(JSON.stringify(item.images)) : [];
-    tempPdfs = item?.pdfs ? JSON.parse(JSON.stringify(item.pdfs)) : [];
-    tempExtraLinks = item?.extraLinks ? JSON.parse(JSON.stringify(item.extraLinks)) : [];
-    // video links is array; project links is {github,live,demo} object
-    tempVideoLinks = (item?.links && Array.isArray(item.links)) ? JSON.parse(JSON.stringify(item.links)) : [];
+  tempImages     = item?.images    ? JSON.parse(JSON.stringify(item.images))    : [];
+  tempPdfs       = item?.pdfs      ? JSON.parse(JSON.stringify(item.pdfs))      : [];
+  tempExtraLinks = item?.extraLinks? JSON.parse(JSON.stringify(item.extraLinks)): [];
+  tempVideoLinks = item?.links     ? JSON.parse(JSON.stringify(item.links))     : [];
 
-    const title = isEdit ? `Edit <em>${collection}</em>` : `Add <em>${PANELS[collection]?.addLabel?.replace('Add ','') || collection}</em>`;
-    const forms = { design: formDesign, video: formVideo, violin: formViolin, competitions: formCompetition, blog: formBlog, projects: formProject };
-    const bodyHTML = forms[collection] ? forms[collection](item || {}) : '<p>Form not available</p>';
+  const title = isEdit
+    ? `Edit <em>${collection}</em>`
+    : `Add <em>${PANELS[collection]?.addLabel?.replace('Add ','') || collection}</em>`;
 
-    openModal(title, bodyHTML, async () => {
-      try {
-        const data = collectForm(collection);
-        if (!data) return;
-        if (isEdit) { await DB[collection].update(id, data); toast('Updated!', 'success'); }
-        else { await DB[collection].add(data); toast('Added!', 'success'); }
-        closeModal();
-        renderPanel(collection);
-        loadCounts();
-      } catch(saveErr) {
-        console.error('Save error:', saveErr);
-        toast('Save failed: ' + saveErr.message, 'error');
-      }
-    });
+  const forms = { design: formDesign, video: formVideo, violin: formViolin, competitions: formCompetition, blog: formBlog, projects: formProject };
+  const bodyHTML = forms[collection] ? forms[collection](item) : '<p>Form not available</p>';
 
-    // Init dynamic lists after DOM inserted
-    setTimeout(() => {
-      if (collection === 'projects') {
-        renderImageList('img-gallery', tempImages);
-        renderPdfList();
-        renderExtraLinks();
-      }
-      if (collection === 'video') renderVideoLinks();
-    }, 50);
+  openModal(title, bodyHTML, async () => {
+    const data = collectForm(collection);
+    if (!data) return;
+    const saveBtn = document.getElementById('modal-save');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
+    try {
+      if (isEdit) { await DB[collection].update(id, data); toast('Updated!', 'success'); }
+      else        { await DB[collection].add(data);        toast('Added!', 'success');   }
+      closeModal();
+      await renderPanel(collection);
+      loadCounts();
+    } catch(e) {
+      toast('Save failed: ' + e.message, 'error');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save Changes';
+    }
+  });
 
-  } catch(err) {
-    console.error('openForm error:', err);
-    toast('Could not open form: ' + err.message, 'error');
-  }
+  setTimeout(() => {
+    if (collection === 'projects') { renderImageList('img-gallery', tempImages); renderPdfList(); renderExtraLinks(); }
+    if (collection === 'video')    renderVideoLinks();
+  }, 50);
 }
 
 // ── FORM BUILDERS ──
-function formDesign(i={}) {
+const uploadAreaHTML = (previewId, urlFieldId, existingImg = '') => `
+  <div class="upload-area" id="drop_${previewId}">
+    <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-preview="${previewId}" data-urlfield="${urlFieldId}">
+    <div class="upload-area-icon">📁</div>
+    <div class="upload-area-text">Click or drag & drop to upload</div>
+    <div class="upload-area-sub">JPG, PNG, WebP · Max 10MB · Auto-compressed</div>
+    <img id="${previewId}" class="upload-preview" src="${existingImg}" alt="" ${existingImg ? 'style="display:block"' : ''}>
+    <div class="upload-progress"><div class="upload-progress-fill"></div></div>
+    <div class="upload-size-info"></div>
+  </div>`;
+
+function formDesign(i = {}) {
   return `<div class="form-grid">
     <div class="field full"><label>Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="Post title"></div>
     <div class="field"><label>Category</label>
@@ -747,14 +928,8 @@ function formDesign(i={}) {
     </div>
     <div class="field full">
       <label>Image</label>
-      <input id="f_image" value="${esc(i.image||'')}" placeholder="Paste image URL — or upload below">
-      <div class="upload-area" style="margin-top:.5rem">
-        <input type="file" accept="image/*" data-preview="design-img-preview" data-urlfield="f_image">
-        <div class="upload-area-icon">📁</div>
-        <div class="upload-area-text">Click to upload image</div>
-        <div class="upload-area-sub">PNG, JPG, WebP supported</div>
-        ${i.image ? `<img id="design-img-preview" class="upload-preview" src="${i.image}" style="display:block">` : `<img id="design-img-preview" class="upload-preview">`}
-      </div>
+      <input id="f_image" value="${esc(i.image||'')}" placeholder="Paste image URL — or upload below" style="margin-bottom:.5rem;">
+      ${uploadAreaHTML('design-img-preview','f_image', i.image||'')}
     </div>
     <div class="field full">
       <div class="toggle-row"><span class="toggle-label">Featured on homepage</span>
@@ -764,7 +939,7 @@ function formDesign(i={}) {
   </div>`;
 }
 
-function formVideo(i={}) {
+function formVideo(i = {}) {
   return `<div class="form-grid">
     <div class="field full"><label>Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="Video title"></div>
     <div class="field"><label>Category</label>
@@ -773,7 +948,7 @@ function formVideo(i={}) {
     <div class="field"><label>Duration (e.g. 3:24)</label><input id="f_duration" value="${esc(i.duration||'')}" placeholder="2:30"></div>
     <div class="field full"><label>YouTube / Vimeo Embed URL</label>
       <input id="f_embedUrl" value="${esc(i.embedUrl||'')}" placeholder="https://www.youtube.com/embed/VIDEO_ID">
-      <div class="field-hint">Get this from YouTube: Share → Embed → copy the src URL</div>
+      <div class="field-hint">YouTube: Share → Embed → copy the src URL</div>
     </div>
     <div class="field full"><label>Thumbnail URL (optional)</label><input id="f_thumbnail" value="${esc(i.thumbnail||'')}" placeholder="https://..."></div>
     <div class="field full"><label>Description</label><textarea id="f_description" rows="3">${esc(i.description||'')}</textarea></div>
@@ -788,13 +963,13 @@ function formVideo(i={}) {
       <div class="add-row" style="margin-top:.6rem">
         <input id="vlink-label" placeholder="Label (e.g. Watch on YouTube)">
         <input id="vlink-url" placeholder="https://...">
-        <button class="btn-add" onclick="addVideoLink()">+ Add</button>
+        <button class="btn-add" type="button" onclick="addVideoLink()">+ Add</button>
       </div>
     </div>
   </div>`;
 }
 
-function formViolin(i={}) {
+function formViolin(i = {}) {
   return `<div class="form-grid">
     <div class="field full"><label>Piece Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="Canon in D"></div>
     <div class="field"><label>Composer</label><input id="f_composer" value="${esc(i.composer||'')}" placeholder="Johann Pachelbel"></div>
@@ -813,11 +988,11 @@ function formViolin(i={}) {
   </div>`;
 }
 
-function formCompetition(i={}) {
+function formCompetition(i = {}) {
   return `<div class="form-grid">
     <div class="field full"><label>Competition Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="NASA Space Apps Challenge"></div>
-    <div class="field"><label>Icon (emoji)</label><input id="f_icon" value="${i.icon||'🏆'}" placeholder="🏆" maxlength="4"></div>
-    <div class="field"><label>Year</label><input id="f_year" value="${i.year||''}" placeholder="2024"></div>
+    <div class="field"><label>Icon (emoji)</label><input id="f_icon" value="${esc(i.icon||'🏆')}" placeholder="🏆" maxlength="4"></div>
+    <div class="field"><label>Year</label><input id="f_year" value="${esc(i.year||'')}" placeholder="2024"></div>
     <div class="field full"><label>Scope / Category</label><input id="f_scope" value="${esc(i.scope||'')}" placeholder="International · Innovation"></div>
     <div class="field"><label>Outcome / Award</label><input id="f_outcome" value="${esc(i.outcome||'')}" placeholder="Participant / 1st Place / Finalist"></div>
     <div class="field full"><label>Description</label><textarea id="f_description" rows="3">${esc(i.description||'')}</textarea></div>
@@ -825,7 +1000,7 @@ function formCompetition(i={}) {
   </div>`;
 }
 
-function formBlog(i={}) {
+function formBlog(i = {}) {
   return `<div class="form-grid">
     <div class="field full"><label>Post Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="How I built the Church Points System"></div>
     <div class="field"><label>Category</label>
@@ -836,7 +1011,7 @@ function formBlog(i={}) {
     <div class="field full">
       <label>Content (HTML supported)</label>
       <div class="rich-toolbar">
-        ${[['B','<strong>','</strong>'],['I','<em>','</em>'],['H2','<h2>','</h2>'],['H3','<h3>','</h3>'],['P','<p>','</p>'],['Code','<code>','</code>']].map(([l,o,c])=>`<button type="button" class="rich-btn" onclick="wrapSelection('f_content','${o}','${c}')">${l}</button>`).join('')}
+        ${[['B','<strong>','</strong>'],['I','<em>','</em>'],['H2','<h2>','</h2>'],['H3','<h3>','</h3>'],['P','<p>','</p>'],['Code','<code>','</code>'],['Link','<a href="">','</a>']].map(([l,o,c])=>`<button type="button" class="rich-btn" onclick="wrapSelection('f_content','${o}','${c}')">${l}</button>`).join('')}
       </div>
       <textarea id="f_content" class="rich-field" rows="12">${i.content||''}</textarea>
     </div>
@@ -847,11 +1022,11 @@ function formBlog(i={}) {
   </div>`;
 }
 
-function formProject(i={}) {
+function formProject(i = {}) {
   return `<div class="form-grid">
     <div class="field full"><label>Project Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="Church Points System"></div>
     <div class="field"><label>Subtitle</label><input id="f_subtitle" value="${esc(i.subtitle||'')}" placeholder="Full-Stack Web Platform"></div>
-    <div class="field"><label>Icon (emoji)</label><input id="f_icon" value="${i.icon||'⚙️'}" placeholder="⚙️" maxlength="4"></div>
+    <div class="field"><label>Icon (emoji)</label><input id="f_icon" value="${esc(i.icon||'⚙️')}" placeholder="⚙️" maxlength="4"></div>
     <div class="field"><label>Status</label>
       <select id="f_status">
         <option value="live" ${i.status==='live'?'selected':''}>Live & Deployed</option>
@@ -866,7 +1041,6 @@ function formProject(i={}) {
     <div class="field full"><label>Tech Stack (comma separated)</label><input id="f_techStack" value="${(i.techStack||[]).join(', ')}" placeholder="HTML/CSS/JS, PostgreSQL, Node.js"></div>
     <div class="field full"><label>Key Features (one per line)</label><textarea id="f_features" rows="4">${(i.features||[]).join('\n')}</textarea></div>
 
-    <!-- MAIN LINKS -->
     <div class="field full form-section">
       <div class="form-section-title">Main Links</div>
     </div>
@@ -874,7 +1048,6 @@ function formProject(i={}) {
     <div class="field"><label>Live Site URL</label><input id="f_live" value="${esc((i.links||{}).live||'')}" placeholder="https://..."></div>
     <div class="field full"><label>Demo URL</label><input id="f_demo" value="${esc((i.links||{}).demo||'')}" placeholder="https://... (video demo, screencast, etc.)"></div>
 
-    <!-- IMAGES -->
     <div class="field full form-section">
       <div class="form-section-title">Project Screenshots & Images</div>
       <div id="img-gallery" class="img-gallery-preview"></div>
@@ -882,38 +1055,36 @@ function formProject(i={}) {
         <div style="font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.5rem;">Add by URL</div>
         <div class="add-row">
           <input id="img-url-input" placeholder="Paste image URL https://...">
-          <button class="btn-add" onclick="addImageFromUrl('img-url-input','img-gallery')">+ Add URL</button>
+          <button class="btn-add" type="button" onclick="addImageFromUrl('img-url-input','img-gallery')">+ Add URL</button>
         </div>
         <div style="font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin:.8rem 0 .5rem;">Or Upload</div>
         <div class="upload-area">
-          <input type="file" accept="image/*" id="img-file-input" onchange="addImageFromUpload('img-file-input','img-gallery')">
+          <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" id="img-file-input" onchange="addImageFromUpload('img-file-input','img-gallery')">
           <div class="upload-area-icon">📁</div>
-          <div class="upload-area-text">Click to upload screenshot</div>
-          <div class="upload-area-sub">PNG, JPG, WebP — stored as base64</div>
+          <div class="upload-area-text">Click or drag & drop to upload screenshots</div>
+          <div class="upload-area-sub">JPG, PNG, WebP · Max 10MB · Auto-compressed to WebP</div>
         </div>
       </div>
     </div>
 
-    <!-- PDFs -->
     <div class="field full form-section">
       <div class="form-section-title">PDF Documents</div>
       <div id="pdf-list"></div>
       <div class="add-row" style="margin-top:.6rem">
         <input id="pdf-label" placeholder="Label (e.g. Project Report)">
         <input id="pdf-url" placeholder="PDF URL https://... or Google Drive link">
-        <button class="btn-add" onclick="addPdf()">+ Add</button>
+        <button class="btn-add" type="button" onclick="addPdf()">+ Add</button>
       </div>
       <div class="field-hint" style="margin-top:.4rem">Link to Google Drive, Dropbox, or any direct PDF URL.</div>
     </div>
 
-    <!-- EXTRA LINKS -->
     <div class="field full form-section">
       <div class="form-section-title">Extra Links</div>
       <div id="extralinks-list"></div>
       <div class="add-row" style="margin-top:.6rem">
         <input id="elink-label" placeholder="Label (e.g. Presentation Slides)">
         <input id="elink-url" placeholder="URL https://...">
-        <button class="btn-add" onclick="addExtraLink()">+ Add</button>
+        <button class="btn-add" type="button" onclick="addExtraLink()">+ Add</button>
       </div>
     </div>
 
@@ -932,14 +1103,14 @@ function collectForm(collection) {
     design: () => ({
       title: gv('f_title'), category: gv('f_category'), date: gv('f_date'),
       description: gv('f_description'),
-      tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean),
+      tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean).slice(0,20),
       image: gv('f_image'), featured: gb('f_featured')
     }),
     video: () => ({
       title: gv('f_title'), category: gv('f_category'), duration: gv('f_duration'),
       embedUrl: gv('f_embedUrl'), thumbnail: gv('f_thumbnail'), description: gv('f_description'),
       date: gv('f_date'), featured: gb('f_featured'),
-      tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean),
+      tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean).slice(0,20),
       links: [...tempVideoLinks]
     }),
     violin: () => ({
@@ -955,15 +1126,15 @@ function collectForm(collection) {
     blog: () => ({
       title: gv('f_title'), category: gv('f_category'), date: gv('f_date'),
       excerpt: gv('f_excerpt'), content: gv('f_content'),
-      tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean),
+      tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean).slice(0,20),
       featured: gb('f_featured')
     }),
     projects: () => ({
       title: gv('f_title'), subtitle: gv('f_subtitle'), icon: gv('f_icon')||'⚙️',
       status: gv('f_status'), statusLabel: gv('f_statusLabel'), date: gv('f_date'),
       description: gv('f_description'),
-      techStack: gv('f_techStack').split(',').map(t=>t.trim()).filter(Boolean),
-      features: gv('f_features').split('\n').map(t=>t.trim()).filter(Boolean),
+      techStack: gv('f_techStack').split(',').map(t=>t.trim()).filter(Boolean).slice(0,30),
+      features: gv('f_features').split('\n').map(t=>t.trim()).filter(Boolean).slice(0,20),
       links: { github: gv('f_github'), live: gv('f_live'), demo: gv('f_demo') },
       images: [...tempImages],
       pdfs: [...tempPdfs],
@@ -979,25 +1150,28 @@ function collectForm(collection) {
   return data;
 }
 
-// ── HELPERS ──
-function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
+// ── RICH TEXT HELPER ──
 function wrapSelection(id, open, close) {
   const ta = document.getElementById(id);
   if (!ta) return;
-  const start = ta.selectionStart, end = ta.selectionEnd;
+  const start    = ta.selectionStart;
+  const end      = ta.selectionEnd;
   const selected = ta.value.substring(start, end);
-  ta.value = ta.value.substring(0,start) + open + selected + close + ta.value.substring(end);
+  ta.value = ta.value.substring(0, start) + open + selected + close + ta.value.substring(end);
   ta.focus();
+  ta.setSelectionRange(start + open.length, start + open.length + selected.length);
 }
 
 // ── EXPORT ──
 document.getElementById('exportBtn').onclick = async (e) => {
   e.preventDefault();
   const data = await DB.exportAll();
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'bavly-portfolio-data.json'; a.click();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `bavly-portfolio-data-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
   URL.revokeObjectURL(url);
   toast('Data exported!', 'success');
 };
@@ -1005,7 +1179,7 @@ document.getElementById('exportBtn').onclick = async (e) => {
 // ── RESET ──
 document.getElementById('resetBtn').onclick = async (e) => {
   e.preventDefault();
-  showConfirm(async () => {
+  confirm(async () => {
     await DB.resetAll();
     toast('Reset to default data', 'info');
     loadCounts();
