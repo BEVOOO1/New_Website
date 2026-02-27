@@ -290,8 +290,8 @@ function toast(msg, type='info') {
   setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},2800);
 }
 
-// ── CONFIRM ──
-function confirm(cb) {
+// ── CONFIRM DIALOG ──
+function showConfirm(cb) {
   deleteCallback = cb;
   document.getElementById('confirmDialog').classList.add('open');
 }
@@ -548,7 +548,7 @@ function filterTable(input, tbodyId) {
 
 // ── DELETE ──
 function deleteItem(collection, id) {
-  confirm(async () => {
+  showConfirm(async () => {
     await DB[collection].delete(id);
     toast('Item deleted', 'success');
     renderPanel(collection);
@@ -686,39 +686,51 @@ function addVideoLink() {
 
 // ── OPEN FORM ──
 async function openForm(collection, id) {
-  editingId = id;
-  let item = id ? await DB[collection].get(id) : null;
-  const isEdit = !!item;
+  try {
+    editingId = id;
+    let item = id ? await DB[collection].get(id) : null;
+    const isEdit = !!item;
 
-  // Reset temp state
-  tempImages = item?.images ? JSON.parse(JSON.stringify(item.images)) : [];
-  tempPdfs = item?.pdfs ? JSON.parse(JSON.stringify(item.pdfs)) : [];
-  tempExtraLinks = item?.extraLinks ? JSON.parse(JSON.stringify(item.extraLinks)) : [];
-  tempVideoLinks = item?.links ? JSON.parse(JSON.stringify(item.links)) : [];
+    // Reset temp state
+    tempImages = item?.images ? JSON.parse(JSON.stringify(item.images)) : [];
+    tempPdfs = item?.pdfs ? JSON.parse(JSON.stringify(item.pdfs)) : [];
+    tempExtraLinks = item?.extraLinks ? JSON.parse(JSON.stringify(item.extraLinks)) : [];
+    // video links is array; project links is {github,live,demo} object
+    tempVideoLinks = (item?.links && Array.isArray(item.links)) ? JSON.parse(JSON.stringify(item.links)) : [];
 
-  const title = isEdit ? `Edit <em>${collection}</em>` : `Add <em>${PANELS[collection]?.addLabel?.replace('Add ','')}</em>`;
-  const forms = { design: formDesign, video: formVideo, violin: formViolin, competitions: formCompetition, blog: formBlog, projects: formProject };
-  const bodyHTML = forms[collection] ? forms[collection](item) : '<p>Form not available</p>';
+    const title = isEdit ? `Edit <em>${collection}</em>` : `Add <em>${PANELS[collection]?.addLabel?.replace('Add ','') || collection}</em>`;
+    const forms = { design: formDesign, video: formVideo, violin: formViolin, competitions: formCompetition, blog: formBlog, projects: formProject };
+    const bodyHTML = forms[collection] ? forms[collection](item || {}) : '<p>Form not available</p>';
 
-  openModal(title, bodyHTML, async () => {
-    const data = collectForm(collection);
-    if (!data) return;
-    if (isEdit) { await DB[collection].update(id, data); toast('Updated!', 'success'); }
-    else { await DB[collection].add(data); toast('Added!', 'success'); }
-    closeModal();
-    renderPanel(collection);
-    loadCounts();
-  });
+    openModal(title, bodyHTML, async () => {
+      try {
+        const data = collectForm(collection);
+        if (!data) return;
+        if (isEdit) { await DB[collection].update(id, data); toast('Updated!', 'success'); }
+        else { await DB[collection].add(data); toast('Added!', 'success'); }
+        closeModal();
+        renderPanel(collection);
+        loadCounts();
+      } catch(saveErr) {
+        console.error('Save error:', saveErr);
+        toast('Save failed: ' + saveErr.message, 'error');
+      }
+    });
 
-  // Init dynamic lists after DOM inserted
-  setTimeout(() => {
-    if (collection === 'projects') {
-      renderImageList('img-gallery', tempImages);
-      renderPdfList();
-      renderExtraLinks();
-    }
-    if (collection === 'video') renderVideoLinks();
-  }, 50);
+    // Init dynamic lists after DOM inserted
+    setTimeout(() => {
+      if (collection === 'projects') {
+        renderImageList('img-gallery', tempImages);
+        renderPdfList();
+        renderExtraLinks();
+      }
+      if (collection === 'video') renderVideoLinks();
+    }, 50);
+
+  } catch(err) {
+    console.error('openForm error:', err);
+    toast('Could not open form: ' + err.message, 'error');
+  }
 }
 
 // ── FORM BUILDERS ──
@@ -993,7 +1005,7 @@ document.getElementById('exportBtn').onclick = async (e) => {
 // ── RESET ──
 document.getElementById('resetBtn').onclick = async (e) => {
   e.preventDefault();
-  confirm(async () => {
+  showConfirm(async () => {
     await DB.resetAll();
     toast('Reset to default data', 'info');
     loadCounts();
