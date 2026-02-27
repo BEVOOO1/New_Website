@@ -9,7 +9,6 @@
 <style>
 .hero-orb-bl{width:600px;height:600px;background:radial-gradient(circle,rgba(180,140,255,.08) 0%,transparent 70%);top:-120px;right:-80px;animation:bld 16s ease-in-out infinite alternate;}
 @keyframes bld{from{transform:translate(0,0);}to{transform:translate(28px,18px);}}
-/* BLOG LIST */
 .blog-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;position:relative;z-index:2;}
 .blog-card{background:var(--glass-deep);border:1px solid var(--border);border-radius:var(--radius-md);padding:2rem;transition:all .4s cubic-bezier(.23,1,.32,1);cursor:pointer;text-decoration:none;display:block;}
 .blog-card:hover{border-color:var(--border-gold);transform:translateY(-5px);box-shadow:0 24px 70px rgba(0,0,0,.45);background:var(--glass);}
@@ -24,8 +23,6 @@
 .bc-read{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);opacity:0;transition:opacity .3s;}
 .blog-card:hover .bc-read{opacity:1;}
 .bc-tags{display:flex;gap:.4rem;flex-wrap:wrap;}
-
-/* POST READER */
 .post-reader{max-width:740px;margin:0 auto;position:relative;z-index:2;}
 .post-header{margin-bottom:3rem;}
 .post-back{display:inline-flex;align-items:center;gap:.5rem;font-family:'Tenor Sans',sans-serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dim);text-decoration:none;margin-bottom:2rem;transition:color .2s;}
@@ -42,7 +39,6 @@
 .post-content em{font-style:italic;color:var(--gold-dim);}
 .post-content code{font-family:monospace;font-size:.82rem;background:rgba(255,255,255,.06);padding:.15rem .5rem;border-radius:4px;color:var(--gold-light);}
 .post-tags{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border);display:flex;gap:.5rem;flex-wrap:wrap;}
-
 @media(max-width:768px){.blog-grid{grid-template-columns:1fr;}.blog-card.featured{grid-template-columns:1fr;}}
 </style>
 </head>
@@ -54,7 +50,6 @@
     <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html">Video</a>
     <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a><a href="blog.html" class="active">Blog</a>
   </div>
-  <a href="admin.html" class="nav-admin-btn">⚙ Admin</a>
   <button class="nav-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
 </div></nav>
 <div class="mobile-menu" id="mobileMenu">
@@ -77,8 +72,12 @@
 </div></section>
 
 <footer class="footer"><div class="wrapper footer-inner">
-  <span class="footer-name">Bavly Badr</span><span class="footer-copy">© 2025 · BEVO copyright reserved</span>
-  <div class="footer-links"><a href="https://github.com/BEVOOO1" target="_blank">GitHub</a><a href="admin.html">Admin</a></div>
+  <span class="footer-name">Bavly Badr</span>
+  <span class="footer-copy">© 2025 · BEVO copyright reserved</span>
+  <div class="footer-links">
+    <a href="https://github.com/BEVOOO1" target="_blank">GitHub</a>
+    <a href="admin.html" class="footer-admin-btn">⚙ Admin</a>
+  </div>
 </div></footer>
 
 <script src="db.js"></script><script src="shared.js"></script>
@@ -117,10 +116,7 @@ async function showPost(id) {
   const post = await DB.blog.get(id);
   if (!post) { showList(); return; }
   window.location.hash = id;
-
-  // Shrink hero
   document.getElementById('hero-content').innerHTML = '';
-
   const tags = (post.tags||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('');
   document.getElementById('main-content').innerHTML = `
     <div class="post-reader reveal">
@@ -138,12 +134,7 @@ async function showPost(id) {
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// Check if URL has hash (direct link to post)
 const hash = window.location.hash.slice(1);
-if (hash) {
-  showPost(hash);
-} else {
-  showList();
-}
+if (hash) { showPost(hash); } else { showList(); }
 </script>
 </body></html>

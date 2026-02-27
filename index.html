@@ -43,13 +43,12 @@
 .wc5 .wc-bg{background:linear-gradient(135deg,#0a1822,#0d2233);}
 .wc-orb{position:absolute;width:150px;height:150px;border-radius:50%;top:-30px;right:-30px;filter:blur(40px);z-index:1;opacity:.5;transition:opacity .5s;}
 .work-card:hover .wc-orb{opacity:1;}
-.wc1 .wc-orb{background:rgba(120,140,255,.3);} .wc2 .wc-orb{background:rgba(56,200,130,.25);} .wc3 .wc-orb{background:rgba(212,175,120,.3);} .wc4 .wc-orb{background:rgba(200,100,200,.25);} .wc5 .wc-orb{background:rgba(80,180,220,.25);}
+.wc1 .wc-orb{background:rgba(120,140,255,.3);}.wc2 .wc-orb{background:rgba(56,200,130,.25);}.wc3 .wc-orb{background:rgba(212,175,120,.3);}.wc4 .wc-orb{background:rgba(200,100,200,.25);}.wc5 .wc-orb{background:rgba(80,180,220,.25);}
 .wc-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);font-size:2.5rem;transition:transform .4s;z-index:2;}
 .work-card:hover .wc-icon{transform:translate(-50%,-60%) scale(1.15);}
 .wc-info{position:absolute;bottom:0;left:0;right:0;padding:1.5rem 1.2rem;background:linear-gradient(to top,rgba(6,8,16,.9) 0%,transparent 100%);z-index:3;}
 .wc-title{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.1em;color:var(--text);margin-bottom:.3rem;}
 .wc-sub{font-family:'Tenor Sans',sans-serif;font-size:.62rem;letter-spacing:.1em;color:var(--gold);text-transform:uppercase;}
-/* Recent section */
 .recent-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-top:1.5rem;}
 .recent-card{background:var(--glass-deep);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.5rem;transition:all .35s;text-decoration:none;display:block;}
 .recent-card:hover{border-color:var(--border-gold);transform:translateY(-3px);background:var(--glass);}
@@ -74,7 +73,6 @@
       <a href="competitions.html">Competitions</a>
       <a href="blog.html">Blog</a>
     </div>
-    <a href="admin.html" class="nav-admin-btn">⚙ Admin</a>
     <button class="nav-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
   </div>
 </nav>
@@ -129,8 +127,6 @@
       <a href="projects.html" class="work-card wc4 reveal" style="transition-delay:.24s"><div class="wc-bg"></div><div class="wc-orb"></div><div class="wc-icon">⚙️</div><div class="wc-info"><div class="wc-title">Projects</div><div class="wc-sub">Software</div></div></a>
       <a href="competitions.html" class="work-card wc5 reveal" style="transition-delay:.32s"><div class="wc-bg"></div><div class="wc-orb"></div><div class="wc-icon">🏆</div><div class="wc-info"><div class="wc-title">Competitions</div><div class="wc-sub">ICEF · NASA</div></div></a>
     </div>
-
-    <!-- RECENT BLOG POSTS (dynamic) -->
     <div style="margin-top:5rem">
       <div class="section-label reveal">Latest Writing</div>
       <h2 class="section-title reveal" style="font-size:1.8rem;margin-bottom:0;">From the <em>Blog</em></h2>
@@ -145,7 +141,7 @@
   <div class="footer-links">
     <a href="https://github.com/BEVOOO1" target="_blank">GitHub</a>
     <a href="https://www.facebook.com/bavlyd.badr" target="_blank">Facebook</a>
-    <a href="admin.html">Admin</a>
+    <a href="admin.html" class="footer-admin-btn">⚙ Admin</a>
   </div>
 </div></footer>
 

@@ -37,7 +37,6 @@
     <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html">Video</a>
     <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html" class="active">Competitions</a><a href="blog.html">Blog</a>
   </div>
-  <a href="admin.html" class="nav-admin-btn">⚙ Admin</a>
   <button class="nav-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
 </div></nav>
 <div class="mobile-menu" id="mobileMenu">
@@ -59,8 +58,12 @@
   <div id="learned-section"></div>
 </div></section>
 <footer class="footer"><div class="wrapper footer-inner">
-  <span class="footer-name">Bavly Badr</span><span class="footer-copy">© 2025 · BEVO copyright reserved</span>
-  <div class="footer-links"><a href="https://github.com/BEVOOO1" target="_blank">GitHub</a><a href="admin.html">Admin</a></div>
+  <span class="footer-name">Bavly Badr</span>
+  <span class="footer-copy">© 2025 · BEVO copyright reserved</span>
+  <div class="footer-links">
+    <a href="https://github.com/BEVOOO1" target="_blank">GitHub</a>
+    <a href="admin.html" class="footer-admin-btn">⚙ Admin</a>
+  </div>
 </div></footer>
 <script src="db.js"></script><script src="shared.js"></script>
 <script>
@@ -89,7 +92,6 @@ async function init() {
         </div>
       </div>
     </div>`).join('');
-
   const withLearned = items.filter(i=>i.learned);
   if (withLearned.length) {
     learnedEl.innerHTML = `

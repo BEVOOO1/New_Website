@@ -18,7 +18,6 @@
 .perf-card{border-radius:var(--radius-md);overflow:hidden;background:var(--glass-deep);border:1px solid var(--border);transition:all .4s cubic-bezier(.23,1,.32,1);}
 .perf-card:hover{border-color:var(--border-gold);transform:translateY(-6px);box-shadow:0 24px 70px rgba(0,0,0,.5);}
 .perf-thumb{aspect-ratio:1;background:var(--glass);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.8rem;position:relative;overflow:hidden;min-height:200px;}
-.perf-thumb iframe,.perf-thumb audio{width:100%;border:none;}
 .audio-wave{display:flex;align-items:center;gap:3px;height:24px;}
 .audio-wave span{display:block;width:3px;background:var(--gold);border-radius:2px;animation:wave 1.2s ease-in-out infinite;opacity:.3;}
 .audio-wave span:nth-child(1){animation-delay:0s;height:8px;}
@@ -34,8 +33,6 @@
 .perf-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:400;color:var(--text);line-height:1.3;margin-bottom:.2rem;}
 .perf-composer{font-size:.72rem;color:var(--gold-dim);font-style:italic;margin-bottom:.4rem;}
 .perf-desc{font-size:.75rem;color:var(--text-dim);line-height:1.6;}
-.perf-link{display:inline-flex;align-items:center;gap:.4rem;margin-top:.8rem;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(212,175,120,.3);padding-bottom:.1rem;transition:border-color .2s;}
-.perf-link:hover{border-color:var(--gold);}
 @media(max-width:768px){.perf-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:480px){.perf-grid{grid-template-columns:1fr;}}
 </style>
@@ -48,7 +45,6 @@
     <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html">Video</a>
     <a href="violin.html" class="active">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a><a href="blog.html">Blog</a>
   </div>
-  <a href="admin.html" class="nav-admin-btn">⚙ Admin</a>
   <button class="nav-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
 </div></nav>
 <div class="mobile-menu" id="mobileMenu">
@@ -73,8 +69,12 @@
   <div id="perf-grid" class="perf-grid reveal"></div>
 </div></section>
 <footer class="footer"><div class="wrapper footer-inner">
-  <span class="footer-name">Bavly Badr</span><span class="footer-copy">© 2025 · BEVO copyright reserved</span>
-  <div class="footer-links"><a href="https://github.com/BEVOOO1" target="_blank">GitHub</a><a href="admin.html">Admin</a></div>
+  <span class="footer-name">Bavly Badr</span>
+  <span class="footer-copy">© 2025 · BEVO copyright reserved</span>
+  <div class="footer-links">
+    <a href="https://github.com/BEVOOO1" target="_blank">GitHub</a>
+    <a href="admin.html" class="footer-admin-btn">⚙ Admin</a>
+  </div>
 </div></footer>
 <script src="db.js"></script><script src="shared.js"></script>
 <script>
@@ -89,7 +89,7 @@ async function init() {
   }
   el.innerHTML = items.map(v => {
     const mediaEl = v.mediaUrl
-      ? `<a class="perf-link" href="${v.mediaUrl}" target="_blank">▶ Listen / Watch</a>`
+      ? `<a class="media-link" href="${v.mediaUrl}" target="_blank" style="margin-top:.8rem;display:inline-flex;">▶ Listen / Watch</a>`
       : '';
     return `<div class="perf-card">
       <div class="perf-thumb">

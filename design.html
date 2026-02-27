@@ -10,32 +10,70 @@
 .hero-orb-1{width:600px;height:600px;background:radial-gradient(circle,rgba(120,140,255,.09) 0%,transparent 70%);top:-100px;right:-100px;animation:dd 15s ease-in-out infinite alternate;}
 .hero-orb-2{width:350px;height:350px;background:radial-gradient(circle,rgba(212,175,120,.07) 0%,transparent 70%);bottom:0;left:20%;animation:dd 10s ease-in-out infinite alternate-reverse;}
 @keyframes dd{from{transform:translate(0,0);}to{transform:translate(25px,20px);}}
+
+/* FILTER ROW */
 .filter-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:3rem;position:relative;z-index:2;}
 .filter-btn{padding:.5rem 1.3rem;border-radius:100px;border:1px solid var(--border);background:var(--glass);color:var(--text-muted);font-family:'Tenor Sans',sans-serif;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s;backdrop-filter:blur(10px);}
 .filter-btn:hover,.filter-btn.active{border-color:var(--border-gold);color:var(--gold);background:rgba(212,175,120,.08);}
-.masonry{columns:3;column-gap:1.2rem;position:relative;z-index:2;}
-.masonry-item{break-inside:avoid;margin-bottom:1.2rem;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--border);background:var(--glass-deep);position:relative;cursor:pointer;transition:all .4s cubic-bezier(.23,1,.32,1);}
-.masonry-item:hover{border-color:var(--border-gold);transform:scale(1.015);box-shadow:0 20px 60px rgba(0,0,0,.5);}
-.masonry-item img{width:100%;display:block;transition:transform .5s;}
-.masonry-item:hover img{transform:scale(1.04);}
-.masonry-caption{position:absolute;bottom:0;left:0;right:0;padding:2.5rem 1.2rem 1.2rem;background:linear-gradient(to top,rgba(7,8,15,.9),transparent);opacity:0;transform:translateY(6px);transition:all .35s;}
-.masonry-item:hover .masonry-caption{opacity:1;transform:none;}
-.mc-title{font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.08em;color:var(--text);}
-.mc-sub{font-family:'Tenor Sans',sans-serif;font-size:.62rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-top:.2rem;}
-.masonry-ph{height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;background:var(--glass-deep);border:1px dashed rgba(212,175,120,.15);border-radius:var(--radius-md);}
-@media(max-width:768px){.masonry{columns:2;}}
-@media(max-width:480px){.masonry{columns:1;}}
+
+/* DESIGN GRID — beautiful card layout */
+.design-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;position:relative;z-index:2;}
+.design-card{border-radius:var(--radius-md);overflow:hidden;background:var(--glass-deep);border:1px solid var(--border);transition:all .45s cubic-bezier(.23,1,.32,1);cursor:pointer;}
+.design-card:hover{border-color:var(--border-gold);transform:translateY(-6px);box-shadow:0 28px 80px rgba(0,0,0,.55);}
+.design-card.featured{grid-column:span 2;}
+
+/* Image area */
+.dc-thumb{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--glass);}
+.design-card.featured .dc-thumb{aspect-ratio:16/7;}
+.dc-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.23,1,.32,1);}
+.design-card:hover .dc-thumb img{transform:scale(1.06);}
+
+/* Placeholder when no image */
+.dc-thumb-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem;background:linear-gradient(135deg,rgba(6,8,16,.8),rgba(12,18,35,.9));min-height:220px;}
+.dc-ph-icon{font-size:2.5rem;opacity:.25;}
+.dc-ph-hint{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);}
+
+/* Overlay on hover */
+.dc-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,8,15,.88) 0%,rgba(7,8,15,.2) 60%,transparent 100%);opacity:0;transition:opacity .4s;display:flex;align-items:flex-end;padding:1.4rem;}
+.design-card:hover .dc-overlay{opacity:1;}
+.dc-overlay-inner{display:flex;align-items:center;justify-content:space-between;width:100%;}
+.dc-view-label{font-family:'Tenor Sans',sans-serif;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);}
+.dc-view-icon{width:32px;height:32px;border-radius:50%;border:1px solid rgba(212,175,120,.4);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--gold);}
+
+/* Card body */
+.dc-info{padding:1.4rem 1.6rem;}
+.dc-cat{font-family:'Tenor Sans',sans-serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem;}
+.dc-cat::before{content:'';width:12px;height:1px;background:var(--gold);}
+.dc-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:400;color:var(--text);margin-bottom:.4rem;line-height:1.3;}
+.design-card.featured .dc-title{font-size:1.25rem;}
+.dc-desc{font-family:'Tenor Sans',sans-serif;font-size:.75rem;line-height:1.7;color:var(--text-dim);margin-bottom:.8rem;}
+.dc-meta{display:flex;align-items:center;justify-content:space-between;}
+.dc-date{font-size:.65rem;color:var(--text-dim);letter-spacing:.05em;}
+.dc-tags{display:flex;gap:.3rem;flex-wrap:wrap;}
+
+/* LIGHTBOX */
+#design-lightbox{position:fixed;inset:0;z-index:1000;background:rgba(7,8,15,.96);backdrop-filter:blur(24px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:1rem;padding:2rem;}
+#design-lightbox.open{display:flex;}
+#design-lightbox img{max-width:90vw;max-height:80vh;border-radius:14px;box-shadow:0 30px 100px rgba(0,0,0,.8);border:1px solid rgba(212,175,120,.2);object-fit:contain;}
+.lb-info{text-align:center;}
+.lb-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--text);margin-bottom:.3rem;}
+.lb-sub{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);}
+.lb-close{position:fixed;top:2rem;right:2rem;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:1.2rem;transition:all .2s;}
+.lb-close:hover{background:rgba(255,255,255,.14);color:var(--text);}
+
+@media(max-width:900px){.design-grid{grid-template-columns:1fr 1fr;}.design-card.featured{grid-column:1/-1;}}
+@media(max-width:580px){.design-grid{grid-template-columns:1fr;}.design-card.featured{grid-column:auto;}}
 </style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas><div class="grain"></div>
+
 <nav class="nav" id="main-nav"><div class="nav-inner">
   <a href="index.html" class="nav-logo">B<span>.</span></a>
   <div class="nav-links">
     <a href="index.html">Home</a><a href="design.html" class="active">Design</a><a href="video.html">Video</a>
     <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a><a href="blog.html">Blog</a>
   </div>
-  <a href="admin.html" class="nav-admin-btn">⚙ Admin</a>
   <button class="nav-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
 </div></nav>
 <div class="mobile-menu" id="mobileMenu">
@@ -61,57 +99,92 @@
     <div id="filter-row" class="filter-row reveal">
       <button class="filter-btn active" data-cat="all">All Work</button>
     </div>
-    <div id="gallery" class="masonry reveal">
-      <div style="display:flex;align-items:center;gap:.8rem;color:var(--text-dim);font-size:.8rem;">Loading...</div>
-    </div>
+    <div id="gallery" class="design-grid reveal"></div>
   </div>
 </section>
 
 <footer class="footer"><div class="wrapper footer-inner">
-  <span class="footer-name">Bavly Badr</span><span class="footer-copy">© 2025 · BEVO copyright reserved</span>
-  <div class="footer-links"><a href="https://github.com/BEVOOO1" target="_blank">GitHub</a><a href="admin.html">Admin</a></div>
+  <span class="footer-name">Bavly Badr</span>
+  <span class="footer-copy">© 2025 · BEVO copyright reserved</span>
+  <div class="footer-links">
+    <a href="https://github.com/BEVOOO1" target="_blank">GitHub</a>
+    <a href="admin.html" class="footer-admin-btn">⚙ Admin</a>
+  </div>
 </div></footer>
+
+<!-- LIGHTBOX -->
+<div id="design-lightbox">
+  <button class="lb-close" id="lb-close">✕</button>
+  <img id="lb-img" src="" alt="">
+  <div class="lb-info">
+    <div class="lb-title" id="lb-title"></div>
+    <div class="lb-sub" id="lb-sub"></div>
+  </div>
+</div>
 
 <script src="db.js"></script><script src="shared.js"></script>
 <script>
 let allItems = [];
 let activeFilter = 'all';
 
+function openLightbox(src, title, sub) {
+  document.getElementById('lb-img').src = src;
+  document.getElementById('lb-title').textContent = title;
+  document.getElementById('lb-sub').textContent = sub;
+  document.getElementById('design-lightbox').classList.add('open');
+}
+document.getElementById('lb-close').onclick = () => document.getElementById('design-lightbox').classList.remove('open');
+document.getElementById('design-lightbox').addEventListener('click', function(e) {
+  if (e.target === this || e.target.id === 'lb-img') this.classList.remove('open');
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('design-lightbox').classList.remove('open'); });
+
 function renderGallery(items) {
   const filtered = activeFilter === 'all' ? items : items.filter(i => i.category === activeFilter);
   const el = document.getElementById('gallery');
 
   if (!filtered.length) {
-    el.innerHTML = `<div style="text-align:center;padding:4rem;color:var(--text-dim);">
+    el.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--text-dim);">
       <div style="font-size:2rem;margin-bottom:.8rem;opacity:.3;">🎨</div>
       <div style="font-size:.82rem;letter-spacing:.1em;">No design posts yet. <a href="admin.html" style="color:var(--gold);">Add some in Admin →</a></div>
     </div>`;
     return;
   }
 
-  el.innerHTML = filtered.map(item => {
-    if (item.image) {
-      return `<div class="masonry-item" data-lightbox="${item.image}" data-cat="${item.category||''}">
-        <img src="${item.image}" alt="${item.title}" loading="lazy">
-        <div class="masonry-caption">
-          <div class="mc-title">${item.title}</div>
-          <div class="mc-sub">${item.category||''}</div>
+  el.innerHTML = filtered.map((item, i) => {
+    const isFeatured = item.featured && i === 0;
+    const tags = (item.tags||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('');
+
+    const thumbContent = item.image
+      ? `<img src="${item.image}" alt="${item.title}" loading="lazy">
+         <div class="dc-overlay">
+           <div class="dc-overlay-inner">
+             <span class="dc-view-label">View Full</span>
+             <span class="dc-view-icon">↗</span>
+           </div>
+         </div>`
+      : `<div class="dc-thumb-ph">
+           <div class="dc-ph-icon">🎨</div>
+           <div class="dc-ph-hint">Add image in admin</div>
+         </div>`;
+
+    return `<div class="design-card${isFeatured?' featured':''}" data-cat="${item.category||''}" ${item.image?`onclick="openLightbox('${item.image}','${item.title.replace(/'/g,"\\'")}','${(item.category||'').replace(/'/g,"\\'")}')"`:''}">
+      <div class="dc-thumb">${thumbContent}</div>
+      <div class="dc-info">
+        <div class="dc-cat">${item.category||'Design'}</div>
+        <div class="dc-title">${item.title}</div>
+        ${item.description?`<div class="dc-desc">${item.description}</div>`:''}
+        <div class="dc-meta">
+          <span class="dc-date">${item.date||''}</span>
+          <div class="dc-tags">${tags}</div>
         </div>
-      </div>`;
-    }
-    return `<div class="masonry-ph" data-cat="${item.category||''}">
-      <div style="font-size:1.8rem;opacity:.3;">🎨</div>
-      <div style="font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.08em;color:var(--text-muted);">${item.title}</div>
-      <div style="font-size:.62rem;color:var(--gold-dim);letter-spacing:.1em;text-transform:uppercase;">${item.category||''}</div>
-      <div style="font-size:.6rem;color:var(--text-dim);margin-top:.2rem;">Add image in admin</div>
+      </div>
     </div>`;
   }).join('');
-  initLightbox();
 }
 
 async function init() {
   allItems = await DB.design.getAll();
-  // Build filter buttons
   const cats = ['All Work', ...new Set(allItems.map(i=>i.category).filter(Boolean))];
   const row = document.getElementById('filter-row');
   row.innerHTML = cats.map((c,i) => `<button class="filter-btn ${i===0?'active':''}" data-cat="${c==='All Work'?'all':c}">${c}</button>`).join('');

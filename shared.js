@@ -111,7 +111,7 @@ function initLightbox(){
 }
 window.initLightbox=initLightbox;
 
-// ── TOAST NOTIFICATION ──
+// ── TOAST ──
 function toast(msg,type='info'){
   const t=document.createElement('div');
   const colors={info:'rgba(122,180,255,.9)',success:'rgba(56,200,130,.9)',error:'rgba(220,80,80,.9)'};
@@ -122,7 +122,6 @@ function toast(msg,type='info'){
 }
 window.toast=toast;
 
-// ── FORMAT DATE ──
 function fmtDate(str){
   if(!str) return '';
   try{ return new Date(str).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}); }
@@ -130,7 +129,6 @@ function fmtDate(str){
 }
 window.fmtDate=fmtDate;
 
-// ── RENDER HELPERS ──
 function loadingHTML(){ return `<div class="loading-state"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>`; }
 function emptyHTML(icon,title,sub){ return `<div class="empty-state"><div class="empty-state-icon">${icon}</div><div class="empty-state-title">${title}</div><div class="empty-state-sub">${sub}</div></div>`; }
 window.loadingHTML=loadingHTML;
