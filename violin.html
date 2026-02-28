@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Violin — Bavly Badr</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
@@ -9,17 +10,24 @@
 <style>
 .hero-orb-vn{width:600px;height:600px;background:radial-gradient(circle,rgba(212,175,120,.11) 0%,transparent 70%);top:-100px;right:-100px;animation:vnd 14s ease-in-out infinite alternate;}
 @keyframes vnd{from{transform:translate(0,0);}to{transform:translate(25px,18px);}}
+
 .quote-block{padding:3.5rem 3rem;border-radius:var(--radius-lg);background:var(--glass);border:1px solid var(--border-gold);backdrop-filter:blur(20px);position:relative;overflow:hidden;margin-bottom:3.5rem;}
 .quote-block::before{content:'"';position:absolute;right:2rem;top:1rem;font-family:'Playfair Display',serif;font-size:8rem;color:rgba(212,175,120,.05);line-height:1;}
 .quote-text{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.2rem,2.5vw,1.7rem);color:var(--text);line-height:1.5;max-width:680px;position:relative;z-index:1;}
 .quote-attr{font-family:'Tenor Sans',sans-serif;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-dim);margin-top:1.2rem;display:flex;align-items:center;gap:.8rem;}
 .quote-attr::before{content:'—';color:var(--gold);}
-.perf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
-.perf-card{border-radius:var(--radius-md);overflow:hidden;background:var(--glass-deep);border:1px solid var(--border);transition:all .4s cubic-bezier(.23,1,.32,1);}
+
+.perf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;}
+.perf-card{border-radius:var(--radius-md);overflow:hidden;background:var(--glass-deep);border:1px solid var(--border);transition:all .4s cubic-bezier(.23,1,.32,1);cursor:pointer;}
 .perf-card:hover{border-color:var(--border-gold);transform:translateY(-6px);box-shadow:0 24px 70px rgba(0,0,0,.5);}
-.perf-thumb{aspect-ratio:1;background:var(--glass);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.8rem;position:relative;overflow:hidden;min-height:200px;}
-.audio-wave{display:flex;align-items:center;gap:3px;height:24px;}
-.audio-wave span{display:block;width:3px;background:var(--gold);border-radius:2px;animation:wave 1.2s ease-in-out infinite;opacity:.3;}
+
+.perf-thumb{aspect-ratio:4/3;background:linear-gradient(135deg,rgba(20,16,8,.9),rgba(12,10,6,1));display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.8rem;position:relative;overflow:hidden;min-height:160px;}
+.perf-thumb::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(212,175,120,.08) 0%,transparent 70%);}
+.perf-violin-icon{font-size:3rem;opacity:.25;position:relative;z-index:1;transition:all .4s;}
+.perf-card:hover .perf-violin-icon{opacity:.45;transform:scale(1.08);}
+
+.audio-wave{display:flex;align-items:center;gap:3px;height:24px;position:relative;z-index:1;}
+.audio-wave span{display:block;width:3px;background:var(--gold);border-radius:2px;animation:wave 1.2s ease-in-out infinite;opacity:.35;}
 .audio-wave span:nth-child(1){animation-delay:0s;height:8px;}
 .audio-wave span:nth-child(2){animation-delay:.1s;height:16px;}
 .audio-wave span:nth-child(3){animation-delay:.2s;height:24px;}
@@ -27,18 +35,47 @@
 .audio-wave span:nth-child(5){animation-delay:.4s;height:20px;}
 .audio-wave span:nth-child(6){animation-delay:.1s;height:10px;}
 .audio-wave span:nth-child(7){animation-delay:.25s;height:18px;}
+.perf-card:hover .audio-wave span{opacity:.8;}
 @keyframes wave{0%,100%{transform:scaleY(.5);opacity:.3;}50%{transform:scaleY(1);opacity:.8;}}
+
+.perf-play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(7,8,15,0);transition:background .3s;z-index:2;}
+.perf-card:hover .perf-play-overlay{background:rgba(7,8,15,.45);}
+.perf-play-ring{width:56px;height:56px;border-radius:50%;background:rgba(212,175,120,.12);border:2px solid rgba(212,175,120,.35);display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--gold);opacity:0;transform:scale(.85);transition:all .35s;}
+.perf-card:hover .perf-play-ring{opacity:1;transform:scale(1);}
+
 .perf-info{padding:1.4rem;}
-.perf-type{font-family:'Tenor Sans',sans-serif;font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;}
+.perf-type{font-family:'Tenor Sans',sans-serif;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;}
 .perf-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:400;color:var(--text);line-height:1.3;margin-bottom:.2rem;}
-.perf-composer{font-size:.72rem;color:var(--gold-dim);font-style:italic;margin-bottom:.4rem;}
-.perf-desc{font-size:.75rem;color:var(--text-dim);line-height:1.6;}
+.perf-composer{font-size:.72rem;color:var(--gold-dim);font-style:italic;margin-bottom:.5rem;}
+.perf-desc{font-size:.75rem;color:var(--text-dim);line-height:1.6;margin-bottom:.6rem;}
+.perf-cta{display:inline-flex;align-items:center;gap:.4rem;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dim);border:1px solid rgba(212,175,120,.2);padding:.3rem .75rem;border-radius:5px;transition:all .25s;font-family:'Tenor Sans',sans-serif;}
+.perf-card:hover .perf-cta{color:var(--gold);border-color:var(--border-gold);}
+
+/* ── VIOLIN MODAL ── */
+.vn-overlay{position:fixed;inset:0;z-index:800;background:rgba(4,5,12,.97);backdrop-filter:blur(28px);display:none;align-items:center;justify-content:center;padding:2rem;}
+.vn-overlay.open{display:flex;}
+.vn-close{position:fixed;top:1.5rem;right:1.5rem;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:1.1rem;transition:all .2s;}
+.vn-close:hover{background:rgba(255,255,255,.15);color:var(--text);}
+.vn-panel{max-width:520px;width:100%;background:rgba(14,16,24,.9);border:1px solid var(--border-gold);border-radius:20px;padding:2.8rem;text-align:center;}
+.vn-panel-icon{font-size:3rem;margin-bottom:1rem;opacity:.35;}
+.vn-panel-type{font-family:'Tenor Sans',sans-serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;}
+.vn-panel-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;color:var(--text);margin-bottom:.3rem;}
+.vn-panel-composer{font-size:.82rem;color:var(--gold-dim);font-style:italic;margin-bottom:.5rem;}
+.vn-panel-date{font-size:.68rem;letter-spacing:.08em;color:var(--text-dim);margin-bottom:1.5rem;}
+.vn-panel-desc{font-family:'Playfair Display',serif;font-style:italic;font-size:.9rem;line-height:1.8;color:var(--text-muted);margin-bottom:2rem;}
+.vn-panel-divider{height:1px;background:linear-gradient(to right,transparent,var(--border-gold),transparent);margin-bottom:2rem;}
+.vn-listen-btn{display:flex;align-items:center;justify-content:center;gap:.7rem;padding:1rem 2rem;border-radius:100px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#07080f;font-family:'Tenor Sans',sans-serif;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;text-decoration:none;transition:all .3s;margin-bottom:.8rem;}
+.vn-listen-btn:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(212,175,120,.4);}
+.vn-no-media{font-size:.78rem;color:var(--text-dim);padding:1rem;border:1px dashed rgba(212,175,120,.2);border-radius:10px;line-height:1.6;}
+
 @media(max-width:768px){.perf-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:480px){.perf-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
-<canvas id="bg-canvas"></canvas><div class="grain"></div>
+<canvas id="bg-canvas"></canvas>
+<div class="grain"></div>
+
 <nav class="nav" id="main-nav"><div class="nav-inner">
   <a href="index.html" class="nav-logo">B<span>.</span></a>
   <div class="nav-links">
@@ -52,7 +89,9 @@
   <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a>
   <a href="blog.html">Blog</a><a href="admin.html">⚙ Admin</a>
 </div>
-<section class="page-hero"><div class="page-hero-bg"><div class="page-hero-orb hero-orb-vn"></div></div>
+
+<section class="page-hero">
+  <div class="page-hero-bg"><div class="page-hero-orb hero-orb-vn"></div></div>
   <div class="wrapper">
     <div class="section-label" style="animation:fadeUp .6s ease both;">Music</div>
     <h1 class="section-title" style="font-size:clamp(3rem,6vw,5rem);animation:fadeUp .7s .1s ease both;">The<br><em>Violin</em></h1>
@@ -60,14 +99,18 @@
   </div>
 </section>
 <div class="divider"></div>
-<section style="padding:5rem 0 8rem;"><div class="wrapper">
-  <div class="quote-block reveal">
-    <div class="quote-text">"Music gives a soul to the universe, wings to the mind, flight to the imagination, and life to everything."</div>
-    <div class="quote-attr">Plato</div>
+
+<section style="padding:5rem 0 8rem;">
+  <div class="wrapper">
+    <div class="quote-block reveal">
+      <div class="quote-text">"Music gives a soul to the universe, wings to the mind, flight to the imagination, and life to everything."</div>
+      <div class="quote-attr">Plato</div>
+    </div>
+    <div class="section-label reveal">Performances &amp; Recordings</div>
+    <div id="perf-grid" class="perf-grid reveal"></div>
   </div>
-  <div class="section-label reveal">Performances &amp; Recordings</div>
-  <div id="perf-grid" class="perf-grid reveal"></div>
-</div></section>
+</section>
+
 <footer class="footer"><div class="wrapper footer-inner">
   <span class="footer-name">Bavly Badr</span>
   <span class="footer-copy">© 2025 · BEVO copyright reserved</span>
@@ -76,37 +119,72 @@
     <a href="admin.html" class="footer-admin-btn">⚙ Admin</a>
   </div>
 </div></footer>
-<script src="db.js"></script><script src="shared.js"></script>
+
+<!-- VIOLIN MODAL -->
+<div class="vn-overlay" id="vnOverlay">
+  <button class="vn-close" id="vnClose">✕</button>
+  <div id="vnContent"></div>
+</div>
+
+<script src="db.js"></script>
+<script src="shared.js"></script>
 <script>
+'use strict';
+let _items = [];
+const vnOverlay = document.getElementById('vnOverlay');
+const vnContent = document.getElementById('vnContent');
+
+function closeViolinModal() { vnOverlay.classList.remove('open'); }
+document.getElementById('vnClose').onclick = closeViolinModal;
+vnOverlay.addEventListener('click', e => { if (e.target === vnOverlay) closeViolinModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeViolinModal(); });
+
+function openViolinModal(idx) {
+  const v = _items[idx];
+  if (!v) return;
+  vnContent.innerHTML = `
+    <div class="vn-panel">
+      <div class="vn-panel-icon">🎻</div>
+      <div class="vn-panel-type">${sanitizeHTML(v.type||'Performance')}</div>
+      <div class="vn-panel-title">${sanitizeHTML(v.title)}</div>
+      ${v.composer?`<div class="vn-panel-composer">— ${sanitizeHTML(v.composer)}</div>`:''}
+      ${v.date?`<div class="vn-panel-date">${sanitizeHTML(v.date)}</div>`:''}
+      <div class="vn-panel-divider"></div>
+      ${v.description?`<div class="vn-panel-desc">${sanitizeHTML(v.description)}</div>`:''}
+      ${v.mediaUrl
+        ? `<a class="vn-listen-btn" href="${escAttr(safeUrl(v.mediaUrl))}" target="_blank" rel="noopener">▶ Listen / Watch</a>`
+        : `<div class="vn-no-media">No recording linked yet.<br>Add a URL in the <a href="admin.html" style="color:var(--gold);">Admin panel</a>.</div>`
+      }
+    </div>`;
+  vnOverlay.classList.add('open');
+}
+
 async function init() {
-  const items = await DB.violin.getAll();
+  _items = await DB.violin.getAll();
   const el = document.getElementById('perf-grid');
-  if (!items.length) {
+  if (!_items.length) {
     el.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--text-dim);">
       <div style="font-size:2rem;margin-bottom:.8rem;opacity:.3;">🎻</div>
       <div style="font-size:.82rem;">No performances yet. <a href="admin.html" style="color:var(--gold);">Add some in Admin →</a></div>
     </div>`; return;
   }
-  el.innerHTML = items.map(v => {
-    const mediaEl = v.mediaUrl
-      ? `<a class="media-link" href="${v.mediaUrl}" target="_blank" style="margin-top:.8rem;display:inline-flex;">▶ Listen / Watch</a>`
-      : '';
-    return `<div class="perf-card">
+  el.innerHTML = _items.map((v,i) => `
+    <div class="perf-card" onclick="openViolinModal(${i})">
       <div class="perf-thumb">
-        <div style="font-size:2.5rem;opacity:.3;">🎻</div>
+        <div class="perf-violin-icon">🎻</div>
         <div class="audio-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-        <div style="font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);">${v.type||'Performance'}</div>
+        <div class="perf-play-overlay"><div class="perf-play-ring">▶</div></div>
       </div>
       <div class="perf-info">
-        <div class="perf-type">${v.type||'Performance'}</div>
-        <div class="perf-title">${v.title}</div>
-        ${v.composer?`<div class="perf-composer">${v.composer}</div>`:''}
-        <div class="perf-desc">${v.description||''}</div>
-        ${mediaEl}
+        <div class="perf-type">${sanitizeHTML(v.type||'Performance')}</div>
+        <div class="perf-title">${sanitizeHTML(v.title)}</div>
+        ${v.composer?`<div class="perf-composer">${sanitizeHTML(v.composer)}</div>`:''}
+        ${v.description?`<div class="perf-desc">${sanitizeHTML(v.description)}</div>`:''}
+        <span class="perf-cta">${v.mediaUrl?'▶ Listen / Watch':'View Details'} →</span>
       </div>
-    </div>`;
-  }).join('');
+    </div>`).join('');
 }
 init();
 </script>
-</body></html>
+</body>
+</html>

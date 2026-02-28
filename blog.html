@@ -95,13 +95,13 @@ async function showList() {
     ${posts.map((p,i)=>{
       const tags = (p.tags||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('');
       const isFirst = i===0;
-      return `<a class="blog-card${isFirst?' featured':''}" href="#${p.id}" onclick="showPost('${p.id}');return false;">
+      return `<a class="blog-card${isFirst?' featured':''}" href="#${escAttr(p.id)}" onclick="showPost('${escAttr(p.id)}');return false;">
         <div>
-          <div class="bc-cat">${p.category||'Blog'}</div>
-          <div class="bc-title">${p.title}</div>
-          <div class="bc-excerpt">${p.excerpt||''}</div>
+          <div class="bc-cat">${sanitizeHTML(p.category||'Blog')}</div>
+          <div class="bc-title">${sanitizeHTML(p.title)}</div>
+          <div class="bc-excerpt">${sanitizeHTML(p.excerpt||'')}</div>
           <div class="bc-meta">
-            <span class="bc-date">${p.date||''}</span>
+            <span class="bc-date">${sanitizeHTML(p.date||'')}</span>
             <span class="bc-read">Read →</span>
           </div>
           <div class="bc-tags" style="margin-top:.8rem">${tags}</div>
@@ -122,9 +122,9 @@ async function showPost(id) {
     <div class="post-reader reveal">
       <a class="post-back" href="#" onclick="window.location.hash='';showList();return false;">← Back to Blog</a>
       <div class="post-header">
-        <div class="post-cat">${post.category||'Blog'}</div>
-        <h1 class="post-title">${post.title}</h1>
-        <div class="post-date">${post.date||''}</div>
+        <div class="post-cat">${sanitizeHTML(post.category||'Blog')}</div>
+        <h1 class="post-title">${sanitizeHTML(post.title)}</h1>
+        <div class="post-date">${sanitizeHTML(post.date||'')}</div>
       </div>
       <div class="post-divider"></div>
       <div class="post-content">${post.content||'<p>No content yet.</p>'}</div>

@@ -537,8 +537,9 @@ body {
 .reveal.visible { opacity: 1; transform: none; }
 
 /* ── LAZY LOAD FADE ── */
-img[loading="lazy"] { opacity: 0; transition: opacity 0.4s; }
-img.loaded          { opacity: 1; }
+img { opacity: 1; }
+img[data-lazy-fade] { opacity: 0; transition: opacity 0.4s; }
+img[data-lazy-fade].loaded { opacity: 1; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {

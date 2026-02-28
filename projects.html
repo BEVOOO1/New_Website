@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projects — Bavly Badr</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
@@ -10,11 +11,10 @@
 .hero-orb-p{width:650px;height:650px;background:radial-gradient(circle,rgba(167,139,250,.09) 0%,transparent 70%);top:-150px;left:-150px;animation:pd 16s ease-in-out infinite alternate;}
 @keyframes pd{from{transform:translate(0,0);}to{transform:translate(35px,25px);}}
 
-/* PROJECT CARD */
-.project-card{border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);background:var(--glass-deep);transition:all .45s cubic-bezier(.23,1,.32,1);margin-bottom:2rem;}
+/* ── PROJECT CARD (list view) ── */
+.project-card{border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);background:var(--glass-deep);transition:all .45s cubic-bezier(.23,1,.32,1);margin-bottom:2rem;cursor:pointer;}
 .project-card:hover{border-color:var(--border-gold);box-shadow:0 30px 90px rgba(0,0,0,.5);}
 
-/* Header row */
 .p-header{display:grid;grid-template-columns:80px 1fr;border-bottom:1px solid var(--border);}
 .p-icon-col{display:flex;align-items:center;justify-content:center;font-size:2.2rem;background:var(--glass);border-right:1px solid var(--border);padding:2rem 0;transition:background .3s;}
 .project-card:hover .p-icon-col{background:rgba(212,175,120,.05);}
@@ -30,7 +30,6 @@
 .p-title{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,2.5vw,1.9rem);font-weight:400;color:var(--text);margin-bottom:.25rem;}
 .p-subtitle{font-family:'Tenor Sans',sans-serif;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);}
 
-/* Body */
 .p-body{padding:2rem 2.5rem;}
 .p-desc{font-family:'Tenor Sans',sans-serif;font-size:.84rem;line-height:1.85;color:var(--text-dim);margin-bottom:1.5rem;max-width:780px;}
 .p-feats{list-style:none;margin-bottom:1.5rem;display:flex;flex-direction:column;gap:.45rem;}
@@ -38,46 +37,81 @@
 .p-feats li::before{content:'→';color:var(--gold);flex-shrink:0;}
 .p-tech{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
 
-/* LINKS ROW */
-.p-links-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.5rem;}
-.p-link{display:inline-flex;align-items:center;gap:.45rem;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);text-decoration:none;border:1px solid var(--border-gold);border-radius:8px;padding:.4rem 1rem;transition:all .25s;background:rgba(212,175,120,.04);}
-.p-link:hover{color:var(--gold);background:rgba(212,175,120,.1);border-color:var(--border-glow);}
-.p-link.github{color:#a0c4ff;border-color:rgba(160,196,255,.3);background:rgba(160,196,255,.04);}
-.p-link.github:hover{color:#c8dcff;background:rgba(160,196,255,.1);border-color:rgba(160,196,255,.4);}
-.p-link.pdf{color:#ff9f7a;border-color:rgba(255,159,122,.3);background:rgba(255,159,122,.04);}
-.p-link.pdf:hover{color:#ffb899;background:rgba(255,159,122,.1);}
+.p-preview-strip{display:flex;gap:.7rem;margin-bottom:1.5rem;flex-wrap:nowrap;overflow-x:auto;padding-bottom:.5rem;}
+.p-preview-strip::-webkit-scrollbar{height:3px;}
+.p-preview-strip::-webkit-scrollbar-thumb{background:var(--border-gold);border-radius:10px;}
+.p-strip-thumb{width:110px;height:80px;flex-shrink:0;border-radius:8px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:all .3s;}
+.p-strip-thumb:hover{border-color:var(--border-gold);transform:scale(1.04);}
+.p-strip-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.p-strip-more{display:flex;align-items:center;justify-content:center;flex-direction:column;background:rgba(212,175,120,.06);border:1px dashed var(--border-gold);border-radius:8px;cursor:pointer;transition:all .3s;font-family:'Cinzel',serif;color:var(--gold);gap:.2rem;}
+.p-strip-more:hover{background:rgba(212,175,120,.12);}
+.p-strip-more-num{font-size:1.1rem;}
+.p-strip-more-txt{font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;}
 
-/* IMAGE GALLERY */
-.p-gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-bottom:1.5rem;}
-.p-gallery-item{aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--glass);border:1px solid var(--border);cursor:pointer;transition:all .35s;}
-.p-gallery-item:hover{border-color:var(--border-gold);transform:scale(1.02);}
-.p-gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s;}
-.p-gallery-item:hover img{transform:scale(1.05);}
-.p-gallery-item.more{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.3rem;background:rgba(212,175,120,.05);border:1px dashed var(--border-gold);cursor:pointer;}
-.p-gallery-more-num{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--gold);}
-.p-gallery-more-txt{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);}
+.p-view-btn{display:inline-flex;align-items:center;gap:.5rem;font-family:'Tenor Sans',sans-serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dim);border:1px solid var(--border-gold);padding:.5rem 1.2rem;border-radius:8px;transition:all .25s;background:rgba(212,175,120,.04);cursor:pointer;}
+.p-view-btn:hover{color:var(--gold);background:rgba(212,175,120,.1);}
 
-/* EXTRA LINKS (custom) */
-.p-extra-links{display:flex;gap:.5rem;flex-wrap:wrap;}
-.p-extra-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;border:1px solid var(--border);border-radius:8px;padding:.4rem 1rem;transition:all .25s;}
-.p-extra-link:hover{color:var(--gold);border-color:var(--border-gold);background:rgba(212,175,120,.06);}
+/* ── PROJECT MODAL ── */
+.pm-overlay{position:fixed;inset:0;z-index:800;background:rgba(4,5,12,.98);backdrop-filter:blur(28px);display:none;overflow-y:auto;}
+.pm-overlay.open{display:block;}
+.pm-inner{max-width:860px;margin:0 auto;padding:3rem 2rem 6rem;}
+.pm-close{position:fixed;top:1.5rem;right:1.5rem;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:1.1rem;transition:all .2s;z-index:10;}
+.pm-close:hover{background:rgba(255,255,255,.15);color:var(--text);}
 
-/* LIGHTBOX */
-#proj-lightbox{position:fixed;inset:0;z-index:1000;background:rgba(7,8,15,.96);backdrop-filter:blur(24px);display:none;align-items:center;justify-content:center;padding:2rem;}
-#proj-lightbox.open{display:flex;}
-#proj-lightbox img{max-width:90vw;max-height:88vh;border-radius:14px;box-shadow:0 30px 100px rgba(0,0,0,.8);border:1px solid rgba(212,175,120,.2);object-fit:contain;}
-.plb-close{position:fixed;top:2rem;right:2rem;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:1.2rem;transition:all .2s;}
-.plb-close:hover{background:rgba(255,255,255,.14);color:var(--text);}
+.pm-hero{display:flex;align-items:flex-start;gap:1.5rem;margin-bottom:2.5rem;flex-wrap:wrap;}
+.pm-icon{font-size:3.5rem;line-height:1;flex-shrink:0;}
+.pm-hero-info{flex:1;}
+.pm-status{display:inline-flex;align-items:center;gap:.5rem;font-family:'Tenor Sans',sans-serif;font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;padding:.25rem .8rem;border-radius:100px;margin-bottom:.8rem;border:1px solid;}
+.pm-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:400;color:var(--text);line-height:1.1;margin-bottom:.4rem;}
+.pm-subtitle{font-family:'Tenor Sans',sans-serif;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);}
+
+.pm-divider{height:1px;background:linear-gradient(to right,var(--border-gold),transparent);margin:2rem 0;}
+
+.pm-section-title{font-family:'Tenor Sans',sans-serif;font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;}
+.pm-section-title::before{content:'';width:16px;height:1px;background:var(--gold);}
+
+.pm-desc{font-family:'Tenor Sans',sans-serif;font-size:.88rem;line-height:1.9;color:var(--text-muted);margin-bottom:2rem;}
+.pm-feats{list-style:none;margin-bottom:2rem;display:flex;flex-direction:column;gap:.5rem;}
+.pm-feats li{font-size:.82rem;color:var(--text-muted);display:flex;align-items:flex-start;gap:.8rem;line-height:1.6;}
+.pm-feats li::before{content:'→';color:var(--gold);flex-shrink:0;}
+.pm-tech{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem;}
+
+.pm-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:2rem;}
+.pm-gallery-item{aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--glass);border:1px solid var(--border);cursor:pointer;transition:all .35s;}
+.pm-gallery-item:hover{border-color:var(--border-gold);transform:scale(1.02);}
+.pm-gallery-item img{width:100%;height:100%;object-fit:cover;display:block;}
+
+.pm-links{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:.8rem;}
+.pm-link{display:inline-flex;align-items:center;gap:.45rem;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);text-decoration:none;border:1px solid var(--border-gold);border-radius:8px;padding:.45rem 1.1rem;transition:all .25s;background:rgba(212,175,120,.04);}
+.pm-link:hover{color:var(--gold);background:rgba(212,175,120,.1);border-color:var(--border-glow);}
+.pm-link.github{color:#a0c4ff;border-color:rgba(160,196,255,.3);background:rgba(160,196,255,.04);}
+.pm-link.github:hover{color:#c8dcff;background:rgba(160,196,255,.1);}
+.pm-link.pdf{color:#ff9f7a;border-color:rgba(255,159,122,.3);background:rgba(255,159,122,.04);}
+.pm-link.pdf:hover{color:#ffb899;background:rgba(255,159,122,.1);}
+
+/* ── IMAGE LIGHTBOX (inside modal) ── */
+.ilb-overlay{position:fixed;inset:0;z-index:900;background:rgba(4,5,12,.99);display:none;align-items:center;justify-content:center;padding:2rem;}
+.ilb-overlay.open{display:flex;}
+.ilb-close{position:fixed;top:1.5rem;right:1.5rem;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:1.1rem;transition:all .2s;}
+.ilb-close:hover{color:var(--text);}
+.ilb-img{max-width:90vw;max-height:88vh;border-radius:12px;box-shadow:0 30px 100px rgba(0,0,0,.9);border:1px solid rgba(212,175,120,.2);object-fit:contain;}
+.ilb-nav{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:1rem;transition:all .2s;}
+.ilb-nav:hover{color:var(--gold);}
+#ilbPrev{left:1.5rem;}
+#ilbNext{right:1.5rem;}
 
 @media(max-width:768px){
   .p-header{grid-template-columns:60px 1fr;}
   .p-header-info,.p-body{padding:1.5rem;}
-  .p-gallery{grid-template-columns:repeat(2,1fr);}
+  .pm-gallery{grid-template-columns:repeat(2,1fr);}
+  .pm-inner{padding:2rem 1.2rem 5rem;}
 }
 </style>
 </head>
 <body>
-<canvas id="bg-canvas"></canvas><div class="grain"></div>
+<canvas id="bg-canvas"></canvas>
+<div class="grain"></div>
+
 <nav class="nav" id="main-nav"><div class="nav-inner">
   <a href="index.html" class="nav-logo">B<span>.</span></a>
   <div class="nav-links">
@@ -92,7 +126,8 @@
   <a href="blog.html">Blog</a><a href="admin.html">⚙ Admin</a>
 </div>
 
-<section class="page-hero"><div class="page-hero-bg"><div class="page-hero-orb hero-orb-p"></div></div>
+<section class="page-hero">
+  <div class="page-hero-bg"><div class="page-hero-orb hero-orb-p"></div></div>
   <div class="wrapper">
     <div class="section-label" style="animation:fadeUp .6s ease both;">Engineering</div>
     <h1 class="section-title" style="font-size:clamp(3rem,6vw,5rem);animation:fadeUp .7s .1s ease both;">Software<br><em>Projects</em></h1>
@@ -101,9 +136,11 @@
 </section>
 <div class="divider"></div>
 
-<section style="padding:5rem 0 8rem;"><div class="wrapper">
-  <div id="projects-list" class="reveal"></div>
-</div></section>
+<section style="padding:5rem 0 8rem;">
+  <div class="wrapper">
+    <div id="projects-list" class="reveal"></div>
+  </div>
+</section>
 
 <footer class="footer"><div class="wrapper footer-inner">
   <span class="footer-name">Bavly Badr</span>
@@ -114,93 +151,205 @@
   </div>
 </div></footer>
 
-<!-- LIGHTBOX -->
-<div id="proj-lightbox">
-  <button class="plb-close" id="plb-close">✕</button>
-  <img id="plb-img" src="" alt="">
+<!-- PROJECT MODAL -->
+<div class="pm-overlay" id="pmOverlay">
+  <button class="pm-close" id="pmClose">✕</button>
+  <div class="pm-inner" id="pmContent"></div>
 </div>
 
-<script src="db.js"></script><script src="shared.js"></script>
-<script>
-function openProjLightbox(src) {
-  document.getElementById('plb-img').src = src;
-  document.getElementById('proj-lightbox').classList.add('open');
-}
-document.getElementById('plb-close').onclick = () => document.getElementById('proj-lightbox').classList.remove('open');
-document.getElementById('proj-lightbox').addEventListener('click', function(e) { if (e.target === this) this.classList.remove('open'); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('proj-lightbox').classList.remove('open'); });
+<!-- IMAGE LIGHTBOX -->
+<div class="ilb-overlay" id="ilbOverlay">
+  <button class="ilb-close" id="ilbClose">✕</button>
+  <button class="ilb-nav" id="ilbPrev">‹</button>
+  <button class="ilb-nav" id="ilbNext">›</button>
+  <img class="ilb-img" id="ilbImg" src="" alt="">
+</div>
 
+<script src="db.js"></script>
+<script src="shared.js"></script>
+<script>
+'use strict';
+let _projects = [];
+let _ilbImages = [];
+let _ilbIdx = 0;
+
+// ── PROJECT MODAL ──
+const pmOverlay = document.getElementById('pmOverlay');
+const pmContent = document.getElementById('pmContent');
+
+function closeProjModal() {
+  pmOverlay.classList.remove('open');
+  pmContent.innerHTML = '';
+}
+document.getElementById('pmClose').onclick = closeProjModal;
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && pmOverlay.classList.contains('open') && !document.getElementById('ilbOverlay').classList.contains('open')) closeProjModal(); });
+
+// ── IMAGE LIGHTBOX ──
+const ilbOverlay = document.getElementById('ilbOverlay');
+const ilbImg     = document.getElementById('ilbImg');
+
+function openImageLb(images, idx) {
+  _ilbImages = images;
+  _ilbIdx = idx;
+  showIlbImg();
+  ilbOverlay.classList.add('open');
+}
+function closeImageLb() { ilbOverlay.classList.remove('open'); }
+function showIlbImg() {
+  const img = _ilbImages[_ilbIdx];
+  ilbImg.src = typeof img === 'string' ? img : img.url;
+  ilbImg.alt = typeof img === 'string' ? '' : (img.label || '');
+  document.getElementById('ilbPrev').style.display = _ilbImages.length > 1 ? '' : 'none';
+  document.getElementById('ilbNext').style.display = _ilbImages.length > 1 ? '' : 'none';
+}
+document.getElementById('ilbClose').onclick = closeImageLb;
+document.getElementById('ilbPrev').onclick = e => { e.stopPropagation(); _ilbIdx = (_ilbIdx - 1 + _ilbImages.length) % _ilbImages.length; showIlbImg(); };
+document.getElementById('ilbNext').onclick = e => { e.stopPropagation(); _ilbIdx = (_ilbIdx + 1) % _ilbImages.length; showIlbImg(); };
+ilbOverlay.addEventListener('click', e => { if (e.target === ilbOverlay) closeImageLb(); });
+document.addEventListener('keydown', e => {
+  if (!ilbOverlay.classList.contains('open')) return;
+  if (e.key === 'Escape') closeImageLb();
+  if (e.key === 'ArrowLeft') { _ilbIdx = (_ilbIdx - 1 + _ilbImages.length) % _ilbImages.length; showIlbImg(); }
+  if (e.key === 'ArrowRight') { _ilbIdx = (_ilbIdx + 1) % _ilbImages.length; showIlbImg(); }
+});
+
+// ── OPEN PROJECT DETAIL ──
+function openProject(idx) {
+  const p = _projects[idx];
+  if (!p) return;
+  const images = p.images || [];
+  const feats  = (p.features || []).map(f => `<li>${sanitizeHTML(f)}</li>`).join('');
+  const tech   = (p.techStack || []).map(t => `<span class="tag-pill">${sanitizeHTML(t)}</span>`).join('');
+
+  const mainLinks = [
+    p.links?.github ? `<a class="pm-link github" href="${escAttr(safeUrl(p.links.github))}" target="_blank" rel="noopener">🐙 GitHub</a>` : '',
+    p.links?.live   ? `<a class="pm-link" href="${escAttr(safeUrl(p.links.live))}" target="_blank" rel="noopener">🌐 Live Site</a>` : '',
+    p.links?.demo   ? `<a class="pm-link" href="${escAttr(safeUrl(p.links.demo))}" target="_blank" rel="noopener">▶ Demo</a>` : '',
+    ...(p.pdfs||[]).map(pdf => `<a class="pm-link pdf" href="${escAttr(safeUrl(pdf.url))}" target="_blank" rel="noopener">📄 ${sanitizeHTML(pdf.label||'Document')}</a>`),
+    ...(p.extraLinks||[]).map(l => `<a class="pm-link" href="${escAttr(safeUrl(l.url))}" target="_blank" rel="noopener">${sanitizeHTML(l.label||l.url)}</a>`),
+  ].filter(Boolean).join('');
+
+  const galleryHTML = images.length ? `
+    <div class="pm-section-title">Screenshots</div>
+    <div class="pm-gallery" id="pm-gallery-${idx}">
+      ${images.map((img,i) => {
+        const url = typeof img === 'string' ? img : img.url;
+        const label = typeof img === 'string' ? '' : (img.label || '');
+        return `<div class="pm-gallery-item" data-img="${i}"><img src="${escAttr(url)}" alt="${escAttr(label)}" loading="lazy"></div>`;
+      }).join('')}
+    </div>` : '';
+
+  const statusClass = p.status || 'complete';
+  const statusStyle = {
+    live:     'color:#38d9a9;border-color:rgba(56,217,169,.3);background:rgba(56,217,169,.06)',
+    complete: 'color:var(--gold);border-color:var(--border-gold);background:rgba(212,175,120,.06)',
+    progress: 'color:#60a5fa;border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.06)',
+    concept:  'color:var(--text-dim);border-color:var(--border);background:var(--glass)',
+  }[statusClass] || '';
+
+  pmContent.innerHTML = `
+    <div class="pm-hero">
+      <div class="pm-icon">${p.icon||'⚙️'}</div>
+      <div class="pm-hero-info">
+        <span class="pm-status" style="${statusStyle}">${sanitizeHTML(p.statusLabel||p.status||'Completed')}</span>
+        <div class="pm-title">${sanitizeHTML(p.title)}</div>
+        ${p.subtitle?`<div class="pm-subtitle">${sanitizeHTML(p.subtitle)}</div>`:''}
+      </div>
+    </div>
+    <div class="pm-divider"></div>
+    ${p.description?`<div class="pm-section-title">About</div><div class="pm-desc">${sanitizeHTML(p.description)}</div>`:''}
+    ${feats?`<div class="pm-section-title">Key Features</div><ul class="pm-feats">${feats}</ul>`:''}
+    ${tech?`<div class="pm-section-title">Tech Stack</div><div class="pm-tech">${tech}</div>`:''}
+    ${galleryHTML}
+    ${mainLinks?`<div class="pm-section-title">Links</div><div class="pm-links">${mainLinks}</div>`:''}`;
+
+  // Attach gallery click
+  const gallery = pmContent.querySelector(`#pm-gallery-${idx}`);
+  if (gallery) {
+    gallery.addEventListener('click', e => {
+      const item = e.target.closest('.pm-gallery-item');
+      if (!item) return;
+      openImageLb(images, parseInt(item.dataset.img));
+    });
+  }
+
+  pmOverlay.classList.add('open');
+  pmOverlay.scrollTop = 0;
+}
+
+// ── RENDER LIST ──
 async function init() {
-  const items = await DB.projects.getAll();
+  _projects = await DB.projects.getAll();
   const el = document.getElementById('projects-list');
-  if (!items.length) {
+  if (!_projects.length) {
     el.innerHTML = `<div style="text-align:center;padding:4rem;color:var(--text-dim);">
       <div style="font-size:2rem;margin-bottom:.8rem;opacity:.3;">⚙️</div>
       <div style="font-size:.82rem;">No projects yet. <a href="admin.html" style="color:var(--gold);">Add some in Admin →</a></div>
     </div>`; return;
   }
 
-  el.innerHTML = items.map(p => {
-    const feats = (p.features||[]).map(f=>`<li>${f}</li>`).join('');
-    const tags = (p.techStack||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('');
+  el.innerHTML = _projects.map((p, idx) => {
+    const feats = (p.features||[]).map(f=>`<li>${sanitizeHTML(f)}</li>`).join('');
+    const tech  = (p.techStack||[]).map(t=>`<span class="tag-pill">${sanitizeHTML(t)}</span>`).join('');
+    const images = p.images||[];
+    const previewStrip = images.length ? `
+      <div class="p-preview-strip">
+        ${images.slice(0,5).map((img,i) => {
+          const url = typeof img==='string'?img:img.url;
+          return `<div class="p-strip-thumb" data-proj="${idx}" data-img="${i}"><img src="${escAttr(url)}" alt="" loading="lazy"></div>`;
+        }).join('')}
+        ${images.length>5?`<div class="p-strip-more p-strip-thumb" data-proj="${idx}" data-img="5"><div class="p-strip-more-num">+${images.length-5}</div><div class="p-strip-more-txt">more</div></div>`:''}
+      </div>` : '';
 
-    // Main links row
-    const mainLinks = [
-      p.links?.github ? `<a class="p-link github" href="${p.links.github}" target="_blank">🐙 GitHub</a>` : '',
-      p.links?.live   ? `<a class="p-link" href="${p.links.live}" target="_blank">🌐 Live Site</a>` : '',
-      p.links?.demo   ? `<a class="p-link" href="${p.links.demo}" target="_blank">▶ Demo</a>` : '',
-    ].filter(Boolean).join('');
+    const hasLinks = (p.links?.github||p.links?.live||p.links?.demo||(p.pdfs||[]).length||(p.extraLinks||[]).length);
+    const statusClass = p.status||'complete';
 
-    // PDFs
-    const pdfLinks = (p.pdfs||[]).map(pdf =>
-      `<a class="p-link pdf" href="${pdf.url}" target="_blank">📄 ${pdf.label||'Document'}</a>`
-    ).join('');
-
-    // Extra custom links
-    const extraLinks = (p.extraLinks||[]).map(lnk =>
-      `<a class="p-extra-link" href="${lnk.url}" target="_blank">${lnk.label||lnk.url}</a>`
-    ).join('');
-
-    // Image gallery (max 4 shown + overflow count)
-    let galleryHTML = '';
-    const images = p.images || [];
-    if (images.length > 0) {
-      const shown = images.slice(0, 4);
-      const rest = images.length - 4;
-      galleryHTML = `<div class="p-gallery">
-        ${shown.map((img, idx) => `<div class="p-gallery-item" onclick="openProjLightbox('${img.url||img}')">
-          <img src="${img.url||img}" alt="${img.label||'Project screenshot'}" loading="lazy">
-        </div>`).join('')}
-        ${rest > 0 ? `<div class="p-gallery-item more" onclick="openProjLightbox('${images[4].url||images[4]}')">
-          <div class="p-gallery-more-num">+${rest}</div>
-          <div class="p-gallery-more-txt">more</div>
-        </div>` : ''}
-      </div>`;
-    }
-
-    const allLinks = mainLinks + pdfLinks;
-    const hasLinks = allLinks || extraLinks;
-
-    return `<div class="project-card">
+    return `<div class="project-card" data-proj="${idx}">
       <div class="p-header">
         <div class="p-icon-col">${p.icon||'⚙️'}</div>
         <div class="p-header-info">
-          <span class="p-status ${p.status||'complete'}">${p.statusLabel||p.status||'Completed'}</span>
-          <div class="p-title">${p.title}</div>
-          <div class="p-subtitle">${p.subtitle||''}</div>
+          <span class="p-status ${statusClass}">${sanitizeHTML(p.statusLabel||p.status||'Completed')}</span>
+          <div class="p-title">${sanitizeHTML(p.title)}</div>
+          <div class="p-subtitle">${sanitizeHTML(p.subtitle||'')}</div>
         </div>
       </div>
       <div class="p-body">
-        <div class="p-desc">${p.description||''}</div>
-        ${feats ? `<ul class="p-feats">${feats}</ul>` : ''}
-        ${tags ? `<div class="p-tech">${tags}</div>` : ''}
-        ${galleryHTML}
-        ${hasLinks ? `<div class="p-links-row">${allLinks}</div>` : ''}
-        ${extraLinks ? `<div class="p-extra-links">${extraLinks}</div>` : ''}
+        ${p.description?`<div class="p-desc">${sanitizeHTML(p.description)}</div>`:''}
+        ${feats?`<ul class="p-feats">${feats}</ul>`:''}
+        ${tech?`<div class="p-tech">${tech}</div>`:''}
+        ${previewStrip}
+        <div style="display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin-top:.5rem;">
+          <button class="p-view-btn" data-proj="${idx}">↗ View Full Details</button>
+          ${hasLinks?`<span style="font-size:.68rem;color:var(--text-dim);">${[p.links?.github?'GitHub':'',p.links?.live?'Live':'',p.links?.demo?'Demo':''].filter(Boolean).join(' · ')}</span>`:''}
+        </div>
       </div>
     </div>`;
   }).join('');
+
+  // Event delegation for all clicks on the list
+  el.addEventListener('click', e => {
+    // Image strip click → open in modal at that image
+    const stripThumb = e.target.closest('.p-strip-thumb');
+    if (stripThumb) {
+      e.stopPropagation();
+      openProject(parseInt(stripThumb.dataset.proj));
+      // After modal opens, open image lb too
+      requestAnimationFrame(() => {
+        const images = _projects[parseInt(stripThumb.dataset.proj)]?.images || [];
+        if (images.length) openImageLb(images, parseInt(stripThumb.dataset.img)||0);
+      });
+      return;
+    }
+    // View button or card click
+    const btn  = e.target.closest('.p-view-btn');
+    const card = e.target.closest('.project-card');
+    if (btn || card) {
+      const projIdx = parseInt((btn||card).dataset.proj);
+      openProject(projIdx);
+    }
+  });
 }
 init();
 </script>
-</body></html>
+</body>
+</html>
