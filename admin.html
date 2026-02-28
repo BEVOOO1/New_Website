@@ -174,11 +174,131 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .toggle-track::before{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:var(--text-dim);bottom:3px;left:3px;transition:.3s;}
 .toggle input:checked+.toggle-track::before{transform:translateX(18px);background:var(--gold);}
 
-/* ── RICH TEXT TOOLBAR ── */
-.rich-toolbar{display:flex;gap:.3rem;flex-wrap:wrap;padding:.5rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;}
-.rich-btn{background:none;border:1px solid var(--border);border-radius:4px;padding:.2rem .6rem;font-size:.75rem;color:var(--text-dim);cursor:pointer;transition:all .2s;font-family:'Tenor Sans',sans-serif;}
-.rich-btn:hover{background:var(--glass2);color:var(--text);}
-.rich-field{border-top-left-radius:0;border-top-right-radius:0;}
+/* ── WYSIWYG RICH TEXT EDITOR ── */
+.we-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .2s;}
+.we-wrap:focus-within{border-color:var(--border-gold);}
+
+.we-toolbar{
+  display:flex;align-items:center;gap:1px;flex-wrap:wrap;
+  padding:.45rem .6rem;
+  background:rgba(255,255,255,.04);
+  border-bottom:1px solid var(--border);
+}
+.we-sep{width:1px;height:20px;background:rgba(255,255,255,.09);margin:0 4px;flex-shrink:0;}
+.we-btn{
+  display:flex;align-items:center;justify-content:center;
+  min-width:30px;height:28px;padding:0 6px;
+  border:none;border-radius:5px;
+  background:none;color:var(--text-dim);
+  cursor:pointer;font-size:.8rem;font-weight:600;
+  font-family:'Tenor Sans',sans-serif;
+  transition:background .15s,color .15s;
+  white-space:nowrap;
+}
+.we-btn:hover{background:rgba(255,255,255,.08);color:var(--text);}
+.we-btn.active{background:rgba(212,175,120,.16);color:var(--gold);}
+.we-btn svg{width:14px;height:14px;fill:currentColor;display:block;}
+.we-btn-b{font-family:'Georgia',serif;font-weight:700;font-size:.9rem;}
+.we-btn-i{font-family:'Georgia',serif;font-style:italic;font-size:.9rem;}
+.we-btn-u{text-decoration:underline;font-size:.8rem;}
+.we-btn-s{text-decoration:line-through;font-size:.8rem;}
+
+/* Heading select */
+.we-select{
+  height:28px;padding:0 6px;border-radius:5px;
+  border:none;background:rgba(255,255,255,.06);
+  color:var(--text-dim);font-size:.75rem;
+  font-family:'Tenor Sans',sans-serif;cursor:pointer;
+  outline:none;
+}
+.we-select:hover{background:rgba(255,255,255,.1);color:var(--text);}
+.we-select option{background:var(--panel);}
+
+/* Editor body — the contenteditable area */
+.we-editor{
+  min-height:320px;max-height:620px;
+  padding:1.2rem 1.4rem;
+  overflow-y:auto;
+  outline:none;
+  font-family:'Georgia',serif;
+  font-size:.92rem;line-height:1.85;
+  color:var(--text);
+  background:rgba(255,255,255,.025);
+  caret-color:var(--gold);
+}
+.we-editor:empty::before{
+  content:attr(data-placeholder);
+  color:var(--text-dim);pointer-events:none;
+}
+/* Scroll bar */
+.we-editor::-webkit-scrollbar{width:4px;}
+.we-editor::-webkit-scrollbar-thumb{background:rgba(212,175,120,.2);border-radius:4px;}
+
+/* Typography inside the editor */
+.we-editor h1{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;margin:.9rem 0 .4rem;color:var(--text);}
+.we-editor h2{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;margin:.8rem 0 .35rem;color:var(--text);}
+.we-editor h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;margin:.7rem 0 .3rem;color:var(--text);}
+.we-editor p{margin:.35rem 0;}
+.we-editor strong{color:var(--text);font-weight:700;}
+.we-editor em{font-style:italic;color:rgba(240,236,228,.85);}
+.we-editor u{text-decoration:underline;}
+.we-editor s{text-decoration:line-through;opacity:.6;}
+.we-editor a{color:var(--gold);text-decoration:underline;cursor:pointer;}
+.we-editor a:hover{color:var(--gold-light);}
+.we-editor blockquote{
+  border-left:3px solid var(--border-gold);
+  margin:.6rem 0;padding:.5rem 1rem;
+  background:rgba(212,175,120,.04);
+  font-style:italic;color:var(--text-muted);
+  border-radius:0 6px 6px 0;
+}
+.we-editor code{
+  background:rgba(100,160,255,.12);border:1px solid rgba(100,160,255,.2);
+  border-radius:4px;padding:.1em .4em;
+  font-family:'Courier New',monospace;font-size:.85em;
+  color:rgba(140,190,255,.9);
+}
+.we-editor pre{
+  background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;padding:1rem;margin:.6rem 0;
+  overflow-x:auto;
+}
+.we-editor pre code{background:none;border:none;padding:0;color:rgba(180,220,180,.9);}
+.we-editor ul,.we-editor ol{padding-left:1.5rem;margin:.4rem 0;}
+.we-editor li{margin:.2rem 0;}
+.we-editor hr{border:none;border-top:1px solid rgba(255,255,255,.1);margin:1rem 0;}
+.we-editor img{max-width:100%;border-radius:6px;margin:.4rem 0;}
+.we-editor .we-highlight{background:rgba(212,175,120,.2);border-radius:2px;padding:.05em .2em;}
+
+/* Status bar */
+.we-status{
+  padding:.3rem .8rem;
+  background:rgba(255,255,255,.02);
+  border-top:1px solid rgba(255,255,255,.05);
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:.62rem;letter-spacing:.06em;color:var(--text-dim);
+}
+
+/* Link dialog popup */
+.we-link-dialog{
+  position:fixed;z-index:1000;
+  background:var(--panel);border:1px solid var(--border-gold);
+  border-radius:10px;padding:1rem 1.2rem;
+  box-shadow:0 12px 40px rgba(0,0,0,.6);
+  display:none;min-width:320px;
+}
+.we-link-dialog.open{display:block;}
+.we-link-dialog label{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:.3rem;}
+.we-link-dialog input{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:6px;padding:.55rem .8rem;color:var(--text);font-size:.82rem;font-family:'Tenor Sans',sans-serif;outline:none;margin-bottom:.6rem;}
+.we-link-dialog input:focus{border-color:var(--border-gold);}
+.we-link-actions{display:flex;gap:.5rem;justify-content:flex-end;}
+.we-link-btn{padding:.4rem .9rem;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text-dim);font-size:.72rem;cursor:pointer;font-family:'Tenor Sans',sans-serif;transition:all .2s;}
+.we-link-btn.primary{background:rgba(212,175,120,.15);border-color:var(--border-gold);color:var(--gold);}
+.we-link-btn:hover{background:var(--glass2);color:var(--text);}
+.we-link-btn.primary:hover{background:rgba(212,175,120,.25);}
+
+/* Word count badge */
+.we-wordcount{font-size:.62rem;color:var(--text-dim);letter-spacing:.04em;}
 
 /* ── CONFIRM DIALOG ── */
 .confirm-dialog{position:fixed;inset:0;z-index:600;background:rgba(7,8,15,.8);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}
@@ -196,6 +316,10 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .table-empty{padding:4rem;text-align:center;color:var(--text-dim);}
 .table-empty-icon{font-size:2.5rem;margin-bottom:.8rem;opacity:.3;}
 .table-empty-text{font-size:.8rem;letter-spacing:.1em;}
+
+/* ── SKELETON LOADING ── */
+@keyframes skel-shimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
+.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.09) 50%,rgba(255,255,255,.04) 75%);background-size:600px 100%;animation:skel-shimmer 1.4s ease-in-out infinite;border-radius:4px;display:block;}
 
 /* ── MOBILE SIDEBAR TOGGLE ── */
 .sidebar-toggle{display:none;position:fixed;bottom:1.5rem;left:1.5rem;z-index:300;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;cursor:pointer;font-size:1.1rem;box-shadow:0 6px 20px rgba(212,175,120,.4);}
@@ -432,6 +556,11 @@ function openModal(title, bodyHTML, onSave) {
   modal.classList.add('open');
   document.getElementById('modal-save').onclick = onSave;
 
+  // Auto-init WYSIWYG editor if blog form was injected
+  requestAnimationFrame(() => {
+    if (document.getElementById('we-editor')) initWysiwygEditor();
+  });
+
   // Wire file inputs for single-image previews with optimization
   modal.querySelectorAll('input[type=file][data-preview]').forEach(inp => {
     inp.addEventListener('change', async function () {
@@ -560,22 +689,34 @@ document.getElementById('sidebarToggle').addEventListener('click', () => {
   document.getElementById('sidebar').classList.toggle('open');
 });
 
-// ── COUNTS ──
+// ── COUNTS — parallel fetch ──
 async function loadCounts() {
   const keys = ['design','video','violin','competitions','blog','projects'];
-  for (const k of keys) {
+  await Promise.all(keys.map(async k => {
     const col = await DB[k].getAll();
     allData[k] = col;
     const el = document.getElementById('cnt-' + k);
     if (el) el.textContent = col.length;
-  }
+  }));
 }
 
 // ── RENDER PANEL ──
+function skelTable(cols = 4, rows = 5) {
+  const cells = Array(cols).fill(0).map(() => `<td><div class="skeleton" style="height:14px;border-radius:4px;"></div></td>`).join('');
+  const headCells = Array(cols).fill(0).map(() => `<th><div class="skeleton" style="height:12px;width:60%;border-radius:4px;"></div></th>`).join('');
+  return `<div class="table-wrap">
+    <div class="table-head" style="padding:.9rem 1.2rem;">
+      <div class="skeleton" style="height:16px;width:180px;border-radius:6px;"></div>
+    </div>
+    <table><thead><tr>${headCells}</tr></thead><tbody>
+      ${Array(rows).fill(0).map(() => `<tr style="opacity:${Math.random()*.4+.3}">${cells}</tr>`).join('')}
+    </tbody></table></div>`;
+}
+
 async function renderPanel(panel) {
   const area = document.getElementById('content-area');
-  area.innerHTML = '<div style="display:flex;align-items:center;gap:.8rem;padding:3rem;color:rgba(240,236,228,.32);font-size:.8rem;">Loading…</div>';
-  if (panel === 'dashboard') { await renderDashboard(); return; }
+  if (panel === 'dashboard') { area.innerHTML = skelTable(3,6); await renderDashboard(); return; }
+  area.innerHTML = skelTable(5,5);
   const items = await DB[panel].getAll();
   allData[panel] = items;
   const cnt = document.getElementById('cnt-' + panel);
@@ -1129,6 +1270,7 @@ function formCompetition(i = {}) {
 }
 
 function formBlog(i = {}) {
+  const content = i.content || '';
   return `<div class="form-grid">
     <div class="field full"><label>Post Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="How I built the Church Points System"></div>
     <div class="field"><label>Category</label>
@@ -1137,11 +1279,100 @@ function formBlog(i = {}) {
     <div class="field"><label>Date</label><input id="f_date" type="date" value="${i.date||''}"></div>
     <div class="field full"><label>Excerpt</label><textarea id="f_excerpt" rows="2">${esc(i.excerpt||'')}</textarea></div>
     <div class="field full">
-      <label>Content (HTML supported)</label>
-      <div class="rich-toolbar">
-        ${[['B','<strong>','</strong>'],['I','<em>','</em>'],['H2','<h2>','</h2>'],['H3','<h3>','</h3>'],['P','<p>','</p>'],['Code','<code>','</code>'],['Link','<a href="">','</a>']].map(([l,o,c])=>`<button type="button" class="rich-btn" onclick="wrapSelection('f_content','${o}','${c}')">${l}</button>`).join('')}
+      <label>Content</label>
+      <div class="we-wrap" id="we-wrap">
+
+        <!-- TOOLBAR -->
+        <div class="we-toolbar" id="we-toolbar">
+
+          <!-- Headings -->
+          <select class="we-select" id="we-heading" title="Paragraph style">
+            <option value="p">Paragraph</option>
+            <option value="h1">Heading 1</option>
+            <option value="h2">Heading 2</option>
+            <option value="h3">Heading 3</option>
+            <option value="blockquote">Quote</option>
+            <option value="pre">Code Block</option>
+          </select>
+
+          <div class="we-sep"></div>
+
+          <!-- Inline formatting -->
+          <button type="button" class="we-btn we-btn-b" data-cmd="bold"       title="Bold (Ctrl+B)"><b>B</b></button>
+          <button type="button" class="we-btn we-btn-i" data-cmd="italic"     title="Italic (Ctrl+I)"><i>I</i></button>
+          <button type="button" class="we-btn we-btn-u" data-cmd="underline"  title="Underline (Ctrl+U)"><u>U</u></button>
+          <button type="button" class="we-btn we-btn-s" data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+          <button type="button" class="we-btn" data-cmd="hiliteColor" data-val="rgba(212,175,120,0.25)" title="Highlight">◐</button>
+
+          <div class="we-sep"></div>
+
+          <!-- Lists -->
+          <button type="button" class="we-btn" data-cmd="insertUnorderedList" title="Bullet list">
+            <svg viewBox="0 0 16 16"><circle cx="2" cy="4" r="1.4"/><rect x="5" y="3" width="10" height="2" rx="1"/><circle cx="2" cy="8" r="1.4"/><rect x="5" y="7" width="10" height="2" rx="1"/><circle cx="2" cy="12" r="1.4"/><rect x="5" y="11" width="10" height="2" rx="1"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="insertOrderedList" title="Numbered list">
+            <svg viewBox="0 0 16 16"><text x="1" y="5" font-size="5" fill="currentColor">1.</text><rect x="6" y="3" width="9" height="2" rx="1"/><text x="1" y="9" font-size="5" fill="currentColor">2.</text><rect x="6" y="7" width="9" height="2" rx="1"/><text x="1" y="13" font-size="5" fill="currentColor">3.</text><rect x="6" y="11" width="9" height="2" rx="1"/></svg>
+          </button>
+
+          <div class="we-sep"></div>
+
+          <!-- Alignment -->
+          <button type="button" class="we-btn" data-cmd="justifyLeft"   title="Align left">
+            <svg viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="2" rx="1"/><rect x="1" y="6" width="9" height="2" rx="1"/><rect x="1" y="10" width="14" height="2" rx="1"/><rect x="1" y="14" width="6" height="2" rx="1"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="justifyCenter" title="Align centre">
+            <svg viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="2" rx="1"/><rect x="3.5" y="6" width="9" height="2" rx="1"/><rect x="1" y="10" width="14" height="2" rx="1"/><rect x="5" y="14" width="6" height="2" rx="1"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="justifyRight"  title="Align right">
+            <svg viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="2" rx="1"/><rect x="6" y="6" width="9" height="2" rx="1"/><rect x="1" y="10" width="14" height="2" rx="1"/><rect x="9" y="14" width="6" height="2" rx="1"/></svg>
+          </button>
+
+          <div class="we-sep"></div>
+
+          <!-- Indent -->
+          <button type="button" class="we-btn" data-cmd="indent"  title="Indent">⇥</button>
+          <button type="button" class="we-btn" data-cmd="outdent" title="Outdent">⇤</button>
+
+          <div class="we-sep"></div>
+
+          <!-- Link & HR -->
+          <button type="button" class="we-btn" id="we-link-btn" title="Insert / Edit link">
+            <svg viewBox="0 0 16 16"><path d="M6.5 9.5a3 3 0 0 0 4.24 0l2-2a3 3 0 0 0-4.24-4.24l-1.12 1.12" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M9.5 6.5a3 3 0 0 0-4.24 0l-2 2a3 3 0 0 0 4.24 4.24l1.12-1.12" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="unlink" title="Remove link">
+            <svg viewBox="0 0 16 16"><path d="M6.5 9.5a3 3 0 0 0 4.24 0l2-2a3 3 0 0 0-4.24-4.24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M9.5 6.5a3 3 0 0 0-4.24 0l-2 2a3 3 0 0 0 4.24 4.24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><line x1="13" y1="3" x2="3" y2="13" stroke="currentColor" stroke-width="1.5"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="insertHorizontalRule" title="Divider line">—</button>
+
+          <div class="we-sep"></div>
+
+          <!-- Undo / Redo -->
+          <button type="button" class="we-btn" data-cmd="undo" title="Undo (Ctrl+Z)">
+            <svg viewBox="0 0 16 16"><path d="M3 7a5 5 0 1 1 0 6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><polyline points="1,4 3,7 6,5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="redo" title="Redo (Ctrl+Y)">
+            <svg viewBox="0 0 16 16"><path d="M13 7a5 5 0 1 0 0 6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><polyline points="15,4 13,7 10,5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="removeFormat" title="Clear formatting">✕<sub style="font-size:.55rem">fmt</sub></button>
+        </div>
+
+        <!-- EDITABLE AREA -->
+        <div
+          class="we-editor"
+          id="we-editor"
+          contenteditable="true"
+          data-placeholder="Start writing your post…"
+        >${content || '<p></p>'}</div>
+
+        <!-- STATUS BAR -->
+        <div class="we-status">
+          <span id="we-status-msg">Ready</span>
+          <span class="we-wordcount" id="we-wordcount">0 words</span>
+        </div>
       </div>
-      <textarea id="f_content" class="rich-field" rows="12">${i.content||''}</textarea>
+
+      <!-- Hidden input — value synced on save -->
+      <input type="hidden" id="f_content" value="">
     </div>
     <div class="field full"><label>Tags (comma separated)</label><input id="f_tags" value="${(i.tags||[]).join(', ')}" placeholder="Engineering, Web Dev"></div>
     <div class="field full"><div class="toggle-row"><span class="toggle-label">Featured post</span>
@@ -1253,7 +1484,7 @@ function collectForm(collection) {
     }),
     blog: () => ({
       title: gv('f_title'), category: gv('f_category'), date: gv('f_date'),
-      excerpt: gv('f_excerpt'), content: gv('f_content'),
+      excerpt: gv('f_excerpt'), content: getEditorContent(),
       tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean).slice(0,20),
       featured: gb('f_featured')
     }),
@@ -1278,16 +1509,189 @@ function collectForm(collection) {
   return data;
 }
 
-// ── RICH TEXT HELPER ──
+// ══════════════════════════════════════════════════
+//  WYSIWYG RICH EDITOR ENGINE
+// ══════════════════════════════════════════════════
+let _weEditor = null;
+let _weSavedSel = null;
+
+function initWysiwygEditor() {
+  const editor  = document.getElementById('we-editor');
+  const toolbar = document.getElementById('we-toolbar');
+  const heading = document.getElementById('we-heading');
+  const linkBtn = document.getElementById('we-link-btn');
+  if (!editor) return;
+  _weEditor = editor;
+
+  // ── exec helper ──
+  function exec(cmd, val = null) {
+    editor.focus();
+    document.execCommand(cmd, false, val);
+    syncToolbarState();
+  }
+
+  // ── toolbar button clicks ──
+  toolbar.addEventListener('mousedown', e => {
+    const btn = e.target.closest('[data-cmd]');
+    if (!btn) return;
+    e.preventDefault(); // keep focus in editor
+    const cmd = btn.dataset.cmd;
+    const val = btn.dataset.val || null;
+    exec(cmd, val);
+  });
+
+  // ── heading/block select ──
+  heading.addEventListener('change', () => {
+    const tag = heading.value;
+    editor.focus();
+    if (tag === 'pre') {
+      // wrap selection in <pre><code>
+      const sel = window.getSelection();
+      const txt = sel.toString() || 'code here';
+      document.execCommand('insertHTML', false, `<pre><code>${txt}</code></pre><p><br></p>`);
+    } else if (tag === 'blockquote') {
+      document.execCommand('formatBlock', false, 'blockquote');
+    } else {
+      document.execCommand('formatBlock', false, tag);
+    }
+    heading.value = 'p'; // reset
+    syncToolbarState();
+  });
+
+  // ── LINK DIALOG ──
+  linkBtn.addEventListener('mousedown', e => {
+    e.preventDefault();
+    _weSavedSel = saveSelection();
+    const existing = getSelectedLink();
+    const dialog = document.getElementById('we-link-dialog');
+    document.getElementById('we-link-url').value  = existing?.href || 'https://';
+    document.getElementById('we-link-text').value = existing?.textContent || window.getSelection().toString() || '';
+    // Position near button
+    const r = linkBtn.getBoundingClientRect();
+    dialog.style.top  = (r.bottom + 8 + window.scrollY) + 'px';
+    dialog.style.left = Math.min(r.left, window.innerWidth - 340) + 'px';
+    dialog.classList.add('open');
+  });
+
+  document.getElementById('we-link-cancel').addEventListener('click', () => {
+    document.getElementById('we-link-dialog').classList.remove('open');
+  });
+
+  document.getElementById('we-link-insert').addEventListener('click', () => {
+    const url  = document.getElementById('we-link-url').value.trim();
+    const text = document.getElementById('we-link-text').value.trim();
+    if (!url) return;
+    restoreSelection(_weSavedSel);
+    editor.focus();
+    const sel = window.getSelection();
+    if (sel.toString()) {
+      document.execCommand('createLink', false, url);
+    } else {
+      const linkHTML = `<a href="${url.replace(/"/g,'&quot;')}">${text || url}</a>`;
+      document.execCommand('insertHTML', false, linkHTML);
+    }
+    document.getElementById('we-link-dialog').classList.remove('open');
+    syncToolbarState();
+  });
+
+  // Close link dialog on outside click
+  document.addEventListener('mousedown', e => {
+    const d = document.getElementById('we-link-dialog');
+    if (d.classList.contains('open') && !d.contains(e.target) && e.target !== linkBtn) {
+      d.classList.remove('open');
+    }
+  });
+
+  // ── Keyboard shortcuts ──
+  editor.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey) {
+      const shortcuts = { b:'bold', i:'italic', u:'underline', z:'undo', y:'redo' };
+      if (shortcuts[e.key.toLowerCase()]) {
+        e.preventDefault();
+        exec(shortcuts[e.key.toLowerCase()]);
+      }
+      if (e.key.toLowerCase() === 'k') { e.preventDefault(); linkBtn.dispatchEvent(new MouseEvent('mousedown')); }
+    }
+    // Tab → indent
+    if (e.key === 'Tab') { e.preventDefault(); exec(e.shiftKey ? 'outdent' : 'indent'); }
+    // Enter in empty list item → exit list
+    if (e.key === 'Enter' && !e.shiftKey) {
+      // Let browser handle naturally
+    }
+    updateWordCount();
+  });
+
+  // ── Paste: strip formatting ──
+  editor.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = e.clipboardData.getData('text/plain');
+    document.execCommand('insertText', false, text);
+  });
+
+  // ── Toolbar state sync ──
+  editor.addEventListener('keyup', syncToolbarState);
+  editor.addEventListener('mouseup', syncToolbarState);
+  editor.addEventListener('input', () => { updateWordCount(); });
+
+  function syncToolbarState() {
+    const cmds = ['bold','italic','underline','strikeThrough','insertUnorderedList','insertOrderedList'];
+    toolbar.querySelectorAll('[data-cmd]').forEach(btn => {
+      try { btn.classList.toggle('active', document.queryCommandState(btn.dataset.cmd)); } catch(e) {}
+    });
+  }
+
+  function updateWordCount() {
+    const text = (editor.innerText || '').trim();
+    const words = text ? text.split(/\s+/).length : 0;
+    const chars = text.length;
+    const el = document.getElementById('we-wordcount');
+    if (el) el.textContent = `${words} word${words!==1?'s':''} · ${chars} chars`;
+    const msg = document.getElementById('we-status-msg');
+    if (msg) msg.textContent = 'Editing';
+  }
+
+  // Init word count
+  updateWordCount();
+  syncToolbarState();
+}
+
+// ── Selection save/restore (for link dialog) ──
+function saveSelection() {
+  const sel = window.getSelection();
+  return sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null;
+}
+function restoreSelection(range) {
+  if (!range) return;
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+function getSelectedLink() {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return null;
+  let node = sel.getRangeAt(0).commonAncestorContainer;
+  while (node && node.nodeName !== 'A') node = node.parentNode;
+  return (node && node.nodeName === 'A') ? node : null;
+}
+
+// ── Get editor HTML for saving ──
+function getEditorContent() {
+  const ed = document.getElementById('we-editor');
+  if (!ed) return document.getElementById('f_content')?.value || '';
+  return ed.innerHTML
+    .replace(/<p><br><\/p>$/, '') // strip trailing empty paragraph
+    .trim();
+}
+
+// Old wrapSelection kept for any other uses
 function wrapSelection(id, open, close) {
   const ta = document.getElementById(id);
   if (!ta) return;
-  const start    = ta.selectionStart;
-  const end      = ta.selectionEnd;
-  const selected = ta.value.substring(start, end);
-  ta.value = ta.value.substring(0, start) + open + selected + close + ta.value.substring(end);
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.substring(s, e);
+  ta.value = ta.value.substring(0, s) + open + sel + close + ta.value.substring(e);
   ta.focus();
-  ta.setSelectionRange(start + open.length, start + open.length + selected.length);
+  ta.setSelectionRange(s + open.length, s + open.length + sel.length);
 }
 
 // ── EXPORT ──
@@ -1318,5 +1722,17 @@ document.getElementById('resetBtn').onclick = async (e) => {
 // ── INIT ──
 renderPanel('dashboard');
 </script>
+<!-- ── WYSIWYG LINK DIALOG ── -->
+<div class="we-link-dialog" id="we-link-dialog" style="position:fixed;">
+  <label>Link URL</label>
+  <input type="url" id="we-link-url" placeholder="https://example.com">
+  <label>Link Text (optional — leave blank to use selection)</label>
+  <input type="text" id="we-link-text" placeholder="Click here">
+  <div class="we-link-actions">
+    <button type="button" class="we-link-btn" id="we-link-cancel">Cancel</button>
+    <button type="button" class="we-link-btn primary" id="we-link-insert">Insert Link</button>
+  </div>
+</div>
+
 </body>
 </html>

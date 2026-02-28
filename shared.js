@@ -154,23 +154,41 @@ function initReveal() {
 document.addEventListener('DOMContentLoaded', initReveal);
 window.initReveal = initReveal;
 
-// ── LAZY IMAGE LOADING ──
+// ── LAZY IMAGE LOADING — blur-up reveal ──
 function initLazyImages() {
-  const imgs = document.querySelectorAll('img[loading="lazy"]');
+  // Handle both data-src (deferred load) and regular src with lazy-img class
+  function attachLoad(img) {
+    const onLoad = () => {
+      img.classList.add('loaded');
+      img.parentElement?.classList?.add('img-loaded');
+    };
+    if (img.complete && img.naturalWidth) { onLoad(); return; }
+    img.addEventListener('load',  onLoad, { once: true });
+    img.addEventListener('error', onLoad, { once: true });
+  }
+
+  const dataSrcImgs = document.querySelectorAll('img[data-src]');
+  const lazyImgs    = document.querySelectorAll('img.lazy-img:not([data-src])');
+
   if ('IntersectionObserver' in window) {
     const obs = new IntersectionObserver((entries, o) => {
       entries.forEach(e => {
-        if (e.isIntersecting) {
-          const img = e.target;
-          img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
-          img.addEventListener('error', () => img.classList.add('loaded'), { once: true });
-          o.unobserve(img);
+        if (!e.isIntersecting) return;
+        const img = e.target;
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+          delete img.dataset.src;
         }
+        attachLoad(img);
+        o.unobserve(img);
       });
-    }, { rootMargin: '200px' });
-    imgs.forEach(img => obs.observe(img));
+    }, { rootMargin: '300px' });
+
+    dataSrcImgs.forEach(img => obs.observe(img));
+    lazyImgs.forEach(img    => obs.observe(img));
   } else {
-    imgs.forEach(img => img.classList.add('loaded'));
+    dataSrcImgs.forEach(img => { if (img.dataset.src) img.src = img.dataset.src; img.classList.add('loaded'); });
+    lazyImgs.forEach(img    => img.classList.add('loaded'));
   }
 }
 document.addEventListener('DOMContentLoaded', initLazyImages);

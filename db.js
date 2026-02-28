@@ -43,11 +43,25 @@ const DB = (() => {
     return text ? JSON.parse(text) : null;
   }
 
+  // ── IN-MEMORY CACHE (30-second TTL) ────────────
+  const _cache = {};
+  function cacheGet(table) {
+    const entry = _cache[table];
+    if (entry && (Date.now() - entry.ts) < 30000) return entry.data;
+    return null;
+  }
+  function cacheSet(table, data) { _cache[table] = { data, ts: Date.now() }; }
+  function cacheClear(table) { delete _cache[table]; }
+
   // SELECT all rows, ordered by sort_order then created_at
   async function sbGetAll(table) {
-    return sbRequest('GET', table, {
+    const cached = cacheGet(table);
+    if (cached) return cached;
+    const data = await sbRequest('GET', table, {
       filter: 'order=sort_order.asc,created_at.desc',
     }) || [];
+    cacheSet(table, data);
+    return data;
   }
 
   // SELECT one row by id
@@ -60,12 +74,14 @@ const DB = (() => {
 
   // INSERT a row
   async function sbInsert(table, row) {
+    cacheClear(table);
     const rows = await sbRequest('POST', table, { body: row });
     return Array.isArray(rows) ? rows[0] : rows;
   }
 
   // UPDATE a row by id
   async function sbUpdate(table, id, updates) {
+    cacheClear(table);
     const rows = await sbRequest('PATCH', table, {
       filter: `id=eq.${encodeURIComponent(id)}`,
       body: updates,
@@ -75,6 +91,7 @@ const DB = (() => {
 
   // DELETE a row by id
   async function sbDelete(table, id) {
+    cacheClear(table);
     return sbRequest('DELETE', table, {
       filter: `id=eq.${encodeURIComponent(id)}`,
     });
@@ -336,7 +353,7 @@ const DB = (() => {
   }
 
   // ── IMAGE COMPRESSION ───────────────────────────
-  async function processImageUpload(file, maxWidth = 1200, maxHeight = 1200, quality = 0.82) {
+  async function processImageUpload(file, maxWidth = 900, maxHeight = 900, quality = 0.78) {
     const allowed = ['image/jpeg','image/jpg','image/png','image/webp','image/gif'];
     if (!allowed.includes(file.type)) throw new Error('Invalid file type. Only JPG, PNG, WebP, and GIF are allowed.');
     if (file.size > 10 * 1024 * 1024) throw new Error('File too large. Maximum size is 10MB.');

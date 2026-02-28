@@ -175,6 +175,18 @@ function getFiltered() {
   return activeFilter === 'all' ? allItems : allItems.filter(i => i.category === activeFilter);
 }
 
+/* Show skeletons while data loads */
+function showSkeletons(count = 6) {
+  const el = document.getElementById('gallery');
+  el.innerHTML = Array.from({length: count}, () => `
+    <div class="skel-card">
+      <div class="skel-thumb"></div>
+      <div class="skel-line" style="margin-top:14px;width:70%;"></div>
+      <div class="skel-line short" style="margin-top:8px;"></div>
+      <div class="skel-line xshort" style="margin:10px 16px 16px;"></div>
+    </div>`).join('');
+}
+
 function renderGallery() {
   const items = getFiltered();
   const el = document.getElementById('gallery');
@@ -194,7 +206,7 @@ function renderGallery() {
     const clickable = item.image && imgIdx !== -1;
 
     const thumbContent = item.image
-      ? `<img src="${escAttr(item.image)}" alt="${escAttr(item.title)}">
+      ? `<img class="lazy-img" data-src="${escAttr(item.image)}" alt="${escAttr(item.title)}" loading="lazy">
          <div class="dc-overlay">
            <div class="dc-view-label">View Full</div>
            <div class="dc-view-icon">↗</div>
@@ -215,6 +227,9 @@ function renderGallery() {
     </div>`;
   }).join('');
 
+  // Activate lazy loading for new images
+  if (window.initLazyImages) initLazyImages();
+
   // Attach click via delegation
   el.onclick = e => {
     const card = e.target.closest('.design-card');
@@ -226,6 +241,7 @@ function renderGallery() {
 }
 
 async function init() {
+  showSkeletons(6);
   allItems = await DB.design.getAll();
   const cats = ['All Work', ...new Set(allItems.map(i=>i.category).filter(Boolean))];
   const row = document.getElementById('filter-row');
