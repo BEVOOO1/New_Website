@@ -183,3 +183,37 @@ insert into projects (id, title, subtitle, icon, status, status_label, descripti
    '["Reminder and scheduling functionality","Memory assistance tools","Multi-screen structured interface"]',
    '{"github":"","live":"","demo":""}', '2024-10-15', true)
 on conflict (id) do nothing;
+
+
+-- ════════════════════════════════════════════════
+-- AUDIO STORAGE BUCKET
+-- Run this in Supabase Dashboard → SQL Editor
+-- ════════════════════════════════════════════════
+
+-- Create the "audio" storage bucket (public = anyone can read the files)
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'audio',
+  'audio',
+  true,
+  52428800,   -- 50 MB per file
+  array['audio/mpeg','audio/mp3','audio/wav','audio/wave','audio/x-wav',
+        'audio/mp4','audio/m4a','audio/x-m4a','audio/aac',
+        'audio/ogg','audio/flac','audio/x-flac','audio/webm']
+)
+on conflict (id) do nothing;
+
+-- Allow anyone (anon) to read audio files (public playback)
+create policy "Public read audio"
+  on storage.objects for select
+  using ( bucket_id = 'audio' );
+
+-- Allow anon to upload audio files (admin panel is PIN-protected in browser)
+create policy "Anon upload audio"
+  on storage.objects for insert
+  with check ( bucket_id = 'audio' );
+
+-- Allow anon to delete audio files (for replacing tracks in admin)
+create policy "Anon delete audio"
+  on storage.objects for delete
+  using ( bucket_id = 'audio' );

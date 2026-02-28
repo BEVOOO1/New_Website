@@ -470,6 +470,60 @@ function openModal(title, bodyHTML, onSave) {
       }
     });
   });
+
+  // Wire audio file upload for violin forms — uploads to Supabase Storage
+  const audioFileInput = modal.querySelector('#f_audioFile');
+  if (audioFileInput) {
+    audioFileInput.addEventListener('change', async function() {
+      const file = this.files[0];
+      if (!file) return;
+      const label    = document.getElementById('audio-upload-label');
+      const sizeInfo = document.getElementById('audio-size-info');
+      const progFill = document.getElementById('audio-progress-fill');
+      const progWrap = this.closest('.upload-area')?.querySelector('.upload-progress');
+
+      if (progWrap) progWrap.style.display = 'block';
+      if (progFill) progFill.style.width = '5%';
+      if (label) label.textContent = `Uploading ${file.name}…`;
+      if (sizeInfo) sizeInfo.textContent = `${(file.size/1024/1024).toFixed(1)} MB — uploading to cloud…`;
+
+      try {
+        const publicUrl = await DB.upload.audioFile(file, pct => {
+          if (progFill) progFill.style.width = pct + '%';
+        });
+
+        if (progFill) progFill.style.width = '100%';
+        setTimeout(() => { if (progWrap) progWrap.style.display = 'none'; }, 700);
+
+        // Save public URL into the mediaUrl field
+        const mediaField = document.getElementById('f_mediaUrl');
+        if (mediaField) mediaField.value = publicUrl;
+
+        if (label) label.textContent = `✓ ${file.name} — uploaded`;
+        if (sizeInfo) sizeInfo.textContent = `Stored in Supabase Storage ✓`;
+
+        // Preview player
+        const area = document.getElementById('audio-upload-area');
+        if (area) {
+          let prev = area.parentElement.querySelector('.audio-preview-el');
+          if (prev) prev.remove();
+          const aud = document.createElement('audio');
+          aud.controls = true;
+          aud.src = publicUrl;
+          aud.className = 'audio-preview-el';
+          aud.style.cssText = 'width:100%;margin-top:.7rem;border-radius:8px;height:40px;display:block;';
+          area.after(aud);
+        }
+        toast('Audio uploaded to cloud — click Save to finish', 'success');
+      } catch(err) {
+        if (progWrap) progWrap.style.display = 'none';
+        if (label) label.textContent = 'Click or drag & drop an audio file';
+        if (sizeInfo) sizeInfo.textContent = '';
+        toast(err.message || 'Upload failed', 'error');
+        this.value = '';
+      }
+    });
+  }
 }
 
 function closeModal() {
@@ -946,11 +1000,24 @@ function formVideo(i = {}) {
       <select id="f_category">${['Church Event','Event Recap','Short Film','Documentary','Highlight Reel','Other'].map(c=>`<option ${i.category===c?'selected':''}>${c}</option>`).join('')}</select>
     </div>
     <div class="field"><label>Duration (e.g. 3:24)</label><input id="f_duration" value="${esc(i.duration||'')}" placeholder="2:30"></div>
-    <div class="field full"><label>YouTube / Vimeo Embed URL</label>
-      <input id="f_embedUrl" value="${esc(i.embedUrl||'')}" placeholder="https://www.youtube.com/embed/VIDEO_ID">
-      <div class="field-hint">YouTube: Share → Embed → copy the src URL</div>
+    <div class="field full form-section">
+      <div class="form-section-title">📺 Video Embed URL</div>
+      <div class="field-hint" style="margin-bottom:.8rem;line-height:1.8;">
+        Paste any YouTube, Vimeo, or Google Drive share link — it is auto-converted.<br>
+        <strong style="color:var(--gold);">YouTube / Vimeo:</strong> any watch or share link works ✓<br>
+        <strong style="color:var(--gold);">Google Drive:</strong> the file <em>must</em> be set to
+        <strong style="color:var(--gold-light);">"Anyone with the link → Viewer"</strong> in Drive sharing settings,
+        then paste the share link here. Private files cannot be embedded.
+      </div>
+      <input id="f_embedRaw" value="${esc(i.embedUrl||'')}" placeholder="https://youtube.com/watch?v=… or drive.google.com/file/d/…/view" oninput="previewEmbedConvert(this.value)">
+      <div id="embed-preview" style="margin-top:.5rem;font-size:.68rem;color:var(--gold-dim);min-height:1.4em;word-break:break-all;"></div>
     </div>
-    <div class="field full"><label>Thumbnail URL (optional)</label><input id="f_thumbnail" value="${esc(i.thumbnail||'')}" placeholder="https://..."></div>
+    <div class="field full form-section">
+      <div class="form-section-title">🖼️ Thumbnail</div>
+      <div class="field-hint" style="margin-bottom:.6rem;">Upload an image or paste a URL. For YouTube, leave blank — the thumbnail is fetched automatically from the embed URL.</div>
+      <input id="f_thumbnail" value="${esc(i.thumbnail||'')}" placeholder="Paste image URL — or upload below" style="margin-bottom:.5rem;">
+      ${uploadAreaHTML('video-thumb-preview','f_thumbnail', i.thumbnail||'')}
+    </div>
     <div class="field full"><label>Description</label><textarea id="f_description" rows="3">${esc(i.description||'')}</textarea></div>
     <div class="field"><label>Date</label><input id="f_date" type="date" value="${i.date||''}"></div>
     <div class="field"><div class="toggle-row"><span class="toggle-label">Featured</span>
@@ -958,7 +1025,7 @@ function formVideo(i = {}) {
     </div></div>
     <div class="field full"><label>Tags (comma separated)</label><input id="f_tags" value="${(i.tags||[]).join(', ')}" placeholder="Church, Cinematic"></div>
     <div class="field full form-section">
-      <div class="form-section-title">External Links</div>
+      <div class="form-section-title">External Watch Links</div>
       <div id="videolinks-list"></div>
       <div class="add-row" style="margin-top:.6rem">
         <input id="vlink-label" placeholder="Label (e.g. Watch on YouTube)">
@@ -969,7 +1036,50 @@ function formVideo(i = {}) {
   </div>`;
 }
 
+/* Convert any video URL to an embeddable src */
+function toEmbedUrl(raw) {
+  if (!raw) return '';
+  raw = raw.trim();
+  // Already a Drive preview URL — use as-is
+  if (raw.includes('drive.google.com/file/d/') && raw.endsWith('/preview')) return raw;
+  // Already a YouTube embed
+  if (raw.includes('youtube.com/embed/') || raw.includes('player.vimeo')) return raw;
+  // YouTube watch: youtube.com/watch?v=ID or youtu.be/ID
+  let m = raw.match(/(?:youtube\.com\/watch\?(?:.*&)?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  if (m) return 'https://www.youtube.com/embed/' + m[1];
+  // YouTube shorts
+  m = raw.match(/youtube\.com\/shorts\/([A-Za-z0-9_-]{11})/);
+  if (m) return 'https://www.youtube.com/embed/' + m[1];
+  // Vimeo: vimeo.com/VIDEO_ID
+  m = raw.match(/vimeo\.com\/(\d+)/);
+  if (m) return 'https://player.vimeo.com/video/' + m[1];
+  // Google Drive file/d/ID/view or file/d/ID
+  m = raw.match(/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]+)/);
+  if (m) return 'https://drive.google.com/file/d/' + m[1] + '/preview';
+  // Google Drive open?id=ID
+  m = raw.match(/drive\.google\.com\/open\?(?:.*&)?id=([A-Za-z0-9_-]+)/);
+  if (m) return 'https://drive.google.com/file/d/' + m[1] + '/preview';
+  // Google Drive uc?id=ID
+  m = raw.match(/drive\.google\.com\/uc\?(?:.*&)?id=([A-Za-z0-9_-]+)/);
+  if (m) return 'https://drive.google.com/file/d/' + m[1] + '/preview';
+  // Return as-is
+  return raw;
+}
+
+function previewEmbedConvert(raw) {
+  const el = document.getElementById('embed-preview');
+  if (!raw.trim()) { el.textContent = ''; return; }
+  const converted = toEmbedUrl(raw);
+  if (converted !== raw) {
+    el.innerHTML = `<span style="color:var(--gold);">✓ Auto-converted →</span> <span style="opacity:.6;word-break:break-all;">${converted}</span>`;
+  } else {
+    el.innerHTML = `<span style="opacity:.5;">Using URL as-is</span>`;
+  }
+}
+
 function formViolin(i = {}) {
+  const hasAudio    = i.mediaUrl && i.mediaUrl.startsWith('data:audio');
+  const hasExternal = i.mediaUrl && i.mediaUrl.startsWith('http');
   return `<div class="form-grid">
     <div class="field full"><label>Piece Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="Canon in D"></div>
     <div class="field"><label>Composer</label><input id="f_composer" value="${esc(i.composer||'')}" placeholder="Johann Pachelbel"></div>
@@ -977,10 +1087,28 @@ function formViolin(i = {}) {
       <select id="f_type">${['Performance','Recital','Church Music','Practice','Competition','Recording'].map(t=>`<option ${i.type===t?'selected':''}>${t}</option>`).join('')}</select>
     </div>
     <div class="field full"><label>Description</label><textarea id="f_description" rows="3">${esc(i.description||'')}</textarea></div>
-    <div class="field full"><label>Audio / Video URL</label>
-      <input id="f_mediaUrl" value="${esc(i.mediaUrl||'')}" placeholder="https://youtube.com/... or SoundCloud...">
-      <div class="field-hint">YouTube, SoundCloud, Google Drive share link, etc.</div>
+
+    <div class="field full form-section">
+      <div class="form-section-title">🎵 Upload Audio File — plays directly in the browser</div>
+      <div class="field-hint" style="margin-bottom:.8rem;">Upload MP3, WAV, M4A, OGG, or FLAC. Stored and plays natively — no external app needed.</div>
+      <div class="upload-area" id="audio-upload-area" style="${hasAudio?'border-color:rgba(212,175,120,.5);background:rgba(212,175,120,.04);':''}">
+        <input type="file" id="f_audioFile" accept="audio/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;">
+        <div class="upload-area-icon">🎵</div>
+        <div class="upload-area-text" id="audio-upload-label">${hasAudio ? '✓ Audio loaded — click to replace' : 'Click or drag & drop an audio file'}</div>
+        <div class="upload-area-sub">MP3 · WAV · M4A · OGG · FLAC · Max 50MB</div>
+        <div class="upload-progress"><div class="upload-progress-fill" id="audio-progress-fill"></div></div>
+        <div class="upload-size-info" id="audio-size-info">${hasAudio?'✓ File stored':''}${hasExternal?'Using external URL':''}
+        </div>
+      </div>
+      ${hasAudio ? `<audio controls src="${esc(i.mediaUrl)}" style="width:100%;margin-top:.7rem;border-radius:8px;height:40px;filter:invert(.85) sepia(1) saturate(.5) hue-rotate(5deg);"></audio>` : ''}
     </div>
+
+    <div class="field full">
+      <label>— OR — External URL (YouTube, SoundCloud, Spotify)</label>
+      <input id="f_mediaUrl" value="${hasExternal?esc(i.mediaUrl):''}" placeholder="https://youtube.com/watch?v=...">
+      <div class="field-hint">Only fill this if you do not have a local audio file. Uploading above is preferred for in-browser playback.</div>
+    </div>
+
     <div class="field"><label>Date</label><input id="f_date" type="date" value="${i.date||''}"></div>
     <div class="field"><div class="toggle-row"><span class="toggle-label">Featured</span>
       <label class="toggle"><input id="f_featured" type="checkbox" ${i.featured?'checked':''}><div class="toggle-track"></div></label>
@@ -1108,7 +1236,7 @@ function collectForm(collection) {
     }),
     video: () => ({
       title: gv('f_title'), category: gv('f_category'), duration: gv('f_duration'),
-      embedUrl: gv('f_embedUrl'), thumbnail: gv('f_thumbnail'), description: gv('f_description'),
+      embedUrl: toEmbedUrl(gv('f_embedRaw')), thumbnail: gv('f_thumbnail'), description: gv('f_description'),
       date: gv('f_date'), featured: gb('f_featured'),
       tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean).slice(0,20),
       links: [...tempVideoLinks]

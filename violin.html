@@ -391,23 +391,36 @@ function syncPlayState(playing) {
   document.getElementById('pdVinyl').classList.toggle('spinning', playing);
 }
 
+/* Check if a mediaUrl is directly streamable audio
+   (Supabase Storage public URLs, base64 data URLs, blob URLs)
+   vs external embeds (YouTube, SoundCloud, etc.) */
+function isLocalAudio(url) {
+  if (!url) return false;
+  // Base64 or blob (legacy)
+  if (url.startsWith('data:audio') || url.startsWith('blob:')) return true;
+  // Supabase Storage public URL
+  if (url.includes('supabase.co/storage/v1/object/public/audio/')) return true;
+  // Any direct audio file URL (ends in audio extension)
+  if (/\.(mp3|wav|m4a|ogg|flac|aac|webm)(\?|$)/i.test(url)) return true;
+  return false;
+}
+
 /* Load a track by index */
 function loadTrack(idx, autoplay = true) {
   const item = _items[idx];
   if (!item) return;
   _currentIdx = idx;
 
-  /* Local file playback */
-  if (item.mediaUrl && (item.mediaUrl.startsWith('data:audio') || item.mediaUrl.startsWith('blob:'))) {
-    audio.src = item.mediaUrl;
+  if (isLocalAudio(item.mediaUrl)) {
+    if (audio.src !== item.mediaUrl) audio.src = item.mediaUrl;
     playerBar.classList.add('visible');
     updatePlayerBar(item);
     if (autoplay) { audio.play().then(() => syncPlayState(true)).catch(()=>{}); }
-    else syncPlayState(false);
+    else { syncPlayState(false); }
     return;
   }
 
-  /* No local file — just show bar with info and let drawer handle external links */
+  /* External URL or no media — show bar with info, let drawer handle it */
   audio.src = '';
   playerBar.classList.add('visible');
   updatePlayerBar(item);
@@ -418,8 +431,8 @@ function loadTrack(idx, autoplay = true) {
 function togglePlay() {
   if (_currentIdx < 0) return;
   const item = _items[_currentIdx];
-  if (!item.mediaUrl || item.mediaUrl.startsWith('http')) {
-    /* External URL — open in drawer instead */
+  if (!isLocalAudio(item.mediaUrl)) {
+    /* External URL or no media — open drawer */
     openDrawer(_currentIdx);
     return;
   }
@@ -505,8 +518,8 @@ function openDrawer(idx) {
   vinyl.classList.toggle('spinning', _playing && idx === _currentIdx);
 
   /* Body */
-  const isLocal = v.mediaUrl && !v.mediaUrl.startsWith('http');
-  const isExternal = v.mediaUrl && v.mediaUrl.startsWith('http');
+  const isLocal = isLocalAudio(v.mediaUrl);
+  const isExternal = v.mediaUrl && v.mediaUrl.startsWith('http') && !isLocal;
 
   let domain = '';
   if (isExternal) {
@@ -646,12 +659,11 @@ async function init() {
   }).join('');
 }
 
-/* Card click: local → play immediately + open drawer; external/none → open drawer */
+/* Card click: local audio → play immediately + open drawer; external/none → open drawer */
 function cardClick(idx) {
   const v = _items[idx];
   if (!v) return;
-  const isLocal = v.mediaUrl && !v.mediaUrl.startsWith('http');
-  if (isLocal) {
+  if (isLocalAudio(v.mediaUrl)) {
     if (_currentIdx === idx) { togglePlay(); }
     else { loadTrack(idx, true); }
   }

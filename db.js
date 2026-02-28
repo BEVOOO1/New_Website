@@ -321,9 +321,11 @@ const DB = (() => {
   function sanitizeUrl(url) {
     if (!url) return '';
     const t = url.trim();
-    if (t.startsWith('data:image/') || t.startsWith('https://') ||
-        t.startsWith('http://')     || t.startsWith('/')         || t.startsWith('./')) {
-      return t.slice(0, 500000);
+    // Allow data URIs for images and audio, plus http/https/relative
+    if (t.startsWith('data:image/') || t.startsWith('data:audio/') ||
+        t.startsWith('https://')    || t.startsWith('http://')     ||
+        t.startsWith('/')           || t.startsWith('./')) {
+      return t.slice(0, 20000000); // 20MB char limit for audio base64
     }
     return '';
   }
@@ -361,6 +363,58 @@ const DB = (() => {
     });
   }
 
+  // ── SUPABASE STORAGE — AUDIO UPLOAD ─────────────
+  // Uploads an audio file to the "audio" storage bucket and returns the public URL.
+  // The bucket must be created in Supabase first (see supabase-setup.sql).
+  async function uploadAudioFile(file, onProgress) {
+    const AUDIO_TYPES = ['audio/mpeg','audio/mp3','audio/wav','audio/wave','audio/x-wav',
+                         'audio/mp4','audio/m4a','audio/x-m4a','audio/aac',
+                         'audio/ogg','audio/flac','audio/x-flac','audio/webm'];
+    if (!AUDIO_TYPES.includes(file.type) && !file.type.startsWith('audio/')) {
+      throw new Error('Invalid file type. Please upload an audio file (MP3, WAV, M4A, OGG, FLAC).');
+    }
+    const MAX = 50 * 1024 * 1024; // 50 MB
+    if (file.size > MAX) throw new Error('File too large. Maximum audio size is 50MB.');
+
+    // Build a unique path:  audio/timestamp-filename.ext
+    const ext  = file.name.split('.').pop().toLowerCase() || 'mp3';
+    const path = `audio/${Date.now()}-${Math.random().toString(36).slice(2,6)}.${ext}`;
+
+    // Upload via Supabase Storage REST API
+    const uploadUrl = `${SUPABASE_URL}/storage/v1/object/audio/${path}`;
+
+    // Use XMLHttpRequest so we can track progress
+    const publicUrl = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', uploadUrl);
+      xhr.setRequestHeader('apikey',        SUPABASE_KEY);
+      xhr.setRequestHeader('Authorization', `Bearer ${SUPABASE_KEY}`);
+      xhr.setRequestHeader('Content-Type',  file.type);
+      xhr.setRequestHeader('x-upsert',      'true');
+
+      if (onProgress) {
+        xhr.upload.onprogress = e => {
+          if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 95));
+        };
+      }
+
+      xhr.onload = () => {
+        if (xhr.status === 200 || xhr.status === 201) {
+          // Return the public URL
+          const pub = `${SUPABASE_URL}/storage/v1/object/public/audio/${path}`;
+          resolve(pub);
+        } else {
+          reject(new Error(`Upload failed: ${xhr.status} — ${xhr.responseText}`));
+        }
+      };
+      xhr.onerror = () => reject(new Error('Network error during upload.'));
+      xhr.send(file);
+    });
+
+    if (onProgress) onProgress(100);
+    return publicUrl;
+  }
+
   // ── PUBLIC API ───────────────────────────────────
   return {
     design:       makeAPI('design'),
@@ -371,7 +425,7 @@ const DB = (() => {
     projects:     makeAPI('projects'),
 
     sanitize: { string: sanitizeString, url: sanitizeUrl, tags: sanitizeTags },
-    upload:   { processImage: processImageUpload },
+    upload:   { processImage: processImageUpload, audioFile: uploadAudioFile },
 
     // Export everything as JSON (for backup)
     async exportAll() {

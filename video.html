@@ -12,53 +12,29 @@
 .hero-orb-v2{width:380px;height:380px;background:radial-gradient(circle,rgba(212,175,120,.06) 0%,transparent 70%);bottom:0;right:8%;animation:vd2 13s ease-in-out infinite alternate;}
 @keyframes vd{from{transform:translate(0,0);}to{transform:translate(35px,25px);}}
 @keyframes vd2{from{transform:translate(0,0);}to{transform:translate(-20px,15px);}}
-
-/* ═══════════════════════════════
-   VIDEO GRID
-═══════════════════════════════ */
 .video-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;}
 .video-grid .vc:first-child{grid-column:1/-1;}
-
-/* ═══════════════════════════════
-   VIDEO CARD
-═══════════════════════════════ */
 .vc{border-radius:18px;overflow:hidden;background:var(--glass-deep);border:1px solid var(--border);cursor:pointer;transition:border-color .4s,transform .4s,box-shadow .4s;display:flex;flex-direction:column;}
 .vc:hover{border-color:var(--border-gold);transform:translateY(-7px);box-shadow:0 30px 80px rgba(0,0,0,.6);}
-
-/* Featured (first card) */
 .vc:first-child{display:grid;grid-template-columns:1.55fr 1fr;border-radius:20px;}
 .vc:first-child .vc-thumb{aspect-ratio:unset;min-height:300px;}
 .vc:first-child .vc-info{padding:2.4rem 2rem;justify-content:center;}
 .vc:first-child .vc-title{font-size:1.55rem;line-height:1.2;}
 .vc:first-child .vc-desc{-webkit-line-clamp:4;}
-
-/* Thumbnail */
 .vc-thumb{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#090b15,#0e1220);overflow:hidden;flex-shrink:0;}
 .vc-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .55s cubic-bezier(.23,1,.32,1);}
 .vc:hover .vc-thumb img{transform:scale(1.06);}
-
-/* Cinematic bottom gradient */
 .vc-thumb-grad{position:absolute;bottom:0;left:0;right:0;height:65%;background:linear-gradient(to top,rgba(7,8,15,.8),transparent);pointer-events:none;}
-
-/* Category badge — top left */
 .vc-badge{position:absolute;top:.75rem;left:.75rem;background:rgba(7,8,15,.75);backdrop-filter:blur(10px);border:1px solid rgba(212,175,120,.22);font-family:'Tenor Sans',sans-serif;font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);padding:.22rem .6rem;border-radius:5px;}
-
-/* Duration — bottom right */
 .vc-dur{position:absolute;bottom:.75rem;right:.75rem;background:rgba(7,8,15,.82);backdrop-filter:blur(8px);font-family:'Tenor Sans',sans-serif;font-size:.58rem;letter-spacing:.05em;color:rgba(240,236,228,.7);padding:.2rem .55rem;border-radius:4px;}
-
-/* Play overlay */
 .vc-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(7,8,15,0);transition:background .35s;}
 .vc:hover .vc-play{background:rgba(7,8,15,.45);}
 .vc-play-ring{width:58px;height:58px;border-radius:50%;background:rgba(212,175,120,.14);border:2px solid rgba(212,175,120,.45);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.8);transition:all .35s cubic-bezier(.23,1,.32,1);backdrop-filter:blur(12px);}
 .vc:hover .vc-play-ring{opacity:1;transform:scale(1);}
 .vc-play-ring svg{width:20px;height:20px;fill:var(--gold);margin-left:3px;}
-
-/* No thumbnail placeholder */
 .vc-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;}
 .vc-ph-icon{font-size:2rem;opacity:.15;}
 .vc-ph-txt{font-family:'Tenor Sans',sans-serif;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);}
-
-/* Info section */
 .vc-info{padding:1.35rem 1.5rem 1.55rem;display:flex;flex-direction:column;flex:1;}
 .vc-eyebrow{font-family:'Tenor Sans',sans-serif;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.45rem;display:flex;align-items:center;gap:.45rem;}
 .vc-eyebrow::before{content:'';width:12px;height:1px;background:var(--gold);}
@@ -69,72 +45,40 @@
 .vc-date{font-family:'Tenor Sans',sans-serif;font-size:.62rem;letter-spacing:.04em;color:var(--text-dim);}
 .vc-cta{font-family:'Tenor Sans',sans-serif;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:.35rem;opacity:.65;transition:opacity .2s;}
 .vc:hover .vc-cta{opacity:1;}
-
-/* ═══════════════════════════════
-   SLIDE-IN DRAWER
-═══════════════════════════════ */
+/* DRAWER */
 .vd-backdrop{position:fixed;inset:0;z-index:600;background:rgba(4,5,12,.6);backdrop-filter:blur(5px);opacity:0;pointer-events:none;transition:opacity .4s;}
 .vd-backdrop.open{opacity:1;pointer-events:all;}
-
-.vd-drawer{
-  position:fixed;top:0;right:0;bottom:0;z-index:601;
-  width:min(560px,100vw);
-  background:linear-gradient(160deg,rgba(11,13,22,.99) 0%,rgba(8,9,18,1) 100%);
-  border-left:1px solid rgba(212,175,120,.14);
-  box-shadow:-30px 0 80px rgba(0,0,0,.7);
-  transform:translateX(105%);
-  transition:transform .48s cubic-bezier(.23,1,.32,1);
-  display:flex;flex-direction:column;overflow:hidden;
-}
+.vd-drawer{position:fixed;top:0;right:0;bottom:0;z-index:601;width:min(560px,100vw);background:linear-gradient(160deg,rgba(11,13,22,.99) 0%,rgba(8,9,18,1) 100%);border-left:1px solid rgba(212,175,120,.14);box-shadow:-30px 0 80px rgba(0,0,0,.7);transform:translateX(105%);transition:transform .48s cubic-bezier(.23,1,.32,1);display:flex;flex-direction:column;overflow:hidden;}
 .vd-drawer.open{transform:translateX(0);}
-
-/* Close button */
 .vd-close{position:absolute;top:1rem;right:1rem;z-index:10;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:1rem;transition:all .2s;}
 .vd-close:hover{background:rgba(255,255,255,.14);color:var(--text);}
-
-/* ── PLAYER AREA ── */
 .vd-player-wrap{position:relative;width:100%;flex-shrink:0;}
 .vd-player-wrap::after{content:'';display:block;padding-bottom:56.25%;}
-.vd-player-wrap iframe,.vd-player-wrap .vd-thumb-state{position:absolute;inset:0;width:100%;height:100%;border:none;}
-
-/* Thumbnail state */
+.vd-player-wrap iframe,.vd-thumb-state{position:absolute;inset:0;width:100%;height:100%;border:none;}
 .vd-thumb-state{overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#060810;}
 .vd-thumb-state img{width:100%;height:100%;object-fit:cover;display:block;}
-
-/* Gradient from player to body */
 .vd-player-fade{position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,rgba(11,13,22,1),transparent);pointer-events:none;z-index:2;}
-
-/* Play button over thumbnail in drawer */
 .vd-thumb-play{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem;cursor:pointer;z-index:3;background:rgba(7,8,15,.25);transition:background .3s;}
 .vd-thumb-play:hover{background:rgba(7,8,15,.5);}
 .vd-thumb-play-btn{width:72px;height:72px;border-radius:50%;background:rgba(212,175,120,.16);border:2px solid rgba(212,175,120,.5);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(14px);transition:all .35s;}
 .vd-thumb-play-btn svg{width:26px;height:26px;fill:var(--gold);margin-left:4px;}
 .vd-thumb-play:hover .vd-thumb-play-btn{background:rgba(212,175,120,.3);border-color:var(--gold);transform:scale(1.1);box-shadow:0 0 50px rgba(212,175,120,.3);}
 .vd-thumb-play-label{font-family:'Tenor Sans',sans-serif;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(212,175,120,.75);}
-
-/* No thumb / no embed placeholder */
 .vd-no-media{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem;background:linear-gradient(135deg,#090b16,#0c0f1c);}
 .vd-no-media-icon{font-size:2.5rem;opacity:.14;}
 .vd-no-media-txt{font-family:'Tenor Sans',sans-serif;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim);}
-
-/* ── DRAWER BODY ── */
 .vd-body{flex:1;overflow-y:auto;padding:1.6rem 1.8rem 3rem;scrollbar-width:thin;scrollbar-color:rgba(212,175,120,.18) transparent;}
 .vd-body::-webkit-scrollbar{width:3px;}
 .vd-body::-webkit-scrollbar-thumb{background:rgba(212,175,120,.2);border-radius:10px;}
-
 .vd-eyebrow{font-family:'Tenor Sans',sans-serif;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.65rem;display:flex;align-items:center;gap:.5rem;}
 .vd-eyebrow::before{content:'';width:16px;height:1px;background:var(--gold);}
 .vd-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;color:var(--text);line-height:1.15;margin-bottom:.75rem;}
 .vd-chips{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:1.3rem;}
 .vd-chip{font-family:'Tenor Sans',sans-serif;font-size:.65rem;letter-spacing:.06em;color:var(--text-dim);padding:.18rem .55rem;border:1px solid var(--border);border-radius:100px;}
-
 .vd-hr{height:1px;background:linear-gradient(to right,rgba(212,175,120,.18),transparent);margin:1.2rem 0;}
-
 .vd-section-label{font-family:'Tenor Sans',sans-serif;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(212,175,120,.45);margin-bottom:.55rem;}
 .vd-desc{font-family:'Tenor Sans',sans-serif;font-size:.83rem;line-height:1.9;color:var(--text-muted);margin-bottom:1.2rem;}
 .vd-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.2rem;}
-
-/* Watch link rows */
 .vd-links{display:flex;flex-direction:column;gap:.5rem;}
 .vd-link-row{display:flex;align-items:center;gap:.9rem;padding:.9rem 1.1rem;border-radius:12px;border:1px solid rgba(212,175,120,.16);background:rgba(212,175,120,.035);text-decoration:none;transition:all .3s;color:var(--text);}
 .vd-link-row:hover{border-color:var(--border-gold);background:rgba(212,175,120,.09);transform:translateX(4px);}
@@ -144,31 +88,24 @@
 .vd-link-domain{font-family:'Tenor Sans',sans-serif;font-size:.62rem;letter-spacing:.04em;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .vd-link-arrow{color:var(--gold);font-size:.85rem;opacity:0;transform:translateX(-4px);transition:all .25s;flex-shrink:0;}
 .vd-link-row:hover .vd-link-arrow{opacity:1;transform:translateX(0);}
-
-/* No links state */
 .vd-no-links{padding:1.4rem;border:1px dashed rgba(212,175,120,.14);border-radius:10px;text-align:center;font-family:'Tenor Sans',sans-serif;font-size:.76rem;line-height:1.7;color:var(--text-dim);}
 .vd-no-links a{color:var(--gold);}
-
-/* ── MOBILE ── */
 @media(max-width:768px){
   .video-grid{grid-template-columns:1fr;}
   .vc:first-child{grid-template-columns:1fr;}
   .vc:first-child .vc-thumb{min-height:200px;}
   .vc:first-child .vc-info{padding:1.4rem;}
   .vc:first-child .vc-title{font-size:1.2rem;}
-  .vc:first-child .vc-desc{-webkit-line-clamp:3;}
-  /* Drawer becomes bottom sheet on mobile */
   .vd-drawer{top:auto;left:0;right:0;bottom:0;width:100%;height:88vh;border-left:none;border-top:1px solid rgba(212,175,120,.14);border-radius:22px 22px 0 0;transform:translateY(105%);}
   .vd-drawer.open{transform:translateY(0);}
   .vd-handle{display:block;}
 }
-.vd-handle{display:none;width:40px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin:0.75rem auto 0;flex-shrink:0;}
+.vd-handle{display:none;width:40px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin:.75rem auto 0;flex-shrink:0;}
 </style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
 <div class="grain"></div>
-
 <nav class="nav" id="main-nav"><div class="nav-inner">
   <a href="index.html" class="nav-logo">B<span>.</span></a>
   <div class="nav-links">
@@ -182,7 +119,6 @@
   <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a>
   <a href="blog.html">Blog</a><a href="admin.html">⚙ Admin</a>
 </div>
-
 <section class="page-hero">
   <div class="page-hero-bg">
     <div class="page-hero-orb hero-orb-v"></div>
@@ -195,13 +131,11 @@
   </div>
 </section>
 <div class="divider"></div>
-
 <section style="padding:5rem 0 8rem;">
   <div class="wrapper">
     <div id="video-grid" class="video-grid reveal"></div>
   </div>
 </section>
-
 <footer class="footer"><div class="wrapper footer-inner">
   <span class="footer-name">Bavly Badr</span>
   <span class="footer-copy">© 2025 · BEVO copyright reserved</span>
@@ -210,8 +144,6 @@
     <a href="admin.html" class="footer-admin-btn">⚙ Admin</a>
   </div>
 </div></footer>
-
-<!-- SLIDE-IN DRAWER -->
 <div class="vd-backdrop" id="vdBackdrop"></div>
 <aside class="vd-drawer" id="vdDrawer" role="dialog" aria-modal="true">
   <div class="vd-handle"></div>
@@ -219,31 +151,23 @@
   <div class="vd-player-wrap" id="vdPlayerWrap"></div>
   <div class="vd-body" id="vdBody"></div>
 </aside>
-
 <script src="db.js"></script>
 <script src="shared.js"></script>
 <script>
 'use strict';
-
 const PLAY_SVG = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
-
 let _items = [];
-const backdrop = document.getElementById('vdBackdrop');
-const drawer   = document.getElementById('vdDrawer');
+const backdrop   = document.getElementById('vdBackdrop');
+const drawer     = document.getElementById('vdDrawer');
 const playerWrap = document.getElementById('vdPlayerWrap');
-const vdBody   = document.getElementById('vdBody');
+const vdBody     = document.getElementById('vdBody');
 
-/* ── DRAWER OPEN / CLOSE ── */
 function openDrawer(idx) {
   const v = _items[idx];
   if (!v) return;
-
-  /* Player area */
   if (v.embedUrl && v.thumbnail) {
     playerWrap.innerHTML = `
-      <div class="vd-thumb-state">
-        <img src="${escAttr(v.thumbnail)}" alt="${escAttr(v.title)}">
-      </div>
+      <div class="vd-thumb-state"><img src="${escAttr(v.thumbnail)}" alt="${escAttr(v.title)}"></div>
       <div class="vd-thumb-play" id="vdLoadEmbed">
         <div class="vd-thumb-play-btn">${PLAY_SVG}</div>
         <div class="vd-thumb-play-label">Play Video</div>
@@ -253,23 +177,15 @@ function openDrawer(idx) {
   } else if (v.embedUrl) {
     loadEmbed(v.embedUrl);
   } else {
-    playerWrap.innerHTML = `
-      <div class="vd-no-media">
-        <div class="vd-no-media-icon">🎬</div>
-        <div class="vd-no-media-txt">No embed URL — see links below</div>
-      </div>`;
+    playerWrap.innerHTML = `<div class="vd-no-media"><div class="vd-no-media-icon">🎬</div><div class="vd-no-media-txt">No embed — see links below</div></div>`;
   }
-
-  /* Info body */
-  const tags  = (v.tags||[]).map(t => `<span class="tag-pill">${sanitizeHTML(t)}</span>`).join('');
+  const tags  = (v.tags||[]).map(t=>`<span class="tag-pill">${sanitizeHTML(t)}</span>`).join('');
   const links = (v.links||[]);
-
   let linksHTML = '';
   if (links.length) {
     linksHTML = links.map(l => {
       const url = safeUrl(l.url);
-      let domain = l.url;
-      try { domain = new URL(l.url).hostname.replace('www.',''); } catch(e) {}
+      let domain = l.url; try { domain = new URL(l.url).hostname.replace('www.',''); } catch(e) {}
       const icon = l.url.includes('youtube')?'▶': l.url.includes('vimeo')?'◆': l.url.includes('drive')?'📁':'🔗';
       return `<a class="vd-link-row" href="${escAttr(url)}" target="_blank" rel="noopener">
         <div class="vd-link-icon">${icon}</div>
@@ -283,7 +199,6 @@ function openDrawer(idx) {
   } else {
     linksHTML = `<div class="vd-no-links">No external links added yet.<br>Add them in the <a href="admin.html">Admin panel →</a></div>`;
   }
-
   vdBody.innerHTML = `
     <div class="vd-eyebrow">${sanitizeHTML(v.category||'Video')}</div>
     <div class="vd-title">${sanitizeHTML(v.title)}</div>
@@ -291,14 +206,11 @@ function openDrawer(idx) {
       ${v.duration?`<span class="vd-chip">⏱ ${sanitizeHTML(v.duration)}</span>`:''}
       ${v.date?`<span class="vd-chip">📅 ${sanitizeHTML(v.date)}</span>`:''}
     </div>
-    ${v.description?`<div class="vd-hr"></div>
-      <div class="vd-section-label">About</div>
-      <div class="vd-desc">${sanitizeHTML(v.description)}</div>`:''}
+    ${v.description?`<div class="vd-hr"></div><div class="vd-section-label">About</div><div class="vd-desc">${sanitizeHTML(v.description)}</div>`:''}
     ${tags?`<div class="vd-tags">${tags}</div>`:''}
     <div class="vd-hr"></div>
     <div class="vd-section-label">Watch</div>
     <div class="vd-links">${linksHTML}</div>`;
-
   drawer.classList.add('open');
   backdrop.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -315,38 +227,27 @@ function closeDrawer() {
   vdBody.innerHTML = '';
   document.body.style.overflow = '';
 }
-
 document.getElementById('vdClose').onclick = closeDrawer;
 backdrop.addEventListener('click', closeDrawer);
 document.addEventListener('keydown', e => { if (e.key==='Escape') closeDrawer(); });
 
-/* ── RENDER CARDS ── */
 async function init() {
   _items = await DB.video.getAll();
   const el = document.getElementById('video-grid');
-
   if (!_items.length) {
-    el.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:5rem;color:var(--text-dim);">
-      <div style="font-size:2.5rem;margin-bottom:1rem;opacity:.2;">🎬</div>
-      <div style="font-size:.85rem;">No videos yet. <a href="admin.html" style="color:var(--gold);">Add some in Admin →</a></div>
-    </div>`;
+    el.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:5rem;color:var(--text-dim);"><div style="font-size:2.5rem;margin-bottom:1rem;opacity:.2;">🎬</div><div style="font-size:.85rem;">No videos yet. <a href="admin.html" style="color:var(--gold);">Add some in Admin →</a></div></div>`;
     return;
   }
-
-  el.innerHTML = _items.map((v, i) => {
+  el.innerHTML = _items.map((v,i) => {
     const tags = (v.tags||[]).map(t=>`<span class="tag-pill">${sanitizeHTML(t)}</span>`).join('');
-    const thumb = v.thumbnail
-      ? `<img src="${escAttr(v.thumbnail)}" alt="${escAttr(v.title)}">`
-      : `<div class="vc-ph"><div class="vc-ph-icon">🎬</div><div class="vc-ph-txt">No thumbnail set</div></div>`;
+    const thumb = v.thumbnail ? `<img src="${escAttr(v.thumbnail)}" alt="${escAttr(v.title)}">` : `<div class="vc-ph"><div class="vc-ph-icon">🎬</div><div class="vc-ph-txt">No thumbnail set</div></div>`;
     return `<article class="vc" onclick="openDrawer(${i})">
       <div class="vc-thumb">
         ${thumb}
         <div class="vc-thumb-grad"></div>
         ${v.category?`<div class="vc-badge">${sanitizeHTML(v.category)}</div>`:''}
         ${v.duration?`<div class="vc-dur">${sanitizeHTML(v.duration)}</div>`:''}
-        <div class="vc-play">
-          <div class="vc-play-ring">${PLAY_SVG}</div>
-        </div>
+        <div class="vc-play"><div class="vc-play-ring">${PLAY_SVG}</div></div>
       </div>
       <div class="vc-info">
         <div class="vc-eyebrow">${sanitizeHTML(v.category||'Video')}</div>
