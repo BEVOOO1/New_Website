@@ -1,127 +1,329 @@
 /* ════════════════════════════════════════════════
-   BAVLY CMS — db.js v4 (Optimized & Secure)
-   - XSS-safe sanitization on read
-   - File upload validation & compression
-   - Optimistic UI helpers
-   - Schema validation
+   BAVLY CMS — db.js v5  (Supabase Backend)
+   All data reads/writes go to Supabase REST API.
+   Works identically on every device & browser.
 ════════════════════════════════════════════════ */
 
 const DB = (() => {
+  'use strict';
 
-  // ── STORAGE ADAPTER ──
-  const store = {
-    async get(key) {
-      try {
-        if (window.storage) {
-          const r = await window.storage.get(key);
-          return r ? JSON.parse(r.value) : null;
-        }
-      } catch(e) {}
-      try {
-        const v = localStorage.getItem('bavly_' + key);
-        return v ? JSON.parse(v) : null;
-      } catch(e) { return null; }
-    },
-    async set(key, value) {
-      const str = JSON.stringify(value);
-      try {
-        if (window.storage) { await window.storage.set(key, str); return; }
-      } catch(e) {}
-      try { localStorage.setItem('bavly_' + key, str); } catch(e) {}
-    },
-    async delete(key) {
-      try {
-        if (window.storage) { await window.storage.delete(key); return; }
-      } catch(e) {}
-      try { localStorage.removeItem('bavly_' + key); } catch(e) {}
+  // ── CONFIG ──────────────────────────────────────
+  const SUPABASE_URL = 'https://bdqntkshtdqwoektxhhb.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkcW50a3NodGRxd29la3R4aGhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyMDE0NzMsImV4cCI6MjA4Nzc3NzQ3M30.-COvtEDw2eUSGvjioexZ_vVEfgazY1Xsia7ZgFpWK6g';
+
+  const HEADERS = {
+    'apikey':        SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    'Content-Type':  'application/json',
+    'Prefer':        'return=representation',
+  };
+
+  // ── LOW-LEVEL SUPABASE REST HELPERS ─────────────
+
+  async function sbRequest(method, table, opts = {}) {
+    const { filter, body, single } = opts;
+    let url = `${SUPABASE_URL}/rest/v1/${table}`;
+    if (filter) url += `?${filter}`;
+
+    const res = await fetch(url, {
+      method,
+      headers: {
+        ...HEADERS,
+        ...(single ? { Accept: 'application/vnd.pgrst.object+json' } : {}),
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`Supabase ${method} ${table}: ${res.status} — ${err}`);
     }
+
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
+  }
+
+  // SELECT all rows, ordered by sort_order then created_at
+  async function sbGetAll(table) {
+    return sbRequest('GET', table, {
+      filter: 'order=sort_order.asc,created_at.desc',
+    }) || [];
+  }
+
+  // SELECT one row by id
+  async function sbGetOne(table, id) {
+    const rows = await sbRequest('GET', table, {
+      filter: `id=eq.${encodeURIComponent(id)}`,
+    });
+    return (rows && rows[0]) || null;
+  }
+
+  // INSERT a row
+  async function sbInsert(table, row) {
+    const rows = await sbRequest('POST', table, { body: row });
+    return Array.isArray(rows) ? rows[0] : rows;
+  }
+
+  // UPDATE a row by id
+  async function sbUpdate(table, id, updates) {
+    const rows = await sbRequest('PATCH', table, {
+      filter: `id=eq.${encodeURIComponent(id)}`,
+      body: updates,
+    });
+    return Array.isArray(rows) ? rows[0] : rows;
+  }
+
+  // DELETE a row by id
+  async function sbDelete(table, id) {
+    return sbRequest('DELETE', table, {
+      filter: `id=eq.${encodeURIComponent(id)}`,
+    });
+  }
+
+  // ── FIELD NAME MAPPING ──────────────────────────
+  // Supabase uses snake_case columns; JS objects use camelCase.
+  // Each collection defines toRow() (JS → DB) and fromRow() (DB → JS).
+
+  const MAPS = {
+
+    design: {
+      toRow: (o) => ({
+        id:          o.id,
+        title:       o.title,
+        category:    o.category    || null,
+        description: o.description || null,
+        image:       o.image       || null,
+        date:        o.date        || null,
+        featured:    o.featured    || false,
+        tags:        o.tags        || [],
+        sort_order:  o.sort_order  || 0,
+      }),
+      fromRow: (r) => ({
+        id:          r.id,
+        title:       r.title,
+        category:    r.category,
+        description: r.description,
+        image:       r.image,
+        date:        r.date,
+        featured:    r.featured,
+        tags:        r.tags || [],
+        sort_order:  r.sort_order,
+      }),
+    },
+
+    video: {
+      toRow: (o) => ({
+        id:          o.id,
+        title:       o.title,
+        category:    o.category    || null,
+        description: o.description || null,
+        embed_url:   o.embedUrl    || null,
+        thumbnail:   o.thumbnail   || null,
+        duration:    o.duration    || null,
+        date:        o.date        || null,
+        featured:    o.featured    || false,
+        tags:        o.tags        || [],
+        links:       o.links       || [],
+        sort_order:  o.sort_order  || 0,
+      }),
+      fromRow: (r) => ({
+        id:          r.id,
+        title:       r.title,
+        category:    r.category,
+        description: r.description,
+        embedUrl:    r.embed_url,
+        thumbnail:   r.thumbnail,
+        duration:    r.duration,
+        date:        r.date,
+        featured:    r.featured,
+        tags:        r.tags  || [],
+        links:       r.links || [],
+        sort_order:  r.sort_order,
+      }),
+    },
+
+    violin: {
+      toRow: (o) => ({
+        id:          o.id,
+        title:       o.title,
+        composer:    o.composer    || null,
+        type:        o.type        || null,
+        description: o.description || null,
+        media_url:   o.mediaUrl    || null,
+        date:        o.date        || null,
+        featured:    o.featured    || false,
+        sort_order:  o.sort_order  || 0,
+      }),
+      fromRow: (r) => ({
+        id:          r.id,
+        title:       r.title,
+        composer:    r.composer,
+        type:        r.type,
+        description: r.description,
+        mediaUrl:    r.media_url,
+        date:        r.date,
+        featured:    r.featured,
+        sort_order:  r.sort_order,
+      }),
+    },
+
+    projects: {
+      toRow: (o) => ({
+        id:           o.id,
+        title:        o.title,
+        subtitle:     o.subtitle     || null,
+        icon:         o.icon         || '⚙️',
+        status:       o.status       || 'complete',
+        status_label: o.statusLabel  || null,
+        description:  o.description  || null,
+        tech_stack:   o.techStack    || [],
+        features:     o.features     || [],
+        links:        o.links        || {},
+        images:       o.images       || [],
+        pdfs:         o.pdfs         || [],
+        extra_links:  o.extraLinks   || [],
+        date:         o.date         || null,
+        featured:     o.featured     || false,
+        sort_order:   o.sort_order   || 0,
+      }),
+      fromRow: (r) => ({
+        id:          r.id,
+        title:       r.title,
+        subtitle:    r.subtitle,
+        icon:        r.icon,
+        status:      r.status,
+        statusLabel: r.status_label,
+        description: r.description,
+        techStack:   r.tech_stack  || [],
+        features:    r.features    || [],
+        links:       r.links       || {},
+        images:      r.images      || [],
+        pdfs:        r.pdfs        || [],
+        extraLinks:  r.extra_links || [],
+        date:        r.date,
+        featured:    r.featured,
+        sort_order:  r.sort_order,
+      }),
+    },
+
+    competitions: {
+      toRow: (o) => ({
+        id:          o.id,
+        title:       o.title,
+        scope:       o.scope       || null,
+        icon:        o.icon        || '🏆',
+        year:        o.year        || null,
+        outcome:     o.outcome     || null,
+        description: o.description || null,
+        learned:     o.learned     || null,
+        featured:    o.featured    || false,
+        sort_order:  o.sort_order  || 0,
+      }),
+      fromRow: (r) => ({
+        id:          r.id,
+        title:       r.title,
+        scope:       r.scope,
+        icon:        r.icon,
+        year:        r.year,
+        outcome:     r.outcome,
+        description: r.description,
+        learned:     r.learned,
+        featured:    r.featured,
+        sort_order:  r.sort_order,
+      }),
+    },
+
+    blog: {
+      toRow: (o) => ({
+        id:       o.id,
+        title:    o.title,
+        category: o.category || null,
+        date:     o.date     || null,
+        excerpt:  o.excerpt  || null,
+        content:  o.content  || null,
+        featured: o.featured || false,
+        tags:     o.tags     || [],
+        sort_order: o.sort_order || 0,
+      }),
+      fromRow: (r) => ({
+        id:        r.id,
+        title:     r.title,
+        category:  r.category,
+        date:      r.date,
+        excerpt:   r.excerpt,
+        content:   r.content,
+        featured:  r.featured,
+        tags:      r.tags || [],
+        sort_order: r.sort_order,
+      }),
+    },
   };
 
-  // ── COLLECTION KEYS ──
-  const KEYS = {
-    design:       'col_design',
-    video:        'col_video',
-    violin:       'col_violin',
-    competitions: 'col_competitions',
-    blog:         'col_blog',
-    projects:     'col_projects',
-  };
+  // ── ID GENERATOR ────────────────────────────────
+  function newId(prefix) {
+    return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+  }
 
-  // ── SEED DATA ──
-  const SEEDS = {
-    design: [
-      { id:'d1', title:'Sunday Service Post', category:'Social Posts', tags:['Church','Instagram'], image:'', date:'2025-01-10', featured:true, description:'Weekly Sunday service announcement post.' },
-      { id:'d2', title:'Easter Event Banner', category:'Event Graphics', tags:['Church','Holiday'], image:'', date:'2025-03-28', featured:false, description:'Banner for Easter celebration event.' },
-      { id:'d3', title:'Weekly Verse Graphic', category:'Typography', tags:['Typography','Faith'], image:'', date:'2025-02-14', featured:false, description:'Scripture typography post.' },
-      { id:'d4', title:'Youth Group Announcement', category:'Announcements', tags:['Church','Youth'], image:'', date:'2025-04-05', featured:false, description:'Youth group weekly announcement.' },
-      { id:'d5', title:'Christmas Celebration Post', category:'Event Graphics', tags:['Holiday','Church'], image:'', date:'2024-12-20', featured:true, description:'Christmas celebration social media post.' },
-      { id:'d6', title:'Baptism Ceremony Graphic', category:'Social Posts', tags:['Church','Ceremony'], image:'', date:'2025-05-01', featured:false, description:'Baptism ceremony announcement.' },
-    ],
-    video: [
-      { id:'v1', title:'Easter Sunday Recap', category:'Church Event', embedUrl:'', thumbnail:'', description:'A cinematic recap of the Easter celebration — multi-camera edit with color grading and music sync.', tags:['Church','Cinematic','Color Grade'], duration:'3:24', date:'2025-03-30', featured:true, links:[] },
-      { id:'v2', title:'Youth Camp Highlights', category:'Event Recap', embedUrl:'', thumbnail:'', description:'Fast-paced highlights from the annual youth camp.', tags:['Church','Youth','Dynamic'], duration:'2:10', date:'2025-07-15', featured:false, links:[] },
-      { id:'v3', title:'Christmas Service Film', category:'Short Film', embedUrl:'', thumbnail:'', description:'A short cinematic film covering the church Christmas service.', tags:['Cinematic','Church','Holiday'], duration:'5:40', date:'2024-12-25', featured:false, links:[] },
-    ],
-    violin: [
-      { id:'vn1', title:'Canon in D — Pachelbel', composer:'Johann Pachelbel', type:'Performance', mediaUrl:'', description:'Performed at a church ceremony. Arranged for solo violin.', date:'2025-02-14', featured:true },
-      { id:'vn2', title:'Czardas', composer:'Vittorio Monti', type:'Recital', mediaUrl:'', description:'High-energy performance featuring the dramatic tempo shifts.', date:'2025-05-10', featured:false },
-      { id:'vn3', title:'Ave Maria', composer:'Franz Schubert', type:'Church Music', mediaUrl:'', description:'Played during a church ceremony.', date:'2025-01-01', featured:false },
-    ],
-    competitions: [
-      { id:'c1', title:'ICEF — International Competition', scope:'International · Innovation', icon:'🏆', year:'2024', outcome:'Participant', description:'Submitted and presented the Alzheimer Support Mobile Application.', learned:'Presenting a technical project to judges sharpened my ability to communicate engineering decisions clearly.' },
-      { id:'c2', title:'NASA Space Apps Challenge', scope:'Global · Hackathon', icon:'🚀', year:'2024', outcome:'Participant', description:"Participated in one of the world's largest annual hackathons organized by NASA.", learned:'High-pressure engineering builds a different instinct — prioritization, scoping, and delivering something functional.' },
-    ],
-    blog: [
-      { id:'b1', title:'How I built the Church Points System', category:'Engineering', date:'2025-04-10', excerpt:'A walkthrough of the architecture decisions, database design, and deployment challenges.', content:'<p>When I started building the Church Points System, I had one goal: make it actually work in a real environment — not just a demo...</p><p>The first challenge was the database structure. I needed to track users, their points, and link each user to a physical card...</p>', tags:['Engineering','Web Dev','Church'], featured:true },
-      { id:'b2', title:'What NASA Space Apps taught me about pressure', category:'Competitions', date:'2025-03-05', excerpt:'Competing in a global hackathon with a hard deadline forces you to make decisions differently.', content:'<p>The hardest part of Space Apps is not the technical problem — it is deciding what to cut...</p>', tags:['Hackathon','Mindset','NASA'], featured:false },
-    ],
-    projects: [
-      {
-        id:'p1', title:'Church Points & Card Management System', subtitle:'Full-Stack Web Platform', icon:'⚙️',
-        status:'live', statusLabel:'Live & Deployed',
-        description:'A complete points management system for a church community. Physical card identification integrated with digital tracking.',
-        techStack:['HTML/CSS/JS','Database','Backend','Deployment'],
-        features:['Designed system architecture and database structure from scratch','Frontend interface and backend logic','Physical card identification with digital tracking','Multi-user tracking with administrative controls'],
-        links:{ github:'', live:'', demo:'' },
-        images:[], pdfs:[], extraLinks:[],
-        date:'2024-12-01', featured:true
+  // ── COLLECTION API FACTORY ───────────────────────
+  function makeAPI(table) {
+    const map = MAPS[table];
+
+    return {
+      // Get all items (returns JS camelCase objects)
+      async getAll() {
+        const rows = await sbGetAll(table);
+        return rows.map(map.fromRow);
       },
-      {
-        id:'p2', title:'Alzheimer Support Application', subtitle:'MIT App Inventor · Mobile', icon:'🧠',
-        status:'complete', statusLabel:'ICEF Submission',
-        description:'A multi-feature mobile application for Alzheimer patients and caregivers.',
-        techStack:['MIT App Inventor','Algorithm Design','Mobile UI'],
-        features:['Reminder and scheduling functionality','Memory assistance tools','Multi-screen structured interface','Custom algorithm-based logic'],
-        links:{ github:'', live:'', demo:'' },
-        images:[], pdfs:[], extraLinks:[],
-        date:'2024-10-15', featured:true
-      },
-    ],
-  };
 
-  // ── SECURITY: Input sanitization ──
+      // Get one item by id
+      async get(id) {
+        const row = await sbGetOne(table, id);
+        return row ? map.fromRow(row) : null;
+      },
+
+      // Add new item
+      async add(item) {
+        if (!item.id) item.id = newId(table.slice(0, 2));
+        if (!item.date) item.date = new Date().toISOString().slice(0, 10);
+        const row = map.toRow(item);
+        const saved = await sbInsert(table, row);
+        return saved ? map.fromRow(saved) : item;
+      },
+
+      // Update existing item by id
+      async update(id, updates) {
+        // Merge with existing to build a complete row for mapping
+        const existing = await sbGetOne(table, id);
+        if (!existing) throw new Error(`Item ${id} not found in ${table}`);
+        const merged = { ...map.fromRow(existing), ...updates, id };
+        const row = map.toRow(merged);
+        delete row.id; // don't send id in the PATCH body
+        const saved = await sbUpdate(table, id, row);
+        return saved ? map.fromRow(saved) : merged;
+      },
+
+      // Delete item by id
+      async delete(id) {
+        return sbDelete(table, id);
+      },
+    };
+  }
+
+  // ── SECURITY: Input sanitization ────────────────
   function sanitizeString(str) {
     if (typeof str !== 'string') return '';
     return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;')
-      .trim()
-      .slice(0, 5000); // max length guard
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#x27;')
+      .trim().slice(0, 5000);
   }
 
   function sanitizeUrl(url) {
     if (!url) return '';
-    const trimmed = url.trim();
-    // Allow data URLs (base64 images), http/https, and relative URLs
-    if (trimmed.startsWith('data:image/') ||
-        trimmed.startsWith('https://') ||
-        trimmed.startsWith('http://') ||
-        trimmed.startsWith('/') ||
-        trimmed.startsWith('./')) {
-      return trimmed.slice(0, 500000); // 500kb char limit for base64
+    const t = url.trim();
+    if (t.startsWith('data:image/') || t.startsWith('https://') ||
+        t.startsWith('http://')     || t.startsWith('/')         || t.startsWith('./')) {
+      return t.slice(0, 500000);
     }
     return '';
   }
@@ -131,18 +333,11 @@ const DB = (() => {
     return arr.slice(0, 20).map(t => sanitizeString(String(t)).slice(0, 50)).filter(Boolean);
   }
 
-  // ── IMAGE UPLOAD OPTIMIZATION ──
-  // Compresses an uploaded File to a target max dimension and quality
+  // ── IMAGE COMPRESSION ───────────────────────────
   async function processImageUpload(file, maxWidth = 1200, maxHeight = 1200, quality = 0.82) {
-    // Validate file type
-    const allowedTypes = ['image/jpeg','image/jpg','image/png','image/webp','image/gif'];
-    if (!allowedTypes.includes(file.type)) {
-      throw new Error('Invalid file type. Only JPG, PNG, WebP, and GIF are allowed.');
-    }
-    // Validate file size (max 10MB raw)
-    if (file.size > 10 * 1024 * 1024) {
-      throw new Error('File too large. Maximum size is 10MB.');
-    }
+    const allowed = ['image/jpeg','image/jpg','image/png','image/webp','image/gif'];
+    if (!allowed.includes(file.type)) throw new Error('Invalid file type. Only JPG, PNG, WebP, and GIF are allowed.');
+    if (file.size > 10 * 1024 * 1024) throw new Error('File too large. Maximum size is 10MB.');
 
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -150,83 +345,23 @@ const DB = (() => {
       img.onload = () => {
         URL.revokeObjectURL(url);
         let { width, height } = img;
-
-        // Scale down if needed
         if (width > maxWidth || height > maxHeight) {
           const ratio = Math.min(maxWidth / width, maxHeight / height);
           width  = Math.round(width  * ratio);
           height = Math.round(height * ratio);
         }
-
         const canvas = document.createElement('canvas');
-        canvas.width  = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // Use WebP if supported, fall back to JPEG
-        const outputType = file.type === 'image/png' ? 'image/png' : 'image/webp';
-        const dataUrl = canvas.toDataURL(outputType, quality);
-        resolve(dataUrl);
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        const type = file.type === 'image/png' ? 'image/png' : 'image/webp';
+        resolve(canvas.toDataURL(type, quality));
       };
       img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Failed to load image.')); };
       img.src = url;
     });
   }
 
-  // ── CRUD HELPERS ──
-  async function getCollection(key) {
-    const data = await store.get(KEYS[key]);
-    if (data !== null) return data;
-    await store.set(KEYS[key], SEEDS[key]);
-    return SEEDS[key];
-  }
-
-  async function saveCollection(key, data) {
-    await store.set(KEYS[key], data);
-  }
-
-  function newId(prefix) {
-    return prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-  }
-
-  async function addItem(collection, item) {
-    const col = await getCollection(collection);
-    item.id = newId(collection[0]);
-    item.date = item.date || new Date().toISOString().slice(0, 10);
-    col.unshift(item);
-    await saveCollection(collection, col);
-    return item;
-  }
-
-  async function updateItem(collection, id, updates) {
-    const col = await getCollection(collection);
-    const idx = col.findIndex(i => i.id === id);
-    if (idx === -1) return null;
-    col[idx] = { ...col[idx], ...updates };
-    await saveCollection(collection, col);
-    return col[idx];
-  }
-
-  async function deleteItem(collection, id) {
-    const col = await getCollection(collection);
-    await saveCollection(collection, col.filter(i => i.id !== id));
-  }
-
-  async function getItem(collection, id) {
-    const col = await getCollection(collection);
-    return col.find(i => i.id === id) || null;
-  }
-
-  // ── PUBLIC API ──
-  const makeAPI = (key) => ({
-    getAll:  ()      => getCollection(key),
-    add:     (item)  => addItem(key, item),
-    update:  (id, u) => updateItem(key, id, u),
-    delete:  (id)    => deleteItem(key, id),
-    get:     (id)    => getItem(key, id),
-  });
-
+  // ── PUBLIC API ───────────────────────────────────
   return {
     design:       makeAPI('design'),
     video:        makeAPI('video'),
@@ -235,16 +370,15 @@ const DB = (() => {
     blog:         makeAPI('blog'),
     projects:     makeAPI('projects'),
 
-    // Utilities
-    sanitize:  { string: sanitizeString, url: sanitizeUrl, tags: sanitizeTags },
-    upload:    { processImage: processImageUpload },
+    sanitize: { string: sanitizeString, url: sanitizeUrl, tags: sanitizeTags },
+    upload:   { processImage: processImageUpload },
 
-    resetAll: async () => {
-      for (const key of Object.keys(KEYS)) await store.set(KEYS[key], SEEDS[key]);
-    },
-    exportAll: async () => {
+    // Export everything as JSON (for backup)
+    async exportAll() {
       const out = {};
-      for (const key of Object.keys(KEYS)) out[key] = await getCollection(key);
+      for (const key of ['design','video','violin','competitions','blog','projects']) {
+        out[key] = await makeAPI(key).getAll();
+      }
       return out;
     },
   };
