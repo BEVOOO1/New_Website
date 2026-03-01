@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin — Bavly CMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{
+  --bg:#07080f;--bg2:#0a0c16;--panel:#0e1018;
+  --glass:rgba(255,255,255,.035);--glass2:rgba(255,255,255,.06);
+  --border:rgba(255,255,255,.07);--border-gold:rgba(212,175,120,.28);
+  --gold:#d4af78;--gold-light:#e8cfa0;--gold-dim:rgba(212,175,120,.45);
+  --text:#f0ece4;--text-muted:rgba(240,236,228,.55);--text-dim:rgba(240,236,228,.32);
+  --green:rgba(56,200,130,.9);--red:rgba(220,80,80,.9);--blue:rgba(100,160,255,.9);
+  --radius:12px;--sidebar:260px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'Tenor Sans',serif;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow:hidden;}
+
+/* ── LOCK SCREEN ── */
+.lock-screen{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.lock-screen.hidden{display:none;}
+.lock-card{background:var(--panel);border:1px solid var(--border-gold);border-radius:20px;padding:3rem 3.5rem;text-align:center;max-width:420px;width:90%;box-shadow:0 30px 80px rgba(0,0,0,.6);}
+.lock-logo{font-family:'Cinzel',serif;font-size:2rem;font-weight:600;color:var(--text);margin-bottom:.3rem;}
+.lock-logo span{color:var(--gold);}
+.lock-sub{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:2rem;}
+.lock-divider{display:flex;align-items:center;gap:.8rem;margin:1.5rem 0;color:var(--text-dim);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;}
+.lock-divider::before,.lock-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.lock-google-btn{
+  display:flex;align-items:center;justify-content:center;gap:.75rem;
+  width:100%;padding:.85rem 1.2rem;
+  border-radius:100px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.15);
+  color:var(--text);font-family:'Tenor Sans',sans-serif;
+  font-size:.82rem;letter-spacing:.06em;
+  cursor:pointer;transition:all .25s;
+  margin-top:.5rem;
+}
+.lock-google-btn:hover{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.25);transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.lock-google-btn svg{flex-shrink:0;}
+.lock-err{font-size:.72rem;color:rgba(220,80,80,.85);margin-top:1rem;min-height:1.2rem;text-align:center;line-height:1.5;}
+.lock-hint{font-size:.62rem;color:var(--text-dim);margin-top:1.5rem;letter-spacing:.05em;line-height:1.6;}
+/* User info chip in sidebar */
+.auth-user-chip{display:flex;align-items:center;gap:.6rem;padding:.6rem .8rem;background:rgba(212,175,120,.06);border:1px solid var(--border-gold);border-radius:8px;margin-bottom:.8rem;}
+.auth-user-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid var(--border-gold);}
+.auth-user-avatar-ph{width:28px;height:28px;border-radius:50%;background:rgba(212,175,120,.2);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;}
+.auth-user-name{font-size:.72rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:fixed;left:0;top:0;z-index:100;overflow-y:auto;}
+.sidebar-brand{padding:1.8rem 1.5rem 1.4rem;border-bottom:1px solid var(--border);}
+.sidebar-logo{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:600;color:var(--text);text-decoration:none;display:block;}
+.sidebar-logo span{color:var(--gold);}
+.sidebar-sub{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);margin-top:.3rem;}
+.sidebar-nav{padding:1rem 0;flex:1;}
+.sidebar-section{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);padding:.6rem 1.5rem .4rem;margin-top:.5rem;}
+.sidebar-link{display:flex;align-items:center;gap:.8rem;padding:.75rem 1.5rem;color:var(--text-muted);text-decoration:none;font-size:.8rem;letter-spacing:.05em;transition:all .2s;border-left:2px solid transparent;cursor:pointer;background:none;border-top:none;border-right:none;border-bottom:none;width:100%;text-align:left;}
+.sidebar-link:hover{color:var(--text);background:rgba(255,255,255,.03);}
+.sidebar-link.active{color:var(--gold);background:rgba(212,175,120,.06);border-left-color:var(--gold);}
+.sidebar-link .sl-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
+.sidebar-link .sl-count{margin-left:auto;font-size:.65rem;background:rgba(212,175,120,.15);border:1px solid var(--border-gold);color:var(--gold);padding:.1rem .5rem;border-radius:100px;}
+.sidebar-footer{padding:1.2rem 1.5rem;border-top:1px solid var(--border);}
+.sidebar-footer a{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;padding:.5rem 0;transition:color .2s;}
+.sidebar-footer a:hover{color:var(--gold);}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar);flex:1;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+.topbar{padding:1.2rem 2.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(7,8,15,.8);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:400;}
+.topbar-title em{font-style:italic;color:var(--gold);}
+.topbar-actions{display:flex;gap:.8rem;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.3rem;border-radius:8px;font-family:'Tenor Sans',sans-serif;font-size:.74rem;letter-spacing:.08em;cursor:pointer;transition:all .25s;border:1px solid var(--border);background:var(--glass);color:var(--text-muted);}
+.btn:hover{background:var(--glass2);color:var(--text);border-color:rgba(255,255,255,.15);}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#07080f;border-color:transparent;font-weight:700;}
+.btn-primary:hover{box-shadow:0 6px 24px rgba(212,175,120,.35);transform:translateY(-1px);}
+.btn-danger{border-color:rgba(220,80,80,.3);color:rgba(220,80,80,.7);}
+.btn-danger:hover{background:rgba(220,80,80,.1);color:rgba(220,80,80,1);border-color:rgba(220,80,80,.5);}
+.btn-sm{padding:.4rem .9rem;font-size:.68rem;}
+.content{padding:2rem 2.5rem;flex:1;}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:all .3s;cursor:pointer;}
+.stat-card:hover{border-color:var(--border-gold);transform:translateY(-2px);}
+.stat-icon{font-size:1.6rem;margin-bottom:.8rem;}
+.stat-num{font-family:'Cinzel',serif;font-size:2rem;font-weight:600;color:var(--gold);line-height:1;}
+.stat-label{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-top:.4rem;}
+
+/* ── TABLE ── */
+.table-wrap{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.table-head{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.table-head-title{font-family:'Cinzel',serif;font-size:.9rem;letter-spacing:.08em;color:var(--text);}
+.table-search{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:.5rem 1rem;font-family:'Tenor Sans',sans-serif;font-size:.78rem;color:var(--text);outline:none;transition:border .2s;width:200px;}
+.table-search:focus{border-color:var(--border-gold);}
+.table-search::placeholder{color:var(--text-dim);}
+table{width:100%;border-collapse:collapse;}
+th{font-family:'Tenor Sans',sans-serif;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);padding:.9rem 1.5rem;text-align:left;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);}
+td{padding:.9rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.035);font-size:.8rem;color:var(--text-muted);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.td-title{color:var(--text);font-size:.85rem;}
+.td-badge{display:inline-flex;padding:.2rem .7rem;border-radius:100px;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid;white-space:nowrap;}
+.badge-live{color:#38d9a9;border-color:rgba(56,217,169,.3);background:rgba(56,217,169,.07);}
+.badge-draft{color:var(--gold-dim);border-color:var(--border-gold);background:rgba(212,175,120,.06);}
+.badge-featured{color:#a78bfa;border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.07);}
+.td-actions{display:flex;gap:.4rem;align-items:center;}
+.action-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .7rem;font-size:.68rem;color:var(--text-dim);cursor:pointer;transition:all .2s;font-family:'Tenor Sans',sans-serif;letter-spacing:.05em;}
+.action-btn:hover{background:var(--glass2);color:var(--text);border-color:rgba(255,255,255,.15);}
+.action-btn.edit:hover{color:var(--gold);border-color:var(--border-gold);}
+.action-btn.del:hover{color:rgba(220,80,80,.9);border-color:rgba(220,80,80,.3);}
+.thumb-preview{width:44px;height:44px;border-radius:6px;object-fit:cover;border:1px solid var(--border);}
+.thumb-ph{width:44px;height:44px;border-radius:6px;background:var(--glass);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(7,8,15,.75);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:1rem;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:min(780px,96vw);max-height:92vh;overflow-y:auto;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6);}
+.modal-header{padding:1.8rem 2rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--panel);z-index:10;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:400;}
+.modal-title em{font-style:italic;color:var(--gold);}
+.modal-close{background:none;border:1px solid var(--border);border-radius:6px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);transition:all .2s;font-size:1.1rem;}
+.modal-close:hover{background:var(--glass2);color:var(--text);}
+.modal-body{padding:1.8rem 2rem;}
+.modal-footer{padding:1.2rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.8rem;position:sticky;bottom:0;background:var(--panel);}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+.field{display:flex;flex-direction:column;gap:.5rem;}
+.field.full{grid-column:1/-1;}
+.field label{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);}
+.field input,.field select,.field textarea{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;font-family:'Tenor Sans',sans-serif;font-size:.85rem;color:var(--text);outline:none;transition:border .2s;width:100%;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--border-gold);}
+.field input::placeholder,.field textarea::placeholder{color:var(--text-dim);}
+.field select option{background:var(--panel);}
+.field textarea{resize:vertical;min-height:90px;line-height:1.7;}
+.rich-textarea{min-height:200px;font-size:.82rem;}
+.field-hint{font-size:.65rem;color:var(--text-dim);margin-top:.2rem;}
+.form-section{grid-column:1/-1;border-top:1px solid var(--border);padding-top:1.2rem;margin-top:.5rem;}
+.form-section-title{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;}
+.form-section-title::before{content:'';width:16px;height:1px;background:var(--gold);}
+
+/* ── UPLOAD AREA ── */
+.upload-area{border:2px dashed rgba(212,175,120,.25);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .3s;position:relative;background:rgba(212,175,120,.02);}
+.upload-area:hover,.upload-area.dragover{border-color:var(--border-gold);background:rgba(212,175,120,.06);}
+.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-area-icon{font-size:1.6rem;margin-bottom:.5rem;opacity:.4;}
+.upload-area-text{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);}
+.upload-area-sub{font-size:.62rem;color:var(--text-dim);margin-top:.3rem;opacity:.6;}
+.upload-preview{max-width:100%;max-height:160px;border-radius:8px;margin-top:.8rem;object-fit:contain;border:1px solid var(--border);display:none;}
+.upload-progress{margin-top:.5rem;height:3px;background:rgba(255,255,255,.08);border-radius:100px;overflow:hidden;display:none;}
+.upload-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));width:0;transition:width .3s;border-radius:100px;}
+.upload-size-info{font-size:.62rem;color:var(--text-dim);margin-top:.3rem;}
+
+/* ── DYNAMIC LISTS ── */
+.dyn-list{display:flex;flex-direction:column;gap:.6rem;margin-top:.6rem;}
+.dyn-item{display:flex;align-items:center;gap:.6rem;padding:.7rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;}
+.dyn-item-info{flex:1;min-width:0;}
+.dyn-item-label{font-size:.78rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dyn-item-url{font-size:.65rem;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dyn-remove{background:none;border:1px solid rgba(220,80,80,.3);border-radius:5px;padding:.25rem .6rem;font-size:.65rem;color:rgba(220,80,80,.6);cursor:pointer;transition:all .2s;flex-shrink:0;}
+.dyn-remove:hover{background:rgba(220,80,80,.1);color:rgba(220,80,80,.9);}
+.add-row{display:grid;grid-template-columns:1fr 1fr auto;gap:.5rem;margin-top:.5rem;}
+.add-row.single{grid-template-columns:1fr auto;}
+.add-row input{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:.6rem .9rem;font-family:'Tenor Sans',sans-serif;font-size:.8rem;color:var(--text);outline:none;transition:border .2s;}
+.add-row input:focus{border-color:var(--border-gold);}
+.add-row input::placeholder{color:var(--text-dim);}
+.add-row .btn-add{background:rgba(212,175,120,.1);border:1px solid var(--border-gold);border-radius:8px;padding:.6rem 1rem;font-size:.72rem;color:var(--gold);cursor:pointer;white-space:nowrap;transition:all .2s;font-family:'Tenor Sans',sans-serif;}
+.add-row .btn-add:hover{background:rgba(212,175,120,.2);}
+
+/* ── IMAGE GALLERY ── */
+.img-gallery-preview{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:.6rem;}
+.img-gallery-thumb{aspect-ratio:1;border-radius:8px;overflow:hidden;position:relative;border:1px solid var(--border);}
+.img-gallery-thumb img{width:100%;height:100%;object-fit:cover;}
+.img-gallery-thumb .img-remove{position:absolute;top:.25rem;right:.25rem;background:rgba(7,8,15,.8);border:1px solid rgba(220,80,80,.4);border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;color:rgba(220,80,80,.8);cursor:pointer;transition:all .2s;}
+.img-gallery-thumb .img-remove:hover{background:rgba(220,80,80,.2);}
+
+/* ── TOGGLE ── */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:.8rem 0;}
+.toggle-label{font-size:.78rem;color:var(--text-muted);}
+.toggle{position:relative;width:42px;height:24px;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:100px;cursor:pointer;transition:.3s;border:1px solid var(--border);}
+.toggle input:checked+.toggle-track{background:rgba(212,175,120,.4);border-color:var(--border-gold);}
+.toggle-track::before{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:var(--text-dim);bottom:3px;left:3px;transition:.3s;}
+.toggle input:checked+.toggle-track::before{transform:translateX(18px);background:var(--gold);}
+
+/* ── WYSIWYG RICH TEXT EDITOR ── */
+.we-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .2s;}
+.we-wrap:focus-within{border-color:var(--border-gold);}
+
+.we-toolbar{
+  display:flex;align-items:center;gap:1px;flex-wrap:wrap;
+  padding:.45rem .6rem;
+  background:rgba(255,255,255,.04);
+  border-bottom:1px solid var(--border);
+}
+.we-sep{width:1px;height:20px;background:rgba(255,255,255,.09);margin:0 4px;flex-shrink:0;}
+.we-btn{
+  display:flex;align-items:center;justify-content:center;
+  min-width:30px;height:28px;padding:0 6px;
+  border:none;border-radius:5px;
+  background:none;color:var(--text-dim);
+  cursor:pointer;font-size:.8rem;font-weight:600;
+  font-family:'Tenor Sans',sans-serif;
+  transition:background .15s,color .15s;
+  white-space:nowrap;
+}
+.we-btn:hover{background:rgba(255,255,255,.08);color:var(--text);}
+.we-btn.active{background:rgba(212,175,120,.16);color:var(--gold);}
+.we-btn svg{width:14px;height:14px;fill:currentColor;display:block;}
+.we-btn-b{font-family:'Georgia',serif;font-weight:700;font-size:.9rem;}
+.we-btn-i{font-family:'Georgia',serif;font-style:italic;font-size:.9rem;}
+.we-btn-u{text-decoration:underline;font-size:.8rem;}
+.we-btn-s{text-decoration:line-through;font-size:.8rem;}
+
+/* Heading select */
+.we-select{
+  height:28px;padding:0 6px;border-radius:5px;
+  border:none;background:rgba(255,255,255,.06);
+  color:var(--text-dim);font-size:.75rem;
+  font-family:'Tenor Sans',sans-serif;cursor:pointer;
+  outline:none;
+}
+.we-select:hover{background:rgba(255,255,255,.1);color:var(--text);}
+.we-select option{background:var(--panel);}
+
+/* Editor body — the contenteditable area */
+.we-editor{
+  min-height:320px;max-height:620px;
+  padding:1.2rem 1.4rem;
+  overflow-y:auto;
+  outline:none;
+  font-family:'Georgia',serif;
+  font-size:.92rem;line-height:1.85;
+  color:var(--text);
+  background:rgba(255,255,255,.025);
+  caret-color:var(--gold);
+}
+.we-editor:empty::before{
+  content:attr(data-placeholder);
+  color:var(--text-dim);pointer-events:none;
+}
+/* Scroll bar */
+.we-editor::-webkit-scrollbar{width:4px;}
+.we-editor::-webkit-scrollbar-thumb{background:rgba(212,175,120,.2);border-radius:4px;}
+
+/* Typography inside the editor */
+.we-editor h1{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;margin:.9rem 0 .4rem;color:var(--text);}
+.we-editor h2{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;margin:.8rem 0 .35rem;color:var(--text);}
+.we-editor h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;margin:.7rem 0 .3rem;color:var(--text);}
+.we-editor p{margin:.35rem 0;}
+.we-editor strong{color:var(--text);font-weight:700;}
+.we-editor em{font-style:italic;color:rgba(240,236,228,.85);}
+.we-editor u{text-decoration:underline;}
+.we-editor s{text-decoration:line-through;opacity:.6;}
+.we-editor a{color:var(--gold);text-decoration:underline;cursor:pointer;}
+.we-editor a:hover{color:var(--gold-light);}
+.we-editor blockquote{
+  border-left:3px solid var(--border-gold);
+  margin:.6rem 0;padding:.5rem 1rem;
+  background:rgba(212,175,120,.04);
+  font-style:italic;color:var(--text-muted);
+  border-radius:0 6px 6px 0;
+}
+.we-editor code{
+  background:rgba(100,160,255,.12);border:1px solid rgba(100,160,255,.2);
+  border-radius:4px;padding:.1em .4em;
+  font-family:'Courier New',monospace;font-size:.85em;
+  color:rgba(140,190,255,.9);
+}
+.we-editor pre{
+  background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;padding:1rem;margin:.6rem 0;
+  overflow-x:auto;
+}
+.we-editor pre code{background:none;border:none;padding:0;color:rgba(180,220,180,.9);}
+.we-editor ul,.we-editor ol{padding-left:1.5rem;margin:.4rem 0;}
+.we-editor li{margin:.2rem 0;}
+.we-editor hr{border:none;border-top:1px solid rgba(255,255,255,.1);margin:1rem 0;}
+.we-editor img{max-width:100%;border-radius:6px;margin:.4rem 0;}
+.we-editor .we-highlight{background:rgba(212,175,120,.2);border-radius:2px;padding:.05em .2em;}
+
+/* Status bar */
+.we-status{
+  padding:.3rem .8rem;
+  background:rgba(255,255,255,.02);
+  border-top:1px solid rgba(255,255,255,.05);
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:.62rem;letter-spacing:.06em;color:var(--text-dim);
+}
+
+/* Link dialog popup */
+.we-link-dialog{
+  position:fixed;z-index:1000;
+  background:var(--panel);border:1px solid var(--border-gold);
+  border-radius:10px;padding:1rem 1.2rem;
+  box-shadow:0 12px 40px rgba(0,0,0,.6);
+  display:none;min-width:320px;
+}
+.we-link-dialog.open{display:block;}
+.we-link-dialog label{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:.3rem;}
+.we-link-dialog input{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:6px;padding:.55rem .8rem;color:var(--text);font-size:.82rem;font-family:'Tenor Sans',sans-serif;outline:none;margin-bottom:.6rem;}
+.we-link-dialog input:focus{border-color:var(--border-gold);}
+.we-link-actions{display:flex;gap:.5rem;justify-content:flex-end;}
+.we-link-btn{padding:.4rem .9rem;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text-dim);font-size:.72rem;cursor:pointer;font-family:'Tenor Sans',sans-serif;transition:all .2s;}
+.we-link-btn.primary{background:rgba(212,175,120,.15);border-color:var(--border-gold);color:var(--gold);}
+.we-link-btn:hover{background:var(--glass2);color:var(--text);}
+.we-link-btn.primary:hover{background:rgba(212,175,120,.25);}
+
+/* Word count badge */
+.we-wordcount{font-size:.62rem;color:var(--text-dim);letter-spacing:.04em;}
+
+/* ── CONFIRM DIALOG ── */
+.confirm-dialog{position:fixed;inset:0;z-index:600;background:rgba(7,8,15,.8);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}
+.confirm-dialog.open{display:flex;}
+.confirm-box{background:var(--panel);border:1px solid rgba(220,80,80,.3);border-radius:14px;padding:2rem;max-width:380px;width:90%;text-align:center;}
+.confirm-icon{font-size:2rem;margin-bottom:1rem;}
+.confirm-title{font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:.5rem;}
+.confirm-text{font-size:.8rem;color:var(--text-dim);margin-bottom:1.5rem;line-height:1.6;}
+.confirm-actions{display:flex;gap:.8rem;justify-content:center;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:9999;padding:.9rem 1.6rem;border-radius:10px;font-family:'Tenor Sans',sans-serif;font-size:.8rem;letter-spacing:.05em;backdrop-filter:blur(12px);box-shadow:0 8px 30px rgba(0,0,0,.4);transition:all .3s;pointer-events:none;max-width:320px;}
+
+/* ── EMPTY TABLE ── */
+.table-empty{padding:4rem;text-align:center;color:var(--text-dim);}
+.table-empty-icon{font-size:2.5rem;margin-bottom:.8rem;opacity:.3;}
+.table-empty-text{font-size:.8rem;letter-spacing:.1em;}
+
+/* ── SKELETON LOADING ── */
+@keyframes skel-shimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
+.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.09) 50%,rgba(255,255,255,.04) 75%);background-size:600px 100%;animation:skel-shimmer 1.4s ease-in-out infinite;border-radius:4px;display:block;}
+
+/* ── MOBILE SIDEBAR TOGGLE ── */
+.sidebar-toggle{display:none;position:fixed;bottom:1.5rem;left:1.5rem;z-index:300;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;cursor:pointer;font-size:1.1rem;box-shadow:0 6px 20px rgba(212,175,120,.4);}
+
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);transition:transform .3s;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .form-grid{grid-template-columns:1fr;}
+  .add-row{grid-template-columns:1fr auto;}
+  .sidebar-toggle{display:flex;align-items:center;justify-content:center;}
+}
+@media(max-width:600px){
+  .stats-grid{grid-template-columns:1fr;}
+  .content{padding:1.5rem;}
+  .topbar{padding:1rem 1.5rem;}
+  .img-gallery-preview{grid-template-columns:repeat(3,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOCK SCREEN ── -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-logo">B<span>.</span> Admin</div>
+    <div class="lock-sub">Content Management System</div>
+
+    <!-- Google Sign-In button -->
+    <button class="lock-google-btn" id="googleSignInBtn" onclick="startGoogleAuth()">
+      <svg width="20" height="20" viewBox="0 0 48 48">
+        <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.8 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/>
+        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16.1 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4 24 4 16.3 4 9.6 8.4 6.3 14.7z"/>
+        <path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.4-5.1l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.6-3.2-11.3-7.8L6 33.2C9.2 39.5 16 44 24 44z"/>
+        <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.3 5.7l6.2 5.2C41.4 36.1 44 30.5 44 24c0-1.2-.1-2.4-.4-3.5z"/>
+      </svg>
+      Sign in with Google
+    </button>
+
+    <div class="lock-err" id="lockErr"></div>
+    <div class="lock-hint">Only authorised accounts can access this admin panel.</div>
+  </div>
+</div>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <a href="index.html" class="sidebar-logo">B<span>.</span> Admin</a>
+    <div class="sidebar-sub">Content Management</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Overview</div>
+    <button class="sidebar-link active" data-panel="dashboard"><span class="sl-icon">📊</span> Dashboard</button>
+    <div class="sidebar-section">Content</div>
+    <button class="sidebar-link" data-panel="design"><span class="sl-icon">🎨</span> Design Posts<span class="sl-count" id="cnt-design">0</span></button>
+    <button class="sidebar-link" data-panel="video"><span class="sl-icon">🎬</span> Video Works<span class="sl-count" id="cnt-video">0</span></button>
+    <button class="sidebar-link" data-panel="violin"><span class="sl-icon">🎻</span> Violin<span class="sl-count" id="cnt-violin">0</span></button>
+    <button class="sidebar-link" data-panel="competitions"><span class="sl-icon">🏆</span> Competitions<span class="sl-count" id="cnt-competitions">0</span></button>
+    <button class="sidebar-link" data-panel="blog"><span class="sl-icon">📝</span> Blog Posts<span class="sl-count" id="cnt-blog">0</span></button>
+    <button class="sidebar-link" data-panel="projects"><span class="sl-icon">⚙️</span> Projects<span class="sl-count" id="cnt-projects">0</span></button>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="auth-user-chip" id="authUserChip" style="display:none;">
+      <div class="auth-user-avatar-ph" id="authAvatarPh">👤</div>
+      <img class="auth-user-avatar" id="authAvatar" src="" alt="" style="display:none;">
+      <span class="auth-user-name" id="authUserName">Signed in</span>
+    </div>
+    <a href="index.html" target="_blank">← View Portfolio</a>
+    <a href="#" id="exportBtn">Export Data (JSON)</a>
+    <a href="#" id="resetBtn" style="color:rgba(220,80,80,.5);">Reset to Defaults</a>
+    <a href="#" id="lockBtn" style="color:rgba(212,175,120,.4);">🔒 Sign Out</a>
+  </div>
+</aside>
+
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard <em>Overview</em></div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary" id="addBtn" style="display:none">+ Add New</button>
+    </div>
+  </div>
+  <div class="content" id="content-area">
+    <!-- populated by renderPanel() on auth -->
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Add Item</div>
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn" id="modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="modal-save">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM -->
+<div class="confirm-dialog" id="confirmDialog" role="alertdialog" aria-modal="true">
+  <div class="confirm-box">
+    <div class="confirm-icon">🗑</div>
+    <div class="confirm-title">Delete this item?</div>
+    <div class="confirm-text">This cannot be undone. The item will be permanently removed.</div>
+    <div class="confirm-actions">
+      <button class="btn" id="confirmNo">Cancel</button>
+      <button class="btn btn-danger" id="confirmYes">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="db.js"></script>
+<script>
+'use strict';
+
+// ══════════════════════════════════════════════════
+//  GOOGLE OAUTH AUTHENTICATION
+//  ─────────────────────────────────────────────────
+//  Uses Google Identity Services (GIS) one-tap / popup.
+//  Only the email below can access admin.
+//  To change: update ALLOWED_EMAIL.
+// ══════════════════════════════════════════════════
+
+const ALLOWED_EMAIL = 'bavlybadr61@gmail.com'; // ← Your Gmail address
+const SESSION_KEY   = 'bavly_gauth_v1';
+const SESSION_TTL   = 8 * 60 * 60 * 1000; // 8 hours
+
+// ── Google Cloud OAuth Client ID ──────────────────
+// Created for bavlybadr61@gmail.com
+// Authorised JS origins: your-domain.com + localhost
+// To change: go to console.cloud.google.com → Credentials
+// ─────────────────────────────────────────────────────────────────────────────
+// SETUP REQUIRED: Replace with your Google Cloud OAuth 2.0 Client ID
+//
+// How to get your Client ID (takes ~3 minutes):
+//   1. Go to https://console.cloud.google.com/
+//   2. Create a project → APIs & Services → Credentials
+//   3. Create OAuth 2.0 Client ID → Web application
+//   4. Add your domain to "Authorised JavaScript origins"
+//      e.g. https://yourdomain.com  AND  http://localhost (for testing)
+//   5. Copy the Client ID and paste it below
+//   6. Also set ALLOWED_EMAIL above to your Gmail address
+//
+// NOTE: The Supabase anon key in db.js is safe to be public — it only
+//       allows reads. Writes are protected by Supabase Row Level Security.
+// ─────────────────────────────────────────────────────────────────────────────
+const GOOGLE_CLIENT_ID = 'PASTE_YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com';
+
+const lockScreen = document.getElementById('lockScreen');
+const lockErr    = document.getElementById('lockErr');
+
+// ── Session helpers ────────────────────────────────
+function sessionGet() {
+  try {
+    const s = sessionStorage.getItem(SESSION_KEY);
+    if (!s) return null;
+    const d = JSON.parse(s);
+    if ((Date.now() - d.ts) > SESSION_TTL) { sessionStorage.removeItem(SESSION_KEY); return null; }
+    return d;
+  } catch { return null; }
+}
+
+function sessionSet(user) {
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ...user, ts: Date.now() }));
+}
+
+function sessionClear() {
+  sessionStorage.removeItem(SESSION_KEY);
+}
+
+// ── Unlock & show admin UI ─────────────────────────
+function unlock(user) {
+  // Show user chip in sidebar
+  if (user) {
+    const chip   = document.getElementById('authUserChip');
+    const nameEl = document.getElementById('authUserName');
+    const avatar = document.getElementById('authAvatar');
+    const avatarPh = document.getElementById('authAvatarPh');
+    if (chip)   chip.style.display = 'flex';
+    if (nameEl) nameEl.textContent = user.name || user.email;
+    if (user.picture && avatar) {
+      avatar.src = user.picture;
+      avatar.style.display = 'block';
+      if (avatarPh) avatarPh.style.display = 'none';
+    }
+  }
+  lockScreen.classList.add('hidden');
+  renderPanel('dashboard');
+}
+
+// ── Check existing session on page load ────────────
+const _session = sessionGet();
+if (_session) {
+  unlock(_session);
+}
+
+// ── Start Google sign-in popup ─────────────────────
+function startGoogleAuth() {
+  const btn = document.getElementById('googleSignInBtn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '.6'; btn.textContent = 'Opening Google…'; }
+
+  // Wait for GIS library to be ready
+  // Guard: prompt setup if Client ID is not configured
+  if (GOOGLE_CLIENT_ID.startsWith('PASTE_')) {
+    showLockErr('⚠ Admin not configured yet. See the SETUP REQUIRED comment in admin.html to add your Google Client ID.');
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = googleBtnHTML(); }
+    return;
+  }
+
+  const tryInit = (attempts = 0) => {
+    if (typeof google === 'undefined' || !google.accounts) {
+      if (attempts > 30) {
+        showLockErr('Google sign-in failed to load. Check your internet connection.');
+        if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = googleBtnHTML(); }
+        return;
+      }
+      setTimeout(() => tryInit(attempts + 1), 200);
+      return;
+    }
+
+    google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'openid email profile',
+      callback: handleGoogleToken,
+    }).requestAccessToken();
+  };
+
+  tryInit();
+}
+
+// Restore button HTML
+function googleBtnHTML() {
+  return `<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.8 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16.1 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4 24 4 16.3 4 9.6 8.4 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.4-5.1l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.6-3.2-11.3-7.8L6 33.2C9.2 39.5 16 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.3 5.7l6.2 5.2C41.4 36.1 44 30.5 44 24c0-1.2-.1-2.4-.4-3.5z"/></svg> Sign in with Google`;
+}
+
+// ── Handle token → fetch user info → verify email ──
+async function handleGoogleToken(tokenResponse) {
+  const btn = document.getElementById('googleSignInBtn');
+
+  if (tokenResponse.error) {
+    showLockErr(tokenResponse.error === 'access_denied'
+      ? 'Sign-in was cancelled.'
+      : 'Google sign-in failed. Please try again.');
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = googleBtnHTML(); }
+    return;
+  }
+
+  try {
+    // Fetch the user's profile from Google
+    const res  = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+    });
+    const user = await res.json();
+
+    if (!user.email) throw new Error('Could not retrieve email from Google.');
+
+    if (user.email.toLowerCase() !== ALLOWED_EMAIL.toLowerCase()) {
+      showLockErr(`Access denied. This admin is only accessible to ${ALLOWED_EMAIL}.`);
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = googleBtnHTML(); }
+      return;
+    }
+
+    // Authorised — save session and unlock
+    sessionSet({
+      email:   user.email,
+      name:    user.name    || user.email,
+      picture: user.picture || null,
+    });
+    unlock({ email: user.email, name: user.name, picture: user.picture });
+
+  } catch (err) {
+    showLockErr('Sign-in error: ' + (err.message || 'Please try again.'));
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = googleBtnHTML(); }
+  }
+}
+
+function showLockErr(msg) {
+  if (lockErr) { lockErr.textContent = msg; }
+}
+
+// ── Sign out ───────────────────────────────────────
+document.getElementById('lockBtn').addEventListener('click', e => {
+  e.preventDefault();
+  sessionClear();
+  // Revoke Google token if GIS is available
+  if (typeof google !== 'undefined' && google.accounts?.oauth2) {
+    google.accounts.oauth2.revoke(ALLOWED_EMAIL, () => {});
+  }
+  window.location.reload();
+});
+
+// ── STATE ──
+let currentPanel = 'dashboard';
+let editingId = null;
+let deleteCallback = null;
+let allData = {};
+let tempImages = [], tempPdfs = [], tempExtraLinks = [], tempVideoLinks = [];
+
+const PANELS = {
+  dashboard:    { title: 'Dashboard <em>Overview</em>',              hasAdd: false },
+  design:       { title: 'Design <em>Posts</em>',                    hasAdd: true, addLabel: 'Add Design Post' },
+  video:        { title: 'Video <em>Works</em>',                     hasAdd: true, addLabel: 'Add Video' },
+  violin:       { title: 'Violin <em>Performances</em>',             hasAdd: true, addLabel: 'Add Performance' },
+  competitions: { title: 'Competitions &amp; <em>Initiatives</em>',  hasAdd: true, addLabel: 'Add Competition' },
+  blog:         { title: 'Blog <em>Posts</em>',                      hasAdd: true, addLabel: 'New Blog Post' },
+  projects:     { title: 'Software <em>Projects</em>',               hasAdd: true, addLabel: 'Add Project' },
+};
+
+// ── TOAST ──
+function toast(msg, type = 'info') {
+  const el = document.createElement('div');
+  const bg = { info: 'rgba(100,160,255,.9)', success: 'rgba(56,200,130,.9)', error: 'rgba(220,80,80,.9)', warning: 'rgba(255,180,50,.9)' };
+  el.className = 'toast';
+  el.setAttribute('role', 'status');
+  el.style.cssText = `background:${bg[type]||bg.info};color:#fff;opacity:0;transform:translateY(8px);`;
+  el.textContent = String(msg).slice(0, 200);
+  document.body.appendChild(el);
+  requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 2800);
+}
+
+// ── CONFIRM ──
+function confirm(cb) {
+  deleteCallback = cb;
+  document.getElementById('confirmDialog').classList.add('open');
+}
+document.getElementById('confirmNo').onclick = () => {
+  document.getElementById('confirmDialog').classList.remove('open');
+  deleteCallback = null;
+};
+document.getElementById('confirmYes').onclick = () => {
+  document.getElementById('confirmDialog').classList.remove('open');
+  if (deleteCallback) { deleteCallback(); deleteCallback = null; }
+};
+
+// ── MODAL ──
+const modal = document.getElementById('modal');
+
+function openModal(title, bodyHTML, onSave) {
+  document.getElementById('modal-title').innerHTML = title;
+  document.getElementById('modal-body').innerHTML = bodyHTML;
+  modal.classList.add('open');
+  document.getElementById('modal-save').onclick = onSave;
+
+  // Auto-init WYSIWYG editor if blog form was injected
+  requestAnimationFrame(() => {
+    if (document.getElementById('we-editor')) initWysiwygEditor();
+  });
+
+  // Wire file inputs for single-image previews with optimization
+  modal.querySelectorAll('input[type=file][data-preview]').forEach(inp => {
+    inp.addEventListener('change', async function () {
+      const file = this.files[0];
+      if (!file) return;
+      const previewId   = this.dataset.preview;
+      const urlFieldId  = this.dataset.urlfield;
+      const progressEl  = this.closest('.upload-area')?.querySelector('.upload-progress');
+      const sizeInfoEl  = this.closest('.upload-area')?.querySelector('.upload-size-info');
+
+      try {
+        // Show progress
+        if (progressEl) { progressEl.style.display = 'block'; }
+        if (progressEl) progressEl.querySelector('.upload-progress-fill').style.width = '30%';
+
+        const dataUrl = await DB.upload.processImage(file);
+
+        if (progressEl) progressEl.querySelector('.upload-progress-fill').style.width = '100%';
+        setTimeout(() => { if (progressEl) progressEl.style.display = 'none'; }, 600);
+
+        const prev = document.getElementById(previewId);
+        if (prev) { prev.src = dataUrl; prev.style.display = 'block'; }
+
+        const urlField = document.getElementById(urlFieldId);
+        if (urlField) urlField.value = dataUrl;
+
+        // Show compressed size
+        const kb = Math.round(dataUrl.length * .75 / 1024);
+        if (sizeInfoEl) sizeInfoEl.textContent = `Compressed: ~${kb} KB`;
+
+        toast('Image uploaded & optimized', 'success');
+      } catch (err) {
+        if (progressEl) progressEl.style.display = 'none';
+        toast(err.message || 'Upload failed', 'error');
+        this.value = '';
+      }
+    });
+  });
+
+  // Wire audio file upload for violin forms — uploads to Supabase Storage
+  const audioFileInput = modal.querySelector('#f_audioFile');
+  if (audioFileInput) {
+    audioFileInput.addEventListener('change', async function() {
+      const file = this.files[0];
+      if (!file) return;
+      const label    = document.getElementById('audio-upload-label');
+      const sizeInfo = document.getElementById('audio-size-info');
+      const progFill = document.getElementById('audio-progress-fill');
+      const progWrap = this.closest('.upload-area')?.querySelector('.upload-progress');
+
+      if (progWrap) progWrap.style.display = 'block';
+      if (progFill) progFill.style.width = '5%';
+      if (label) label.textContent = `Uploading ${file.name}…`;
+      if (sizeInfo) sizeInfo.textContent = `${(file.size/1024/1024).toFixed(1)} MB — uploading to cloud…`;
+
+      try {
+        const publicUrl = await DB.upload.audioFile(file, pct => {
+          if (progFill) progFill.style.width = pct + '%';
+        });
+
+        if (progFill) progFill.style.width = '100%';
+        setTimeout(() => { if (progWrap) progWrap.style.display = 'none'; }, 700);
+
+        // Save public URL into the mediaUrl field
+        const mediaField = document.getElementById('f_mediaUrl');
+        if (mediaField) mediaField.value = publicUrl;
+
+        if (label) label.textContent = `✓ ${file.name} — uploaded`;
+        if (sizeInfo) sizeInfo.textContent = `Stored in Supabase Storage ✓`;
+
+        // Preview player
+        const area = document.getElementById('audio-upload-area');
+        if (area) {
+          let prev = area.parentElement.querySelector('.audio-preview-el');
+          if (prev) prev.remove();
+          const aud = document.createElement('audio');
+          aud.controls = true;
+          aud.src = publicUrl;
+          aud.className = 'audio-preview-el';
+          aud.style.cssText = 'width:100%;margin-top:.7rem;border-radius:8px;height:40px;display:block;';
+          area.after(aud);
+        }
+        toast('Audio uploaded to cloud — click Save to finish', 'success');
+      } catch(err) {
+        if (progWrap) progWrap.style.display = 'none';
+        if (label) label.textContent = 'Click or drag & drop an audio file';
+        if (sizeInfo) sizeInfo.textContent = '';
+        toast(err.message || 'Upload failed', 'error');
+        this.value = '';
+      }
+    });
+  }
+}
+
+function closeModal() {
+  modal.classList.remove('open');
+  editingId = null;
+  tempImages = []; tempPdfs = []; tempExtraLinks = []; tempVideoLinks = [];
+}
+document.getElementById('modal-close').onclick = closeModal;
+document.getElementById('modal-cancel').onclick = closeModal;
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+
+// ── SIDEBAR NAV ──
+document.querySelectorAll('.sidebar-link').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentPanel = btn.dataset.panel;
+    document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cfg = PANELS[currentPanel];
+    document.getElementById('topbar-title').innerHTML = cfg.title;
+    const addBtn = document.getElementById('addBtn');
+    addBtn.style.display = cfg.hasAdd ? '' : 'none';
+    addBtn.textContent = '+ ' + (cfg.addLabel || 'Add New');
+    // Close sidebar on mobile
+    if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+    renderPanel(currentPanel);
+  });
+});
+
+document.getElementById('addBtn').onclick = () => openForm(currentPanel, null);
+
+// Mobile sidebar
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+// ── COUNTS — parallel fetch ──
+async function loadCounts() {
+  const keys = ['design','video','violin','competitions','blog','projects'];
+  await Promise.all(keys.map(async k => {
+    const col = await DB[k].getAll();
+    allData[k] = col;
+    const el = document.getElementById('cnt-' + k);
+    if (el) el.textContent = col.length;
+  }));
+}
+
+// ── RENDER PANEL ──
+function skelTable(cols = 4, rows = 5) {
+  const cells = Array(cols).fill(0).map(() => `<td><div class="skeleton" style="height:14px;border-radius:4px;"></div></td>`).join('');
+  const headCells = Array(cols).fill(0).map(() => `<th><div class="skeleton" style="height:12px;width:60%;border-radius:4px;"></div></th>`).join('');
+  return `<div class="table-wrap">
+    <div class="table-head" style="padding:.9rem 1.2rem;">
+      <div class="skeleton" style="height:16px;width:180px;border-radius:6px;"></div>
+    </div>
+    <table><thead><tr>${headCells}</tr></thead><tbody>
+      ${Array(rows).fill(0).map(() => `<tr style="opacity:${Math.random()*.4+.3}">${cells}</tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+async function renderPanel(panel) {
+  const area = document.getElementById('content-area');
+  if (panel === 'dashboard') { area.innerHTML = skelTable(3,6); await renderDashboard(); return; }
+  area.innerHTML = skelTable(5,5);
+  const items = await DB[panel].getAll();
+  allData[panel] = items;
+  const cnt = document.getElementById('cnt-' + panel);
+  if (cnt) cnt.textContent = items.length;
+  const r = { design: renderDesignTable, video: renderVideoTable, violin: renderViolinTable, competitions: renderCompTable, blog: renderBlogTable, projects: renderProjectTable };
+  if (r[panel]) r[panel](items);
+}
+
+// ── DASHBOARD ──
+async function renderDashboard() {
+  await loadCounts();
+  const total = Object.values(allData).reduce((s, a) => s + a.length, 0);
+  document.getElementById('content-area').innerHTML = `
+    <div style="margin-bottom:1.5rem;">
+      <div style="font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:.4rem;">Welcome back, <em style="color:var(--gold)">Bavly</em></div>
+      <div style="font-size:.8rem;color:var(--text-dim);">${total} total items across all sections</div>
+    </div>
+    <div class="stats-grid">
+      ${[['🎨','design','Design Posts'],['🎬','video','Video Works'],['🎻','violin','Violin'],['🏆','competitions','Competitions'],['📝','blog','Blog Posts'],['⚙️','projects','Projects']].map(([icon,key,label]) => `
+        <div class="stat-card" onclick="document.querySelector('[data-panel=${key}]').click()">
+          <div class="stat-icon">${icon}</div>
+          <div class="stat-num">${allData[key]?.length || 0}</div>
+          <div class="stat-label">${label}</div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:2rem;padding:1.5rem 2rem;background:var(--panel);border:1px solid var(--border);border-radius:12px;">
+      <div style="font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.8rem;">Quick Guide</div>
+      <div style="font-size:.82rem;line-height:1.9;color:var(--text-dim);">
+        Click any section to manage content. Use <strong style="color:var(--text-muted)">+ Add New</strong> to create entries.
+        Images are automatically <strong style="color:var(--text-muted)">compressed & optimized</strong> on upload (max 1200px, WebP).
+        Projects support <strong style="color:var(--text-muted)">images, PDF links, and custom links</strong>. Changes save instantly.
+      </div>
+    </div>`;
+}
+
+// ── XSS-SAFE ESCAPE FOR TEMPLATE LITERALS ──
+function esc(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+// ── TABLE RENDERERS ──
+function renderDesignTable(items) {
+  document.getElementById('content-area').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-head"><div class="table-head-title">Design Posts (${items.length})</div>
+        <input class="table-search" placeholder="Search…" oninput="filterTable(this,'design-tbody')"></div>
+      <table><thead><tr><th>Preview</th><th>Title</th><th>Category</th><th>Date</th><th>Featured</th><th>Actions</th></tr></thead>
+      <tbody id="design-tbody">
+        ${items.length ? items.map(i=>`
+          <tr data-search="${esc(i.title).toLowerCase()} ${esc(i.category||'').toLowerCase()}">
+            <td>${i.image?`<img class="thumb-preview" src="${esc(i.image)}" loading="lazy" alt="">`:`<div class="thumb-ph">🎨</div>`}</td>
+            <td><div class="td-title">${esc(i.title)}</div></td>
+            <td><span class="td-badge badge-draft">${esc(i.category||'—')}</span></td>
+            <td>${esc(i.date||'—')}</td>
+            <td>${i.featured?'<span class="td-badge badge-featured">★ Yes</span>':'—'}</td>
+            <td><div class="td-actions">
+              <button class="action-btn edit" onclick="openForm('design','${esc(i.id)}')">Edit</button>
+              <button class="action-btn del" onclick="deleteItem('design','${esc(i.id)}')">Delete</button>
+            </div></td>
+          </tr>`).join('') : `<tr><td colspan="6"><div class="table-empty"><div class="table-empty-icon">🎨</div><div class="table-empty-text">No design posts yet. Click + Add New.</div></div></td></tr>`}
+      </tbody></table></div>`;
+}
+
+function renderVideoTable(items) {
+  document.getElementById('content-area').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-head"><div class="table-head-title">Video Works (${items.length})</div>
+        <input class="table-search" placeholder="Search…" oninput="filterTable(this,'video-tbody')"></div>
+      <table><thead><tr><th>Title</th><th>Category</th><th>Duration</th><th>Embed</th><th>Actions</th></tr></thead>
+      <tbody id="video-tbody">
+        ${items.length ? items.map(i=>`
+          <tr data-search="${esc(i.title).toLowerCase()} ${esc(i.category||'').toLowerCase()}">
+            <td><div class="td-title">${esc(i.title)}</div></td>
+            <td><span class="td-badge badge-draft">${esc(i.category||'—')}</span></td>
+            <td>${esc(i.duration||'—')}</td>
+            <td>${i.embedUrl?'<span class="td-badge badge-live">✓ Set</span>':'<span style="color:var(--text-dim);font-size:.72rem;">None</span>'}</td>
+            <td><div class="td-actions">
+              <button class="action-btn edit" onclick="openForm('video','${esc(i.id)}')">Edit</button>
+              <button class="action-btn del" onclick="deleteItem('video','${esc(i.id)}')">Delete</button>
+            </div></td>
+          </tr>`).join('') : `<tr><td colspan="5"><div class="table-empty"><div class="table-empty-icon">🎬</div><div class="table-empty-text">No videos yet.</div></div></td></tr>`}
+      </tbody></table></div>`;
+}
+
+function renderViolinTable(items) {
+  document.getElementById('content-area').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-head"><div class="table-head-title">Violin Performances (${items.length})</div>
+        <input class="table-search" placeholder="Search…" oninput="filterTable(this,'violin-tbody')"></div>
+      <table><thead><tr><th>Title</th><th>Composer</th><th>Type</th><th>Date</th><th>Media</th><th>Actions</th></tr></thead>
+      <tbody id="violin-tbody">
+        ${items.length ? items.map(i=>`
+          <tr data-search="${esc(i.title).toLowerCase()} ${esc(i.composer||'').toLowerCase()}">
+            <td><div class="td-title">${esc(i.title)}</div></td>
+            <td>${esc(i.composer||'—')}</td>
+            <td><span class="td-badge badge-draft">${esc(i.type||'—')}</span></td>
+            <td>${esc(i.date||'—')}</td>
+            <td>${i.mediaUrl?'<span class="td-badge badge-live">🔗 Linked</span>':'—'}</td>
+            <td><div class="td-actions">
+              <button class="action-btn edit" onclick="openForm('violin','${esc(i.id)}')">Edit</button>
+              <button class="action-btn del" onclick="deleteItem('violin','${esc(i.id)}')">Delete</button>
+            </div></td>
+          </tr>`).join('') : `<tr><td colspan="6"><div class="table-empty"><div class="table-empty-icon">🎻</div><div class="table-empty-text">No performances yet.</div></div></td></tr>`}
+      </tbody></table></div>`;
+}
+
+function renderCompTable(items) {
+  document.getElementById('content-area').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-head"><div class="table-head-title">Competitions (${items.length})</div>
+        <input class="table-search" placeholder="Search…" oninput="filterTable(this,'comp-tbody')"></div>
+      <table><thead><tr><th>Icon</th><th>Title</th><th>Scope</th><th>Year</th><th>Outcome</th><th>Actions</th></tr></thead>
+      <tbody id="comp-tbody">
+        ${items.length ? items.map(i=>`
+          <tr data-search="${esc(i.title).toLowerCase()}">
+            <td style="font-size:1.4rem;">${i.icon||'🏆'}</td>
+            <td><div class="td-title">${esc(i.title)}</div></td>
+            <td><span style="font-size:.72rem;color:var(--text-dim);">${esc(i.scope||'—')}</span></td>
+            <td>${esc(i.year||'—')}</td>
+            <td><span class="td-badge badge-live">${esc(i.outcome||'Participant')}</span></td>
+            <td><div class="td-actions">
+              <button class="action-btn edit" onclick="openForm('competitions','${esc(i.id)}')">Edit</button>
+              <button class="action-btn del" onclick="deleteItem('competitions','${esc(i.id)}')">Delete</button>
+            </div></td>
+          </tr>`).join('') : `<tr><td colspan="6"><div class="table-empty"><div class="table-empty-icon">🏆</div><div class="table-empty-text">No competitions yet.</div></div></td></tr>`}
+      </tbody></table></div>`;
+}
+
+function renderBlogTable(items) {
+  document.getElementById('content-area').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-head"><div class="table-head-title">Blog Posts (${items.length})</div>
+        <input class="table-search" placeholder="Search…" oninput="filterTable(this,'blog-tbody')"></div>
+      <table><thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Featured</th><th>Actions</th></tr></thead>
+      <tbody id="blog-tbody">
+        ${items.length ? items.map(i=>`
+          <tr data-search="${esc(i.title).toLowerCase()} ${esc(i.category||'').toLowerCase()}">
+            <td>
+              <div class="td-title">${esc(i.title)}</div>
+              <div style="font-size:.7rem;color:var(--text-dim);margin-top:.2rem;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(i.excerpt||'')}</div>
+            </td>
+            <td><span class="td-badge badge-draft">${esc(i.category||'—')}</span></td>
+            <td>${esc(i.date||'—')}</td>
+            <td>${i.featured?'<span class="td-badge badge-featured">★ Yes</span>':'—'}</td>
+            <td><div class="td-actions">
+              <button class="action-btn edit" onclick="openForm('blog','${esc(i.id)}')">Edit</button>
+              <button class="action-btn del" onclick="deleteItem('blog','${esc(i.id)}')">Delete</button>
+            </div></td>
+          </tr>`).join('') : `<tr><td colspan="5"><div class="table-empty"><div class="table-empty-icon">📝</div><div class="table-empty-text">No blog posts yet.</div></div></td></tr>`}
+      </tbody></table></div>`;
+}
+
+function renderProjectTable(items) {
+  document.getElementById('content-area').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-head"><div class="table-head-title">Software Projects (${items.length})</div>
+        <input class="table-search" placeholder="Search…" oninput="filterTable(this,'proj-tbody')"></div>
+      <table><thead><tr><th>Icon</th><th>Title</th><th>Status</th><th>Images</th><th>PDFs</th><th>Actions</th></tr></thead>
+      <tbody id="proj-tbody">
+        ${items.length ? items.map(i=>`
+          <tr data-search="${esc(i.title).toLowerCase()}">
+            <td style="font-size:1.4rem;">${i.icon||'⚙️'}</td>
+            <td>
+              <div class="td-title">${esc(i.title)}</div>
+              <div style="font-size:.7rem;color:var(--text-dim);margin-top:.2rem;">${esc(i.subtitle||'')}</div>
+            </td>
+            <td><span class="td-badge ${i.status==='live'?'badge-live':'badge-draft'}">${esc(i.statusLabel||i.status||'')}</span></td>
+            <td><span style="font-size:.75rem;color:${(i.images||[]).length?'var(--gold)':'var(--text-dim)'};">${(i.images||[]).length} img</span></td>
+            <td><span style="font-size:.75rem;color:${(i.pdfs||[]).length?'var(--gold)':'var(--text-dim)'};">${(i.pdfs||[]).length} pdf</span></td>
+            <td><div class="td-actions">
+              <button class="action-btn edit" onclick="openForm('projects','${esc(i.id)}')">Edit</button>
+              <button class="action-btn del" onclick="deleteItem('projects','${esc(i.id)}')">Delete</button>
+            </div></td>
+          </tr>`).join('') : `<tr><td colspan="6"><div class="table-empty"><div class="table-empty-icon">⚙️</div><div class="table-empty-text">No projects yet.</div></div></td></tr>`}
+      </tbody></table></div>`;
+}
+
+// ── FILTER ──
+function filterTable(input, tbodyId) {
+  const q = input.value.toLowerCase();
+  document.querySelectorAll(`#${tbodyId} tr[data-search]`).forEach(row => {
+    row.style.display = row.dataset.search.includes(q) ? '' : 'none';
+  });
+}
+
+// ── DELETE ──
+function deleteItem(collection, id) {
+  confirm(async () => {
+    await DB[collection].delete(id);
+    toast('Item deleted', 'success');
+    await renderPanel(collection);
+    loadCounts();
+  });
+}
+
+// ── IMAGE HELPERS ──
+function renderImageList(listId, items) {
+  const el = document.getElementById(listId);
+  if (!el) return;
+  if (!items.length) { el.innerHTML = '<div style="font-size:.7rem;color:var(--text-dim);padding:.4rem 0;">No images added yet.</div>'; return; }
+  el.innerHTML = items.map((img, idx) => {
+    const url   = typeof img === 'string' ? img : img.url;
+    const label = typeof img === 'string' ? 'Image '+(idx+1) : (img.label || 'Image '+(idx+1));
+    return `<div class="img-gallery-thumb">
+      <img src="${esc(url)}" alt="${esc(label)}" loading="lazy">
+      <button class="img-remove" onclick="removeImage(${idx},'${listId}')" title="Remove" type="button">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function removeImage(idx, listId) {
+  tempImages.splice(idx, 1);
+  renderImageList(listId, tempImages);
+}
+
+function addImageFromUrl(urlInputId, listId) {
+  const urlEl = document.getElementById(urlInputId);
+  const url   = urlEl.value.trim();
+  if (!url) { toast('Enter an image URL first', 'error'); return; }
+  // Basic URL validation
+  if (!url.startsWith('https://') && !url.startsWith('http://')) {
+    toast('Please enter a valid https:// URL', 'error');
+    return;
+  }
+  tempImages.push({ url, label: 'Screenshot' });
+  urlEl.value = '';
+  renderImageList(listId, tempImages);
+  toast('Image added', 'success');
+}
+
+async function addImageFromUpload(fileInputId, listId) {
+  const inp  = document.getElementById(fileInputId);
+  const file = inp.files[0];
+  if (!file) return;
+
+  const uploadArea   = inp.closest('.upload-area');
+  const progressWrap = uploadArea?.nextElementSibling;
+
+  try {
+    toast('Processing image…', 'info');
+    const dataUrl = await DB.upload.processImage(file);
+    tempImages.push({ url: dataUrl, label: file.name });
+    inp.value = '';
+    renderImageList(listId, tempImages);
+    const kb = Math.round(dataUrl.length * .75 / 1024);
+    toast(`Image added (~${kb} KB compressed)`, 'success');
+  } catch(err) {
+    toast(err.message || 'Upload failed', 'error');
+    inp.value = '';
+  }
+}
+
+// ── PDF HELPERS ──
+function renderPdfList() {
+  const el = document.getElementById('pdf-list');
+  if (!el) return;
+  if (!tempPdfs.length) { el.innerHTML = '<div style="font-size:.7rem;color:var(--text-dim);padding:.4rem 0;">No PDFs added yet.</div>'; return; }
+  el.innerHTML = `<div class="dyn-list">${tempPdfs.map((p,i) => `
+    <div class="dyn-item">
+      <div class="dyn-item-info">
+        <div class="dyn-item-label">📄 ${esc(p.label||'Document')}</div>
+        <div class="dyn-item-url">${esc(p.url)}</div>
+      </div>
+      <button class="dyn-remove" type="button" onclick="removePdf(${i})">✕</button>
+    </div>`).join('')}</div>`;
+}
+
+function removePdf(idx) { tempPdfs.splice(idx,1); renderPdfList(); }
+
+function addPdf() {
+  const label = document.getElementById('pdf-label').value.trim();
+  const url   = document.getElementById('pdf-url').value.trim();
+  if (!url) { toast('Enter a PDF URL', 'error'); return; }
+  tempPdfs.push({ label: label||'Document', url });
+  document.getElementById('pdf-label').value = '';
+  document.getElementById('pdf-url').value   = '';
+  renderPdfList();
+  toast('PDF link added', 'success');
+}
+
+// ── EXTRA LINKS ──
+function renderExtraLinks() {
+  const el = document.getElementById('extralinks-list');
+  if (!el) return;
+  if (!tempExtraLinks.length) { el.innerHTML = '<div style="font-size:.7rem;color:var(--text-dim);padding:.4rem 0;">No extra links added yet.</div>'; return; }
+  el.innerHTML = `<div class="dyn-list">${tempExtraLinks.map((l,i) => `
+    <div class="dyn-item">
+      <div class="dyn-item-info">
+        <div class="dyn-item-label">🔗 ${esc(l.label||l.url)}</div>
+        <div class="dyn-item-url">${esc(l.url)}</div>
+      </div>
+      <button class="dyn-remove" type="button" onclick="removeExtraLink(${i})">✕</button>
+    </div>`).join('')}</div>`;
+}
+function removeExtraLink(idx) { tempExtraLinks.splice(idx,1); renderExtraLinks(); }
+function addExtraLink() {
+  const label = document.getElementById('elink-label').value.trim();
+  const url   = document.getElementById('elink-url').value.trim();
+  if (!url) { toast('Enter a URL', 'error'); return; }
+  tempExtraLinks.push({ label: label||url, url });
+  document.getElementById('elink-label').value = '';
+  document.getElementById('elink-url').value   = '';
+  renderExtraLinks();
+  toast('Link added', 'success');
+}
+
+// ── VIDEO LINKS ──
+function renderVideoLinks() {
+  const el = document.getElementById('videolinks-list');
+  if (!el) return;
+  if (!tempVideoLinks.length) { el.innerHTML = '<div style="font-size:.7rem;color:var(--text-dim);padding:.4rem 0;">No links added yet.</div>'; return; }
+  el.innerHTML = `<div class="dyn-list">${tempVideoLinks.map((l,i) => `
+    <div class="dyn-item">
+      <div class="dyn-item-info">
+        <div class="dyn-item-label">🔗 ${esc(l.label||l.url)}</div>
+        <div class="dyn-item-url">${esc(l.url)}</div>
+      </div>
+      <button class="dyn-remove" type="button" onclick="removeVideoLink(${i})">✕</button>
+    </div>`).join('')}</div>`;
+}
+function removeVideoLink(idx) { tempVideoLinks.splice(idx,1); renderVideoLinks(); }
+function addVideoLink() {
+  const label = document.getElementById('vlink-label').value.trim();
+  const url   = document.getElementById('vlink-url').value.trim();
+  if (!url) { toast('Enter a URL', 'error'); return; }
+  tempVideoLinks.push({ label: label||'Watch', url });
+  document.getElementById('vlink-label').value = '';
+  document.getElementById('vlink-url').value   = '';
+  renderVideoLinks();
+  toast('Link added', 'success');
+}
+
+// ── OPEN FORM ──
+async function openForm(collection, id) {
+  editingId = id;
+  const item = id ? await DB[collection].get(id) : null;
+  const isEdit = !!item;
+
+  tempImages     = item?.images    ? JSON.parse(JSON.stringify(item.images))    : [];
+  tempPdfs       = item?.pdfs      ? JSON.parse(JSON.stringify(item.pdfs))      : [];
+  tempExtraLinks = item?.extraLinks? JSON.parse(JSON.stringify(item.extraLinks)): [];
+  tempVideoLinks = item?.links     ? JSON.parse(JSON.stringify(item.links))     : [];
+
+  const title = isEdit
+    ? `Edit <em>${collection}</em>`
+    : `Add <em>${PANELS[collection]?.addLabel?.replace('Add ','') || collection}</em>`;
+
+  const forms = { design: formDesign, video: formVideo, violin: formViolin, competitions: formCompetition, blog: formBlog, projects: formProject };
+  const bodyHTML = forms[collection] ? forms[collection](item) : '<p>Form not available</p>';
+
+  openModal(title, bodyHTML, async () => {
+    const data = collectForm(collection);
+    if (!data) return;
+    const saveBtn = document.getElementById('modal-save');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
+    try {
+      if (isEdit) { await DB[collection].update(id, data); toast('Updated!', 'success'); }
+      else        { await DB[collection].add(data);        toast('Added!', 'success');   }
+      closeModal();
+      await renderPanel(collection);
+      loadCounts();
+    } catch(e) {
+      toast('Save failed: ' + e.message, 'error');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save Changes';
+    }
+  });
+
+  setTimeout(() => {
+    if (collection === 'projects') { renderImageList('img-gallery', tempImages); renderPdfList(); renderExtraLinks(); }
+    if (collection === 'video')    renderVideoLinks();
+  }, 50);
+}
+
+// ── FORM BUILDERS ──
+const uploadAreaHTML = (previewId, urlFieldId, existingImg = '') => `
+  <div class="upload-area" id="drop_${previewId}">
+    <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-preview="${previewId}" data-urlfield="${urlFieldId}">
+    <div class="upload-area-icon">📁</div>
+    <div class="upload-area-text">Click or drag & drop to upload</div>
+    <div class="upload-area-sub">JPG, PNG, WebP · Max 10MB · Auto-compressed</div>
+    <img id="${previewId}" class="upload-preview" src="${existingImg}" alt="" ${existingImg ? 'style="display:block"' : ''}>
+    <div class="upload-progress"><div class="upload-progress-fill"></div></div>
+    <div class="upload-size-info"></div>
+  </div>`;
+
+function formDesign(i = {}) {
+  return `<div class="form-grid">
+    <div class="field full"><label>Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="Post title"></div>
+    <div class="field"><label>Category</label>
+      <select id="f_category">${['Social Posts','Event Graphics','Typography','Announcements','Holiday Graphics','Other'].map(c=>`<option ${i.category===c?'selected':''}>${c}</option>`).join('')}</select>
+    </div>
+    <div class="field"><label>Date</label><input id="f_date" type="date" value="${i.date||''}"></div>
+    <div class="field full"><label>Description</label><textarea id="f_description" rows="2">${esc(i.description||'')}</textarea></div>
+    <div class="field full"><label>Tags (comma separated)</label>
+      <input id="f_tags" value="${(i.tags||[]).join(', ')}" placeholder="Church, Instagram, Holiday">
+    </div>
+    <div class="field full">
+      <label>Image</label>
+      <input id="f_image" value="${esc(i.image||'')}" placeholder="Paste image URL — or upload below" style="margin-bottom:.5rem;">
+      ${uploadAreaHTML('design-img-preview','f_image', i.image||'')}
+    </div>
+    <div class="field full">
+      <div class="toggle-row"><span class="toggle-label">Featured on homepage</span>
+        <label class="toggle"><input id="f_featured" type="checkbox" ${i.featured?'checked':''}><div class="toggle-track"></div></label>
+      </div>
+    </div>
+  </div>`;
+}
+
+function formVideo(i = {}) {
+  return `<div class="form-grid">
+    <div class="field full"><label>Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="Video title"></div>
+    <div class="field"><label>Category</label>
+      <select id="f_category">${['Church Event','Event Recap','Short Film','Documentary','Highlight Reel','Other'].map(c=>`<option ${i.category===c?'selected':''}>${c}</option>`).join('')}</select>
+    </div>
+    <div class="field"><label>Duration (e.g. 3:24)</label><input id="f_duration" value="${esc(i.duration||'')}" placeholder="2:30"></div>
+    <div class="field full form-section">
+      <div class="form-section-title">📺 Video Embed URL</div>
+      <div class="field-hint" style="margin-bottom:.8rem;line-height:1.8;">
+        Paste any YouTube, Vimeo, or Google Drive share link — it is auto-converted.<br>
+        <strong style="color:var(--gold);">YouTube / Vimeo:</strong> any watch or share link works ✓<br>
+        <strong style="color:var(--gold);">Google Drive:</strong> the file <em>must</em> be set to
+        <strong style="color:var(--gold-light);">"Anyone with the link → Viewer"</strong> in Drive sharing settings,
+        then paste the share link here. Private files cannot be embedded.
+      </div>
+      <input id="f_embedRaw" value="${esc(i.embedUrl||'')}" placeholder="https://youtube.com/watch?v=… or drive.google.com/file/d/…/view" oninput="previewEmbedConvert(this.value)">
+      <div id="embed-preview" style="margin-top:.5rem;font-size:.68rem;color:var(--gold-dim);min-height:1.4em;word-break:break-all;"></div>
+    </div>
+    <div class="field full form-section">
+      <div class="form-section-title">🖼️ Thumbnail</div>
+      <div class="field-hint" style="margin-bottom:.6rem;">Upload an image or paste a URL. For YouTube, leave blank — the thumbnail is fetched automatically from the embed URL.</div>
+      <input id="f_thumbnail" value="${esc(i.thumbnail||'')}" placeholder="Paste image URL — or upload below" style="margin-bottom:.5rem;">
+      ${uploadAreaHTML('video-thumb-preview','f_thumbnail', i.thumbnail||'')}
+    </div>
+    <div class="field full"><label>Description</label><textarea id="f_description" rows="3">${esc(i.description||'')}</textarea></div>
+    <div class="field"><label>Date</label><input id="f_date" type="date" value="${i.date||''}"></div>
+    <div class="field"><div class="toggle-row"><span class="toggle-label">Featured</span>
+      <label class="toggle"><input id="f_featured" type="checkbox" ${i.featured?'checked':''}><div class="toggle-track"></div></label>
+    </div></div>
+    <div class="field full"><label>Tags (comma separated)</label><input id="f_tags" value="${(i.tags||[]).join(', ')}" placeholder="Church, Cinematic"></div>
+    <div class="field full form-section">
+      <div class="form-section-title">External Watch Links</div>
+      <div id="videolinks-list"></div>
+      <div class="add-row" style="margin-top:.6rem">
+        <input id="vlink-label" placeholder="Label (e.g. Watch on YouTube)">
+        <input id="vlink-url" placeholder="https://...">
+        <button class="btn-add" type="button" onclick="addVideoLink()">+ Add</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* Convert any video URL to an embeddable src */
+function toEmbedUrl(raw) {
+  if (!raw) return '';
+  raw = raw.trim();
+  // Already a Drive preview URL — use as-is
+  if (raw.includes('drive.google.com/file/d/') && raw.endsWith('/preview')) return raw;
+  // Already a YouTube embed
+  if (raw.includes('youtube.com/embed/') || raw.includes('player.vimeo')) return raw;
+  // YouTube watch: youtube.com/watch?v=ID or youtu.be/ID
+  let m = raw.match(/(?:youtube\.com\/watch\?(?:.*&)?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  if (m) return 'https://www.youtube.com/embed/' + m[1];
+  // YouTube shorts
+  m = raw.match(/youtube\.com\/shorts\/([A-Za-z0-9_-]{11})/);
+  if (m) return 'https://www.youtube.com/embed/' + m[1];
+  // Vimeo: vimeo.com/VIDEO_ID
+  m = raw.match(/vimeo\.com\/(\d+)/);
+  if (m) return 'https://player.vimeo.com/video/' + m[1];
+  // Google Drive file/d/ID/view or file/d/ID
+  m = raw.match(/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]+)/);
+  if (m) return 'https://drive.google.com/file/d/' + m[1] + '/preview';
+  // Google Drive open?id=ID
+  m = raw.match(/drive\.google\.com\/open\?(?:.*&)?id=([A-Za-z0-9_-]+)/);
+  if (m) return 'https://drive.google.com/file/d/' + m[1] + '/preview';
+  // Google Drive uc?id=ID
+  m = raw.match(/drive\.google\.com\/uc\?(?:.*&)?id=([A-Za-z0-9_-]+)/);
+  if (m) return 'https://drive.google.com/file/d/' + m[1] + '/preview';
+  // Return as-is
+  return raw;
+}
+
+function previewEmbedConvert(raw) {
+  const el = document.getElementById('embed-preview');
+  if (!raw.trim()) { el.textContent = ''; return; }
+  const converted = toEmbedUrl(raw);
+  if (converted !== raw) {
+    el.innerHTML = `<span style="color:var(--gold);">✓ Auto-converted →</span> <span style="opacity:.6;word-break:break-all;">${converted}</span>`;
+  } else {
+    el.innerHTML = `<span style="opacity:.5;">Using URL as-is</span>`;
+  }
+}
+
+function formViolin(i = {}) {
+  const hasAudio    = i.mediaUrl && i.mediaUrl.startsWith('data:audio');
+  const hasExternal = i.mediaUrl && i.mediaUrl.startsWith('http');
+  return `<div class="form-grid">
+    <div class="field full"><label>Piece Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="Canon in D"></div>
+    <div class="field"><label>Composer</label><input id="f_composer" value="${esc(i.composer||'')}" placeholder="Johann Pachelbel"></div>
+    <div class="field"><label>Performance Type</label>
+      <select id="f_type">${['Performance','Recital','Church Music','Practice','Competition','Recording'].map(t=>`<option ${i.type===t?'selected':''}>${t}</option>`).join('')}</select>
+    </div>
+    <div class="field full"><label>Description</label><textarea id="f_description" rows="3">${esc(i.description||'')}</textarea></div>
+
+    <div class="field full form-section">
+      <div class="form-section-title">🎵 Upload Audio File — plays directly in the browser</div>
+      <div class="field-hint" style="margin-bottom:.8rem;">Upload MP3, WAV, M4A, OGG, or FLAC. Stored and plays natively — no external app needed.</div>
+      <div class="upload-area" id="audio-upload-area" style="${hasAudio?'border-color:rgba(212,175,120,.5);background:rgba(212,175,120,.04);':''}">
+        <input type="file" id="f_audioFile" accept="audio/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;">
+        <div class="upload-area-icon">🎵</div>
+        <div class="upload-area-text" id="audio-upload-label">${hasAudio ? '✓ Audio loaded — click to replace' : 'Click or drag & drop an audio file'}</div>
+        <div class="upload-area-sub">MP3 · WAV · M4A · OGG · FLAC · Max 50MB</div>
+        <div class="upload-progress"><div class="upload-progress-fill" id="audio-progress-fill"></div></div>
+        <div class="upload-size-info" id="audio-size-info">${hasAudio?'✓ File stored':''}${hasExternal?'Using external URL':''}
+        </div>
+      </div>
+      ${hasAudio ? `<audio controls src="${esc(i.mediaUrl)}" style="width:100%;margin-top:.7rem;border-radius:8px;height:40px;filter:invert(.85) sepia(1) saturate(.5) hue-rotate(5deg);"></audio>` : ''}
+    </div>
+
+    <div class="field full">
+      <label>— OR — External URL (YouTube, SoundCloud, Spotify)</label>
+      <input id="f_mediaUrl" value="${hasExternal?esc(i.mediaUrl):''}" placeholder="https://youtube.com/watch?v=...">
+      <div class="field-hint">Only fill this if you do not have a local audio file. Uploading above is preferred for in-browser playback.</div>
+    </div>
+
+    <div class="field"><label>Date</label><input id="f_date" type="date" value="${i.date||''}"></div>
+    <div class="field"><div class="toggle-row"><span class="toggle-label">Featured</span>
+      <label class="toggle"><input id="f_featured" type="checkbox" ${i.featured?'checked':''}><div class="toggle-track"></div></label>
+    </div></div>
+  </div>`;
+}
+
+function formCompetition(i = {}) {
+  return `<div class="form-grid">
+    <div class="field full"><label>Competition Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="NASA Space Apps Challenge"></div>
+    <div class="field"><label>Icon (emoji)</label><input id="f_icon" value="${esc(i.icon||'🏆')}" placeholder="🏆" maxlength="4"></div>
+    <div class="field"><label>Year</label><input id="f_year" value="${esc(i.year||'')}" placeholder="2024"></div>
+    <div class="field full"><label>Scope / Category</label><input id="f_scope" value="${esc(i.scope||'')}" placeholder="International · Innovation"></div>
+    <div class="field"><label>Outcome / Award</label><input id="f_outcome" value="${esc(i.outcome||'')}" placeholder="Participant / 1st Place / Finalist"></div>
+    <div class="field full"><label>Description</label><textarea id="f_description" rows="3">${esc(i.description||'')}</textarea></div>
+    <div class="field full"><label>What I Learned</label><textarea id="f_learned" rows="3">${esc(i.learned||'')}</textarea></div>
+  </div>`;
+}
+
+function formBlog(i = {}) {
+  const content = i.content || '';
+  return `<div class="form-grid">
+    <div class="field full"><label>Post Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="How I built the Church Points System"></div>
+    <div class="field"><label>Category</label>
+      <select id="f_category">${['Engineering','Design','Music','Competitions','Personal','Reflection','Other'].map(c=>`<option ${i.category===c?'selected':''}>${c}</option>`).join('')}</select>
+    </div>
+    <div class="field"><label>Date</label><input id="f_date" type="date" value="${i.date||''}"></div>
+    <div class="field full"><label>Excerpt</label><textarea id="f_excerpt" rows="2">${esc(i.excerpt||'')}</textarea></div>
+    <div class="field full">
+      <label>Content</label>
+      <div class="we-wrap" id="we-wrap">
+
+        <!-- TOOLBAR -->
+        <div class="we-toolbar" id="we-toolbar">
+
+          <!-- Headings -->
+          <select class="we-select" id="we-heading" title="Paragraph style">
+            <option value="p">Paragraph</option>
+            <option value="h1">Heading 1</option>
+            <option value="h2">Heading 2</option>
+            <option value="h3">Heading 3</option>
+            <option value="blockquote">Quote</option>
+            <option value="pre">Code Block</option>
+          </select>
+
+          <div class="we-sep"></div>
+
+          <!-- Inline formatting -->
+          <button type="button" class="we-btn we-btn-b" data-cmd="bold"       title="Bold (Ctrl+B)"><b>B</b></button>
+          <button type="button" class="we-btn we-btn-i" data-cmd="italic"     title="Italic (Ctrl+I)"><i>I</i></button>
+          <button type="button" class="we-btn we-btn-u" data-cmd="underline"  title="Underline (Ctrl+U)"><u>U</u></button>
+          <button type="button" class="we-btn we-btn-s" data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+          <button type="button" class="we-btn" data-cmd="hiliteColor" data-val="rgba(212,175,120,0.25)" title="Highlight">◐</button>
+
+          <div class="we-sep"></div>
+
+          <!-- Lists -->
+          <button type="button" class="we-btn" data-cmd="insertUnorderedList" title="Bullet list">
+            <svg viewBox="0 0 16 16"><circle cx="2" cy="4" r="1.4"/><rect x="5" y="3" width="10" height="2" rx="1"/><circle cx="2" cy="8" r="1.4"/><rect x="5" y="7" width="10" height="2" rx="1"/><circle cx="2" cy="12" r="1.4"/><rect x="5" y="11" width="10" height="2" rx="1"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="insertOrderedList" title="Numbered list">
+            <svg viewBox="0 0 16 16"><text x="1" y="5" font-size="5" fill="currentColor">1.</text><rect x="6" y="3" width="9" height="2" rx="1"/><text x="1" y="9" font-size="5" fill="currentColor">2.</text><rect x="6" y="7" width="9" height="2" rx="1"/><text x="1" y="13" font-size="5" fill="currentColor">3.</text><rect x="6" y="11" width="9" height="2" rx="1"/></svg>
+          </button>
+
+          <div class="we-sep"></div>
+
+          <!-- Alignment -->
+          <button type="button" class="we-btn" data-cmd="justifyLeft"   title="Align left">
+            <svg viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="2" rx="1"/><rect x="1" y="6" width="9" height="2" rx="1"/><rect x="1" y="10" width="14" height="2" rx="1"/><rect x="1" y="14" width="6" height="2" rx="1"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="justifyCenter" title="Align centre">
+            <svg viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="2" rx="1"/><rect x="3.5" y="6" width="9" height="2" rx="1"/><rect x="1" y="10" width="14" height="2" rx="1"/><rect x="5" y="14" width="6" height="2" rx="1"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="justifyRight"  title="Align right">
+            <svg viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="2" rx="1"/><rect x="6" y="6" width="9" height="2" rx="1"/><rect x="1" y="10" width="14" height="2" rx="1"/><rect x="9" y="14" width="6" height="2" rx="1"/></svg>
+          </button>
+
+          <div class="we-sep"></div>
+
+          <!-- Indent -->
+          <button type="button" class="we-btn" data-cmd="indent"  title="Indent">⇥</button>
+          <button type="button" class="we-btn" data-cmd="outdent" title="Outdent">⇤</button>
+
+          <div class="we-sep"></div>
+
+          <!-- Link & HR -->
+          <button type="button" class="we-btn" id="we-link-btn" title="Insert / Edit link">
+            <svg viewBox="0 0 16 16"><path d="M6.5 9.5a3 3 0 0 0 4.24 0l2-2a3 3 0 0 0-4.24-4.24l-1.12 1.12" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M9.5 6.5a3 3 0 0 0-4.24 0l-2 2a3 3 0 0 0 4.24 4.24l1.12-1.12" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="unlink" title="Remove link">
+            <svg viewBox="0 0 16 16"><path d="M6.5 9.5a3 3 0 0 0 4.24 0l2-2a3 3 0 0 0-4.24-4.24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M9.5 6.5a3 3 0 0 0-4.24 0l-2 2a3 3 0 0 0 4.24 4.24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><line x1="13" y1="3" x2="3" y2="13" stroke="currentColor" stroke-width="1.5"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="insertHorizontalRule" title="Divider line">—</button>
+
+          <div class="we-sep"></div>
+
+          <!-- Undo / Redo -->
+          <button type="button" class="we-btn" data-cmd="undo" title="Undo (Ctrl+Z)">
+            <svg viewBox="0 0 16 16"><path d="M3 7a5 5 0 1 1 0 6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><polyline points="1,4 3,7 6,5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="redo" title="Redo (Ctrl+Y)">
+            <svg viewBox="0 0 16 16"><path d="M13 7a5 5 0 1 0 0 6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><polyline points="15,4 13,7 10,5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="we-btn" data-cmd="removeFormat" title="Clear formatting">✕<sub style="font-size:.55rem">fmt</sub></button>
+        </div>
+
+        <!-- EDITABLE AREA -->
+        <div
+          class="we-editor"
+          id="we-editor"
+          contenteditable="true"
+          data-placeholder="Start writing your post…"
+        >${content || '<p></p>'}</div>
+
+        <!-- STATUS BAR -->
+        <div class="we-status">
+          <span id="we-status-msg">Ready</span>
+          <span class="we-wordcount" id="we-wordcount">0 words</span>
+        </div>
+      </div>
+
+      <!-- Hidden input — value synced on save -->
+      <input type="hidden" id="f_content" value="">
+    </div>
+    <div class="field full"><label>Tags (comma separated)</label><input id="f_tags" value="${(i.tags||[]).join(', ')}" placeholder="Engineering, Web Dev"></div>
+    <div class="field full"><div class="toggle-row"><span class="toggle-label">Featured post</span>
+      <label class="toggle"><input id="f_featured" type="checkbox" ${i.featured?'checked':''}><div class="toggle-track"></div></label>
+    </div></div>
+  </div>`;
+}
+
+function formProject(i = {}) {
+  return `<div class="form-grid">
+    <div class="field full"><label>Project Title *</label><input id="f_title" value="${esc(i.title||'')}" placeholder="Church Points System"></div>
+    <div class="field"><label>Subtitle</label><input id="f_subtitle" value="${esc(i.subtitle||'')}" placeholder="Full-Stack Web Platform"></div>
+    <div class="field"><label>Icon (emoji)</label><input id="f_icon" value="${esc(i.icon||'⚙️')}" placeholder="⚙️" maxlength="4"></div>
+    <div class="field"><label>Status</label>
+      <select id="f_status">
+        <option value="live" ${i.status==='live'?'selected':''}>Live & Deployed</option>
+        <option value="complete" ${i.status==='complete'?'selected':''}>Completed</option>
+        <option value="progress" ${i.status==='progress'?'selected':''}>In Progress</option>
+        <option value="concept" ${i.status==='concept'?'selected':''}>Concept</option>
+      </select>
+    </div>
+    <div class="field"><label>Status Label</label><input id="f_statusLabel" value="${esc(i.statusLabel||'')}" placeholder="Live & Deployed"></div>
+    <div class="field"><label>Date</label><input id="f_date" type="date" value="${i.date||''}"></div>
+    <div class="field full"><label>Description</label><textarea id="f_description" rows="3">${esc(i.description||'')}</textarea></div>
+    <div class="field full"><label>Tech Stack (comma separated)</label><input id="f_techStack" value="${(i.techStack||[]).join(', ')}" placeholder="HTML/CSS/JS, PostgreSQL, Node.js"></div>
+    <div class="field full"><label>Key Features (one per line)</label><textarea id="f_features" rows="4">${(i.features||[]).join('\n')}</textarea></div>
+
+    <div class="field full form-section">
+      <div class="form-section-title">Main Links</div>
+    </div>
+    <div class="field"><label>GitHub URL</label><input id="f_github" value="${esc((i.links||{}).github||'')}" placeholder="https://github.com/..."></div>
+    <div class="field"><label>Live Site URL</label><input id="f_live" value="${esc((i.links||{}).live||'')}" placeholder="https://..."></div>
+    <div class="field full"><label>Demo URL</label><input id="f_demo" value="${esc((i.links||{}).demo||'')}" placeholder="https://... (video demo, screencast, etc.)"></div>
+
+    <div class="field full form-section">
+      <div class="form-section-title">Project Screenshots & Images</div>
+      <div id="img-gallery" class="img-gallery-preview"></div>
+      <div style="margin-top:.8rem;">
+        <div style="font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.5rem;">Add by URL</div>
+        <div class="add-row">
+          <input id="img-url-input" placeholder="Paste image URL https://...">
+          <button class="btn-add" type="button" onclick="addImageFromUrl('img-url-input','img-gallery')">+ Add URL</button>
+        </div>
+        <div style="font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin:.8rem 0 .5rem;">Or Upload</div>
+        <div class="upload-area">
+          <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" id="img-file-input" onchange="addImageFromUpload('img-file-input','img-gallery')">
+          <div class="upload-area-icon">📁</div>
+          <div class="upload-area-text">Click or drag & drop to upload screenshots</div>
+          <div class="upload-area-sub">JPG, PNG, WebP · Max 10MB · Auto-compressed to WebP</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field full form-section">
+      <div class="form-section-title">PDF Documents</div>
+      <div id="pdf-list"></div>
+      <div class="add-row" style="margin-top:.6rem">
+        <input id="pdf-label" placeholder="Label (e.g. Project Report)">
+        <input id="pdf-url" placeholder="PDF URL https://... or Google Drive link">
+        <button class="btn-add" type="button" onclick="addPdf()">+ Add</button>
+      </div>
+      <div class="field-hint" style="margin-top:.4rem">Link to Google Drive, Dropbox, or any direct PDF URL.</div>
+    </div>
+
+    <div class="field full form-section">
+      <div class="form-section-title">Extra Links</div>
+      <div id="extralinks-list"></div>
+      <div class="add-row" style="margin-top:.6rem">
+        <input id="elink-label" placeholder="Label (e.g. Presentation Slides)">
+        <input id="elink-url" placeholder="URL https://...">
+        <button class="btn-add" type="button" onclick="addExtraLink()">+ Add</button>
+      </div>
+    </div>
+
+    <div class="field full"><div class="toggle-row"><span class="toggle-label">Featured project</span>
+      <label class="toggle"><input id="f_featured" type="checkbox" ${i.featured?'checked':''}><div class="toggle-track"></div></label>
+    </div></div>
+  </div>`;
+}
+
+// ── COLLECT FORM ──
+function collectForm(collection) {
+  const gv = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  const gb = id => { const el = document.getElementById(id); return el ? el.checked : false; };
+
+  const maps = {
+    design: () => ({
+      title: gv('f_title'), category: gv('f_category'), date: gv('f_date'),
+      description: gv('f_description'),
+      tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean).slice(0,20),
+      image: gv('f_image'), featured: gb('f_featured')
+    }),
+    video: () => ({
+      title: gv('f_title'), category: gv('f_category'), duration: gv('f_duration'),
+      embedUrl: toEmbedUrl(gv('f_embedRaw')), thumbnail: gv('f_thumbnail'), description: gv('f_description'),
+      date: gv('f_date'), featured: gb('f_featured'),
+      tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean).slice(0,20),
+      links: [...tempVideoLinks]
+    }),
+    violin: () => ({
+      title: gv('f_title'), composer: gv('f_composer'), type: gv('f_type'),
+      description: gv('f_description'), mediaUrl: gv('f_mediaUrl'),
+      date: gv('f_date'), featured: gb('f_featured')
+    }),
+    competitions: () => ({
+      title: gv('f_title'), icon: gv('f_icon')||'🏆', year: gv('f_year'),
+      scope: gv('f_scope'), outcome: gv('f_outcome'),
+      description: gv('f_description'), learned: gv('f_learned')
+    }),
+    blog: () => ({
+      title: gv('f_title'), category: gv('f_category'), date: gv('f_date'),
+      excerpt: gv('f_excerpt'), content: getEditorContent(),
+      tags: gv('f_tags').split(',').map(t=>t.trim()).filter(Boolean).slice(0,20),
+      featured: gb('f_featured')
+    }),
+    projects: () => ({
+      title: gv('f_title'), subtitle: gv('f_subtitle'), icon: gv('f_icon')||'⚙️',
+      status: gv('f_status'), statusLabel: gv('f_statusLabel'), date: gv('f_date'),
+      description: gv('f_description'),
+      techStack: gv('f_techStack').split(',').map(t=>t.trim()).filter(Boolean).slice(0,30),
+      features: gv('f_features').split('\n').map(t=>t.trim()).filter(Boolean).slice(0,20),
+      links: { github: gv('f_github'), live: gv('f_live'), demo: gv('f_demo') },
+      images: [...tempImages],
+      pdfs: [...tempPdfs],
+      extraLinks: [...tempExtraLinks],
+      featured: gb('f_featured')
+    }),
+  };
+
+  const fn = maps[collection];
+  if (!fn) return null;
+  const data = fn();
+  if (!data.title) { toast('Title is required', 'error'); return null; }
+  return data;
+}
+
+// ══════════════════════════════════════════════════
+//  WYSIWYG RICH EDITOR ENGINE
+// ══════════════════════════════════════════════════
+let _weEditor = null;
+let _weSavedSel = null;
+
+function initWysiwygEditor() {
+  const editor  = document.getElementById('we-editor');
+  const toolbar = document.getElementById('we-toolbar');
+  const heading = document.getElementById('we-heading');
+  const linkBtn = document.getElementById('we-link-btn');
+  if (!editor) return;
+  _weEditor = editor;
+
+  // ── exec helper ──
+  function exec(cmd, val = null) {
+    editor.focus();
+    document.execCommand(cmd, false, val);
+    syncToolbarState();
+  }
+
+  // ── toolbar button clicks ──
+  toolbar.addEventListener('mousedown', e => {
+    const btn = e.target.closest('[data-cmd]');
+    if (!btn) return;
+    e.preventDefault(); // keep focus in editor
+    const cmd = btn.dataset.cmd;
+    const val = btn.dataset.val || null;
+    exec(cmd, val);
+  });
+
+  // ── heading/block select ──
+  heading.addEventListener('change', () => {
+    const tag = heading.value;
+    editor.focus();
+    if (tag === 'pre') {
+      // wrap selection in <pre><code>
+      const sel = window.getSelection();
+      const txt = sel.toString() || 'code here';
+      document.execCommand('insertHTML', false, `<pre><code>${txt}</code></pre><p><br></p>`);
+    } else if (tag === 'blockquote') {
+      document.execCommand('formatBlock', false, 'blockquote');
+    } else {
+      document.execCommand('formatBlock', false, tag);
+    }
+    heading.value = 'p'; // reset
+    syncToolbarState();
+  });
+
+  // ── LINK DIALOG ──
+  linkBtn.addEventListener('mousedown', e => {
+    e.preventDefault();
+    _weSavedSel = saveSelection();
+    const existing = getSelectedLink();
+    const dialog = document.getElementById('we-link-dialog');
+    document.getElementById('we-link-url').value  = existing?.href || 'https://';
+    document.getElementById('we-link-text').value = existing?.textContent || window.getSelection().toString() || '';
+    // Position near button
+    const r = linkBtn.getBoundingClientRect();
+    dialog.style.top  = (r.bottom + 8 + window.scrollY) + 'px';
+    dialog.style.left = Math.min(r.left, window.innerWidth - 340) + 'px';
+    dialog.classList.add('open');
+  });
+
+  document.getElementById('we-link-cancel').addEventListener('click', () => {
+    document.getElementById('we-link-dialog').classList.remove('open');
+  });
+
+  document.getElementById('we-link-insert').addEventListener('click', () => {
+    const url  = document.getElementById('we-link-url').value.trim();
+    const text = document.getElementById('we-link-text').value.trim();
+    if (!url) return;
+    restoreSelection(_weSavedSel);
+    editor.focus();
+    const sel = window.getSelection();
+    if (sel.toString()) {
+      document.execCommand('createLink', false, url);
+    } else {
+      const linkHTML = `<a href="${url.replace(/"/g,'&quot;')}">${text || url}</a>`;
+      document.execCommand('insertHTML', false, linkHTML);
+    }
+    document.getElementById('we-link-dialog').classList.remove('open');
+    syncToolbarState();
+  });
+
+  // Close link dialog on outside click
+  document.addEventListener('mousedown', e => {
+    const d = document.getElementById('we-link-dialog');
+    if (d.classList.contains('open') && !d.contains(e.target) && e.target !== linkBtn) {
+      d.classList.remove('open');
+    }
+  });
+
+  // ── Keyboard shortcuts ──
+  editor.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey) {
+      const shortcuts = { b:'bold', i:'italic', u:'underline', z:'undo', y:'redo' };
+      if (shortcuts[e.key.toLowerCase()]) {
+        e.preventDefault();
+        exec(shortcuts[e.key.toLowerCase()]);
+      }
+      if (e.key.toLowerCase() === 'k') { e.preventDefault(); linkBtn.dispatchEvent(new MouseEvent('mousedown')); }
+    }
+    // Tab → indent
+    if (e.key === 'Tab') { e.preventDefault(); exec(e.shiftKey ? 'outdent' : 'indent'); }
+    // Enter in empty list item → exit list
+    if (e.key === 'Enter' && !e.shiftKey) {
+      // Let browser handle naturally
+    }
+    updateWordCount();
+  });
+
+  // ── Paste: strip formatting ──
+  editor.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = e.clipboardData.getData('text/plain');
+    document.execCommand('insertText', false, text);
+  });
+
+  // ── Toolbar state sync ──
+  editor.addEventListener('keyup', syncToolbarState);
+  editor.addEventListener('mouseup', syncToolbarState);
+  editor.addEventListener('input', () => { updateWordCount(); });
+
+  function syncToolbarState() {
+    const cmds = ['bold','italic','underline','strikeThrough','insertUnorderedList','insertOrderedList'];
+    toolbar.querySelectorAll('[data-cmd]').forEach(btn => {
+      try { btn.classList.toggle('active', document.queryCommandState(btn.dataset.cmd)); } catch(e) {}
+    });
+  }
+
+  function updateWordCount() {
+    const text = (editor.innerText || '').trim();
+    const words = text ? text.split(/\s+/).length : 0;
+    const chars = text.length;
+    const el = document.getElementById('we-wordcount');
+    if (el) el.textContent = `${words} word${words!==1?'s':''} · ${chars} chars`;
+    const msg = document.getElementById('we-status-msg');
+    if (msg) msg.textContent = 'Editing';
+  }
+
+  // Init word count
+  updateWordCount();
+  syncToolbarState();
+}
+
+// ── Selection save/restore (for link dialog) ──
+function saveSelection() {
+  const sel = window.getSelection();
+  return sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null;
+}
+function restoreSelection(range) {
+  if (!range) return;
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+function getSelectedLink() {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return null;
+  let node = sel.getRangeAt(0).commonAncestorContainer;
+  while (node && node.nodeName !== 'A') node = node.parentNode;
+  return (node && node.nodeName === 'A') ? node : null;
+}
+
+// ── Get editor HTML for saving ──
+function getEditorContent() {
+  const ed = document.getElementById('we-editor');
+  if (!ed) return document.getElementById('f_content')?.value || '';
+  return ed.innerHTML
+    .replace(/<p><br><\/p>$/, '') // strip trailing empty paragraph
+    .trim();
+}
+
+// Old wrapSelection kept for any other uses
+function wrapSelection(id, open, close) {
+  const ta = document.getElementById(id);
+  if (!ta) return;
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.substring(s, e);
+  ta.value = ta.value.substring(0, s) + open + sel + close + ta.value.substring(e);
+  ta.focus();
+  ta.setSelectionRange(s + open.length, s + open.length + sel.length);
+}
+
+// ── EXPORT ──
+document.getElementById('exportBtn').onclick = async (e) => {
+  e.preventDefault();
+  const data = await DB.exportAll();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `bavly-portfolio-data-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Data exported!', 'success');
+};
+
+// ── RESET ──
+document.getElementById('resetBtn').onclick = async (e) => {
+  e.preventDefault();
+  confirm(async () => {
+    await DB.resetAll();
+    toast('Reset to default data', 'info');
+    loadCounts();
+    renderPanel(currentPanel);
+  });
+};
+
+// ── INIT ──
+renderPanel('dashboard');
+</script>
+<!-- ── WYSIWYG LINK DIALOG ── -->
+<div class="we-link-dialog" id="we-link-dialog" style="position:fixed;">
+  <label>Link URL</label>
+  <input type="url" id="we-link-url" placeholder="https://example.com">
+  <label>Link Text (optional — leave blank to use selection)</label>
+  <input type="text" id="we-link-text" placeholder="Click here">
+  <div class="we-link-actions">
+    <button type="button" class="we-link-btn" id="we-link-cancel">Cancel</button>
+    <button type="button" class="we-link-btn primary" id="we-link-insert">Insert Link</button>
+  </div>
+</div>
+
+</body>
+</html>
