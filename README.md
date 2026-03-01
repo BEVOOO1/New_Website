@@ -1,68 +1,113 @@
-# Bavly Badr Portfolio — v4
+# Bavly Badr Portfolio — v13
 
-A publish-ready personal portfolio CMS built with vanilla HTML/CSS/JS.
+A fully publish-ready personal portfolio CMS built with vanilla HTML/CSS/JS + Supabase cloud backend.
+
+---
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Homepage |
-| `design.html` | Church design gallery |
-| `video.html` | Video works |
-| `violin.html` | Violin performances |
-| `projects.html` | Software projects |
-| `competitions.html` | Competitions |
-| `blog.html` | Blog posts |
-| `admin.html` | Admin CMS (PIN protected) |
+| `index.html` | Homepage with animated canvas background |
+| `design.html` | Church design gallery with lightbox & skeletons |
+| `video.html` | Video works — full-screen modal player |
+| `violin.html` | Violin performances — full-screen music player with Canvas visualizer |
+| `projects.html` | Software projects with PDF/link support |
+| `competitions.html` | Competitions & initiatives |
+| `blog.html` | Blog with rich-text post reader |
+| `admin.html` | Admin CMS — **Google OAuth protected** |
 | `shared.css` | Global design system |
-| `shared.js` | Canvas, nav, reveal, utilities |
-| `db.js` | Storage layer + image optimization |
+| `shared.js` | Canvas, nav, reveal, lazy loading, utilities |
+| `db.js` | Supabase REST layer + image compression + 30s cache |
 
-## What Was Optimized (v4)
+---
 
-### Security
-- **Admin PIN lock** — Admin panel requires a PIN before access. Session expires after 2 hours.
-  - **Change the PIN** in `admin.html` at `const ADMIN_PIN = '2025';` before publishing
-- **XSS protection** — All user content rendered via `sanitizeHTML()` / `escAttr()` helpers
-- **Input validation** — URL sanitizer, file type whitelist, max file size enforcement
-- **`noindex` meta** on admin.html (search engines won't index it)
+## 🔐 Google Authentication Setup (REQUIRED before publishing)
 
-### Optimized File Uploads
-- Images are **auto-compressed on upload** using Canvas API (max 1200×1200, WebP output)
-- Files capped at **10MB** input with meaningful error messages
-- Only allowed: `image/jpeg`, `image/png`, `image/webp`, `image/gif`
-- Compressed size shown to user after upload
-- Drag-and-drop support on upload zones
+The admin panel is protected by **Google OAuth** — only your Gmail address can sign in.
+The old PIN system has been removed (it was visible in the page source — a security risk).
 
-### Performance
-- Canvas animation **pauses** when tab is hidden (saves CPU/battery)
-- **Lazy loading** on all gallery images (`loading="lazy"`)
-- `ResizeObserver` instead of `window.resize` for canvas
-- `will-change: transform` on canvas for GPU compositing
-- `prefers-reduced-motion` respected — animations disabled when user prefers it
-- Passive scroll listeners
+### Step 1 — Create a Google OAuth Client ID (~3 minutes)
 
-### Code Quality
-- `'use strict'` mode in admin.html
-- Table search filter using `data-search` attributes (no re-render)
-- Save button disabled while saving (prevents double-submit)
-- Save includes try/catch with error toast
-- Tags capped at 20, features at 20 lines (prevents storage bloat)
-- JSON export includes date in filename
+1. Go to **https://console.cloud.google.com/**
+2. Create a new project (or use an existing one)
+3. Navigate to **APIs & Services → Credentials**
+4. Click **Create Credentials → OAuth 2.0 Client ID**
+5. Choose **Web application**
+6. Under **Authorised JavaScript origins**, add:
+   - `https://yourdomain.com` (your live domain)
+   - `http://localhost` (for local testing)
+7. Click **Create** and copy the **Client ID** shown
 
-## Deployment
+### Step 2 — Paste it into admin.html
 
-This is a static HTML portfolio — deploy to:
-- **Netlify** (drag the folder onto netlify.com/drop)
-- **GitHub Pages** (push to a repo, enable Pages)
-- **Vercel** (connect GitHub repo)
-- **Any static host**
+Open `admin.html` and find these two lines near the top of the script block:
 
-### Before Publishing Checklist
-1. Change `const ADMIN_PIN = '2025';` in `admin.html` to your own PIN
-2. Add your photo as `myimage.jpg` in the same folder
-3. Update the name, bio, and social links in `index.html`
-4. (Optional) Add a `favicon.ico`
+```js
+const ALLOWED_EMAIL    = 'bavlybadr61@gmail.com';  // Your Gmail
+const GOOGLE_CLIENT_ID = 'PASTE_YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com';
+```
 
-## Storage
-Data is stored in `window.storage` (persistent in the Claude.ai artifact environment) with `localStorage` as fallback for regular browsers.
+Replace the placeholder with your actual Client ID. That is all.
+
+### How it works
+
+- User clicks **Sign in with Google** → Google popup appears
+- Google returns a token → the app fetches your email from Google's API
+- If the email matches `ALLOWED_EMAIL`, a session is saved (8-hour TTL) and admin unlocks
+- Wrong email → access denied with a clear message
+- **Sign Out** in the sidebar clears the session and revokes the Google token
+- No passwords stored anywhere. Google handles all authentication.
+
+---
+
+## 🚀 Before Publishing Checklist
+
+1. Follow the Google Auth setup above and add your Client ID to admin.html
+2. Add `ALLOWED_EMAIL` set to your Gmail address (already set to bavlybadr61@gmail.com)
+3. Add your photo as `myimage.jpg` in the same folder as the HTML files
+4. Update name, bio, GitHub/Facebook links in `index.html`
+5. Add your live domain to Google OAuth authorised origins after deploying
+6. Add a `favicon.ico` (optional but recommended)
+
+---
+
+## 📦 Deployment
+
+This is a static HTML portfolio — deploy anywhere:
+
+| Platform | How |
+|----------|-----|
+| Netlify | Drag the folder onto netlify.com/drop |
+| GitHub Pages | Push to repo → Settings → Pages → Deploy from branch |
+| Vercel | Connect GitHub repo, zero config |
+| Any static host | Upload all files to the root directory |
+
+After deploying, add your live URL to the Google OAuth Authorised JavaScript Origins.
+
+---
+
+## 🗄️ Storage (Supabase)
+
+All content lives in Supabase (PostgreSQL + Storage):
+
+- Tables: design, video, violin, competitions, blog, projects
+- Audio files stored in Supabase Storage bucket (up to 50MB per file)
+- Images auto-compressed to WebP at max 900x900px / 78% quality
+- 30-second in-memory cache — panel switching is instant on repeat visits
+
+The Supabase anon key in db.js is safe to be public. It only allows reads.
+Writes are protected by Supabase Row Level Security (RLS).
+
+---
+
+## 🔒 Security Summary
+
+| Layer | How |
+|-------|-----|
+| Admin access | Google OAuth — only one whitelisted Gmail can unlock |
+| Session | 8-hour TTL in sessionStorage (auto-clears when tab closes) |
+| XSS | All user content uses sanitizeHTML() / escAttr() — no raw innerHTML from user input |
+| URLs | Only https://, http://, data:image/ are accepted |
+| Files | Type whitelist + 10MB image limit + 50MB audio limit |
+| SEO | noindex, nofollow on admin.html so search engines skip it |

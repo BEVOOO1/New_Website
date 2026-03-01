@@ -332,7 +332,7 @@ const DB = (() => {
     return str
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#x27;')
-      .trim().slice(0, 5000);
+      .trim().slice(0, 50000); // 50k chars — enough for long blog posts
   }
 
   function sanitizeUrl(url) {

@@ -4,8 +4,6 @@
    Fully dynamic via CMS
    Optimized for performance & accessibility
 ════════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap');
-
 :root {
   --bg:          #07080f;
   --bg2:         #0a0c16;
@@ -536,10 +534,8 @@ body {
 }
 .reveal.visible { opacity: 1; transform: none; }
 
-/* ── LAZY LOAD FADE ── */
+/* Ensure images display normally by default */
 img { opacity: 1; }
-img[data-lazy-fade] { opacity: 0; transition: opacity 0.4s; }
-img[data-lazy-fade].loaded { opacity: 1; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {

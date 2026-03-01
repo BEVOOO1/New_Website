@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Design work by Bavly Badr — church posts, graphics, and visual projects for the Coptic community.">
 <title>Design — Bavly Badr</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
@@ -106,7 +107,7 @@
 
 <footer class="footer"><div class="wrapper footer-inner">
   <span class="footer-name">Bavly Badr</span>
-  <span class="footer-copy">© 2025 · BEVO copyright reserved</span>
+  <span class="footer-copy" id="footer-year">© 2025 · BEVO copyright reserved</span>
   <div class="footer-links">
     <a href="https://github.com/BEVOOO1" target="_blank">GitHub</a>
     <a href="admin.html" class="footer-admin-btn">⚙ Admin</a>
@@ -148,7 +149,18 @@ function openLightbox(itemsWithImages, startIdx) {
 function showLbImage() {
   const item = filteredItems[lbIndex];
   if (!item) return;
-  document.getElementById('dlbImg').src = item.image;
+  const img = document.getElementById('dlbImg');
+  // Fade out → swap src → fade in
+  img.style.opacity = '0';
+  img.style.transition = 'opacity 0.2s';
+  const newSrc = item.image;
+  const tmp = new Image();
+  tmp.onload = () => {
+    img.src = newSrc;
+    requestAnimationFrame(() => { img.style.opacity = '1'; });
+  };
+  tmp.onerror = () => { img.src = newSrc; img.style.opacity = '1'; };
+  tmp.src = newSrc;
   document.getElementById('dlbTitle').textContent = item.title;
   document.getElementById('dlbSub').textContent = item.category || '';
   document.getElementById('dlbCounter').textContent = `${lbIndex + 1} / ${filteredItems.length}`;

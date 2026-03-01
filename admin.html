@@ -7,6 +7,8 @@
 <title>Admin — Bavly CMS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{
   --bg:#07080f;--bg2:#0a0c16;--panel:#0e1018;
@@ -24,17 +26,32 @@ body{background:var(--bg);color:var(--text);display:flex;min-height:100vh;overfl
 /* ── LOCK SCREEN ── */
 .lock-screen{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;}
 .lock-screen.hidden{display:none;}
-.lock-card{background:var(--panel);border:1px solid var(--border-gold);border-radius:20px;padding:3rem 3.5rem;text-align:center;max-width:380px;width:90%;box-shadow:0 30px 80px rgba(0,0,0,.6);}
+.lock-card{background:var(--panel);border:1px solid var(--border-gold);border-radius:20px;padding:3rem 3.5rem;text-align:center;max-width:420px;width:90%;box-shadow:0 30px 80px rgba(0,0,0,.6);}
 .lock-logo{font-family:'Cinzel',serif;font-size:2rem;font-weight:600;color:var(--text);margin-bottom:.3rem;}
 .lock-logo span{color:var(--gold);}
-.lock-sub{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:2.5rem;}
-.lock-label{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.6rem;text-align:left;}
-.lock-input{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.2rem;font-family:'Tenor Sans',sans-serif;font-size:1.1rem;letter-spacing:.4em;color:var(--text);outline:none;text-align:center;transition:border .2s;margin-bottom:.6rem;}
-.lock-input:focus{border-color:var(--border-gold);}
-.lock-btn{width:100%;padding:.9rem;border-radius:100px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;color:#07080f;font-family:'Tenor Sans',sans-serif;font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:all .25s;margin-top:.4rem;}
-.lock-btn:hover{box-shadow:0 8px 30px rgba(212,175,120,.35);transform:translateY(-1px);}
-.lock-err{font-size:.72rem;color:rgba(220,80,80,.85);margin-top:.6rem;min-height:1.2rem;text-align:center;}
-.lock-hint{font-size:.62rem;color:var(--text-dim);margin-top:1.5rem;letter-spacing:.05em;}
+.lock-sub{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:2rem;}
+.lock-divider{display:flex;align-items:center;gap:.8rem;margin:1.5rem 0;color:var(--text-dim);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;}
+.lock-divider::before,.lock-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.lock-google-btn{
+  display:flex;align-items:center;justify-content:center;gap:.75rem;
+  width:100%;padding:.85rem 1.2rem;
+  border-radius:100px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.15);
+  color:var(--text);font-family:'Tenor Sans',sans-serif;
+  font-size:.82rem;letter-spacing:.06em;
+  cursor:pointer;transition:all .25s;
+  margin-top:.5rem;
+}
+.lock-google-btn:hover{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.25);transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.lock-google-btn svg{flex-shrink:0;}
+.lock-err{font-size:.72rem;color:rgba(220,80,80,.85);margin-top:1rem;min-height:1.2rem;text-align:center;line-height:1.5;}
+.lock-hint{font-size:.62rem;color:var(--text-dim);margin-top:1.5rem;letter-spacing:.05em;line-height:1.6;}
+/* User info chip in sidebar */
+.auth-user-chip{display:flex;align-items:center;gap:.6rem;padding:.6rem .8rem;background:rgba(212,175,120,.06);border:1px solid var(--border-gold);border-radius:8px;margin-bottom:.8rem;}
+.auth-user-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid var(--border-gold);}
+.auth-user-avatar-ph{width:28px;height:28px;border-radius:50%;background:rgba(212,175,120,.2);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;}
+.auth-user-name{font-size:.72rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
 
 /* ── SIDEBAR ── */
 .sidebar{width:var(--sidebar);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:fixed;left:0;top:0;z-index:100;overflow-y:auto;}
@@ -347,12 +364,21 @@ tr:hover td{background:rgba(255,255,255,.02);}
 <div class="lock-screen" id="lockScreen">
   <div class="lock-card">
     <div class="lock-logo">B<span>.</span> Admin</div>
-    <div class="lock-sub">Content Management</div>
-    <div class="lock-label">Enter Access PIN</div>
-    <input class="lock-input" type="password" id="pinInput" maxlength="6" placeholder="••••••" autocomplete="off">
-    <button class="lock-btn" id="pinBtn">Enter Admin</button>
-    <div class="lock-err" id="pinErr"></div>
-    <div class="lock-hint">PIN is set in admin.html — change before publishing</div>
+    <div class="lock-sub">Content Management System</div>
+
+    <!-- Google Sign-In button -->
+    <button class="lock-google-btn" id="googleSignInBtn" onclick="startGoogleAuth()">
+      <svg width="20" height="20" viewBox="0 0 48 48">
+        <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.8 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/>
+        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16.1 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4 24 4 16.3 4 9.6 8.4 6.3 14.7z"/>
+        <path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.4-5.1l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.6-3.2-11.3-7.8L6 33.2C9.2 39.5 16 44 24 44z"/>
+        <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.3 5.7l6.2 5.2C41.4 36.1 44 30.5 44 24c0-1.2-.1-2.4-.4-3.5z"/>
+      </svg>
+      Sign in with Google
+    </button>
+
+    <div class="lock-err" id="lockErr"></div>
+    <div class="lock-hint">Only authorised accounts can access this admin panel.</div>
   </div>
 </div>
 
@@ -374,10 +400,15 @@ tr:hover td{background:rgba(255,255,255,.02);}
     <button class="sidebar-link" data-panel="projects"><span class="sl-icon">⚙️</span> Projects<span class="sl-count" id="cnt-projects">0</span></button>
   </nav>
   <div class="sidebar-footer">
+    <div class="auth-user-chip" id="authUserChip" style="display:none;">
+      <div class="auth-user-avatar-ph" id="authAvatarPh">👤</div>
+      <img class="auth-user-avatar" id="authAvatar" src="" alt="" style="display:none;">
+      <span class="auth-user-name" id="authUserName">Signed in</span>
+    </div>
     <a href="index.html" target="_blank">← View Portfolio</a>
     <a href="#" id="exportBtn">Export Data (JSON)</a>
     <a href="#" id="resetBtn" style="color:rgba(220,80,80,.5);">Reset to Defaults</a>
-    <a href="#" id="lockBtn" style="color:rgba(212,175,120,.4);">🔒 Lock Admin</a>
+    <a href="#" id="lockBtn" style="color:rgba(212,175,120,.4);">🔒 Sign Out</a>
   </div>
 </aside>
 
@@ -391,7 +422,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
     </div>
   </div>
   <div class="content" id="content-area">
-    <div style="display:flex;align-items:center;justify-content:center;padding:5rem;color:var(--text-dim);">Loading…</div>
+    <!-- populated by renderPanel() on auth -->
   </div>
 </div>
 
@@ -427,79 +458,179 @@ tr:hover td{background:rgba(255,255,255,.02);}
 <script>
 'use strict';
 
-// ── PIN AUTHENTICATION ──
-// CHANGE THIS PIN BEFORE PUBLISHING
-const ADMIN_PIN = '2025';
-const SESSION_KEY = 'bavly_admin_auth';
-const SESSION_TTL = 2 * 60 * 60 * 1000; // 2 hours
+// ══════════════════════════════════════════════════
+//  GOOGLE OAUTH AUTHENTICATION
+//  ─────────────────────────────────────────────────
+//  Uses Google Identity Services (GIS) one-tap / popup.
+//  Only the email below can access admin.
+//  To change: update ALLOWED_EMAIL.
+// ══════════════════════════════════════════════════
 
-function checkAuth() {
+const ALLOWED_EMAIL = 'bavlybadr52@gmail.com'; // ← Your Gmail address
+const SESSION_KEY   = 'bavly_gauth_v1';
+const SESSION_TTL   = 8 * 60 * 60 * 1000; // 8 hours
+
+// ── Google Cloud OAuth Client ID ──────────────────
+// Created for bavlybadr61@gmail.com
+// Authorised JS origins: your-domain.com + localhost
+// To change: go to console.cloud.google.com → Credentials
+// ─────────────────────────────────────────────────────────────────────────────
+// SETUP REQUIRED: Replace with your Google Cloud OAuth 2.0 Client ID
+//
+// How to get your Client ID (takes ~3 minutes):
+//   1. Go to https://console.cloud.google.com/
+//   2. Create a project → APIs & Services → Credentials
+//   3. Create OAuth 2.0 Client ID → Web application
+//   4. Add your domain to "Authorised JavaScript origins"
+//      e.g. https://yourdomain.com  AND  http://localhost (for testing)
+//   5. Copy the Client ID and paste it below
+//   6. Also set ALLOWED_EMAIL above to your Gmail address
+//
+// NOTE: The Supabase anon key in db.js is safe to be public — it only
+//       allows reads. Writes are protected by Supabase Row Level Security.
+// ─────────────────────────────────────────────────────────────────────────────
+const GOOGLE_CLIENT_ID = '580491951193-qtjn2uve5526o48aga92moeerbaj6g3i.apps.googleusercontent.com';
+
+const lockScreen = document.getElementById('lockScreen');
+const lockErr    = document.getElementById('lockErr');
+
+// ── Session helpers ────────────────────────────────
+function sessionGet() {
   try {
     const s = sessionStorage.getItem(SESSION_KEY);
-    if (!s) return false;
-    const { ts } = JSON.parse(s);
-    return (Date.now() - ts) < SESSION_TTL;
-  } catch { return false; }
+    if (!s) return null;
+    const d = JSON.parse(s);
+    if ((Date.now() - d.ts) > SESSION_TTL) { sessionStorage.removeItem(SESSION_KEY); return null; }
+    return d;
+  } catch { return null; }
 }
 
-function setAuth() {
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ts: Date.now() }));
+function sessionSet(user) {
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ...user, ts: Date.now() }));
 }
 
-function clearAuth() {
+function sessionClear() {
   sessionStorage.removeItem(SESSION_KEY);
 }
 
-const lockScreen = document.getElementById('lockScreen');
-const pinInput   = document.getElementById('pinInput');
-const pinBtn     = document.getElementById('pinBtn');
-const pinErr     = document.getElementById('pinErr');
-let pinAttempts  = 0;
-const MAX_ATTEMPTS = 5;
-
-function unlock() {
+// ── Unlock & show admin UI ─────────────────────────
+function unlock(user) {
+  // Show user chip in sidebar
+  if (user) {
+    const chip   = document.getElementById('authUserChip');
+    const nameEl = document.getElementById('authUserName');
+    const avatar = document.getElementById('authAvatar');
+    const avatarPh = document.getElementById('authAvatarPh');
+    if (chip)   chip.style.display = 'flex';
+    if (nameEl) nameEl.textContent = user.name || user.email;
+    if (user.picture && avatar) {
+      avatar.src = user.picture;
+      avatar.style.display = 'block';
+      if (avatarPh) avatarPh.style.display = 'none';
+    }
+  }
   lockScreen.classList.add('hidden');
   renderPanel('dashboard');
 }
 
-if (checkAuth()) {
-  unlock();
+// ── Check existing session on page load ────────────
+const _session = sessionGet();
+if (_session) {
+  unlock(_session);
 }
 
-function tryPin() {
-  const val = pinInput.value.trim();
-  if (!val) return;
-  if (pinAttempts >= MAX_ATTEMPTS) {
-    pinErr.textContent = `Too many attempts. Reload the page to try again.`;
-    pinInput.disabled = true;
-    pinBtn.disabled = true;
+// ── Start Google sign-in popup ─────────────────────
+function startGoogleAuth() {
+  const btn = document.getElementById('googleSignInBtn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '.6'; btn.textContent = 'Opening Google…'; }
+
+  // Wait for GIS library to be ready
+  // Guard: prompt setup if Client ID is not configured
+  if (GOOGLE_CLIENT_ID.startsWith('PASTE_')) {
+    showLockErr('⚠ Admin not configured yet. See the SETUP REQUIRED comment in admin.html to add your Google Client ID.');
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = googleBtnHTML(); }
     return;
   }
-  if (val === ADMIN_PIN) {
-    setAuth();
-    pinErr.textContent = '';
-    unlock();
-  } else {
-    pinAttempts++;
-    pinInput.value = '';
-    pinInput.focus();
-    const left = MAX_ATTEMPTS - pinAttempts;
-    pinErr.textContent = left > 0
-      ? `Incorrect PIN. ${left} attempt${left !== 1 ? 's' : ''} remaining.`
-      : `Too many attempts. Reload the page.`;
-    if (pinAttempts >= MAX_ATTEMPTS) {
-      pinInput.disabled = true;
-      pinBtn.disabled = true;
+
+  const tryInit = (attempts = 0) => {
+    if (typeof google === 'undefined' || !google.accounts) {
+      if (attempts > 30) {
+        showLockErr('Google sign-in failed to load. Check your internet connection.');
+        if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = googleBtnHTML(); }
+        return;
+      }
+      setTimeout(() => tryInit(attempts + 1), 200);
+      return;
     }
+
+    google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'openid email profile',
+      callback: handleGoogleToken,
+    }).requestAccessToken();
+  };
+
+  tryInit();
+}
+
+// Restore button HTML
+function googleBtnHTML() {
+  return `<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.8 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16.1 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4 24 4 16.3 4 9.6 8.4 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.4-5.1l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.6-3.2-11.3-7.8L6 33.2C9.2 39.5 16 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.3 5.7l6.2 5.2C41.4 36.1 44 30.5 44 24c0-1.2-.1-2.4-.4-3.5z"/></svg> Sign in with Google`;
+}
+
+// ── Handle token → fetch user info → verify email ──
+async function handleGoogleToken(tokenResponse) {
+  const btn = document.getElementById('googleSignInBtn');
+
+  if (tokenResponse.error) {
+    showLockErr(tokenResponse.error === 'access_denied'
+      ? 'Sign-in was cancelled.'
+      : 'Google sign-in failed. Please try again.');
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = googleBtnHTML(); }
+    return;
+  }
+
+  try {
+    // Fetch the user's profile from Google
+    const res  = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+    });
+    const user = await res.json();
+
+    if (!user.email) throw new Error('Could not retrieve email from Google.');
+
+    if (user.email.toLowerCase() !== ALLOWED_EMAIL.toLowerCase()) {
+      showLockErr(`Access denied. This admin is only accessible to ${ALLOWED_EMAIL}.`);
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = googleBtnHTML(); }
+      return;
+    }
+
+    // Authorised — save session and unlock
+    sessionSet({
+      email:   user.email,
+      name:    user.name    || user.email,
+      picture: user.picture || null,
+    });
+    unlock({ email: user.email, name: user.name, picture: user.picture });
+
+  } catch (err) {
+    showLockErr('Sign-in error: ' + (err.message || 'Please try again.'));
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = googleBtnHTML(); }
   }
 }
 
-pinBtn.addEventListener('click', tryPin);
-pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryPin(); });
+function showLockErr(msg) {
+  if (lockErr) { lockErr.textContent = msg; }
+}
 
+// ── Sign out ───────────────────────────────────────
 document.getElementById('lockBtn').addEventListener('click', e => {
   e.preventDefault();
-  clearAuth();
+  sessionClear();
+  // Revoke Google token if GIS is available
+  if (typeof google !== 'undefined' && google.accounts?.oauth2) {
+    google.accounts.oauth2.revoke(ALLOWED_EMAIL, () => {});
+  }
   window.location.reload();
 });
 
@@ -576,7 +707,7 @@ function openModal(title, bodyHTML, onSave) {
         if (progressEl) { progressEl.style.display = 'block'; }
         if (progressEl) progressEl.querySelector('.upload-progress-fill').style.width = '30%';
 
-        const dataUrl = await DB.upload.processImage(file, 1200, 1200, 0.82);
+        const dataUrl = await DB.upload.processImage(file);
 
         if (progressEl) progressEl.querySelector('.upload-progress-fill').style.width = '100%';
         setTimeout(() => { if (progressEl) progressEl.style.display = 'none'; }, 600);
@@ -962,7 +1093,7 @@ async function addImageFromUpload(fileInputId, listId) {
 
   try {
     toast('Processing image…', 'info');
-    const dataUrl = await DB.upload.processImage(file, 1200, 1200, 0.82);
+    const dataUrl = await DB.upload.processImage(file);
     tempImages.push({ url: dataUrl, label: file.name });
     inp.value = '';
     renderImageList(listId, tempImages);

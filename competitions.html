@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Competitions and initiatives by Bavly Badr — ICEF, NASA challenges, and more.">
 <title>Competitions — Bavly Badr</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
@@ -59,7 +60,7 @@
 </div></section>
 <footer class="footer"><div class="wrapper footer-inner">
   <span class="footer-name">Bavly Badr</span>
-  <span class="footer-copy">© 2025 · BEVO copyright reserved</span>
+  <span class="footer-copy" id="footer-year">© 2025 · BEVO copyright reserved</span>
   <div class="footer-links">
     <a href="https://github.com/BEVOOO1" target="_blank">GitHub</a>
     <a href="admin.html" class="footer-admin-btn">⚙ Admin</a>
@@ -79,16 +80,16 @@ async function init() {
   }
   listEl.innerHTML = items.map(c=>`
     <div class="comp-card">
-      <div class="comp-icon-col">${c.icon||'🏆'}</div>
+      <div class="comp-icon-col">${sanitizeHTML(c.icon||'🏆')}</div>
       <div class="comp-body">
         <div>
-          <div class="comp-scope">${c.scope||''}</div>
-          <div class="comp-title">${c.title}</div>
-          <div class="comp-desc">${c.description||''}</div>
+          <div class="comp-scope">${sanitizeHTML(c.scope||'')}</div>
+          <div class="comp-title">${sanitizeHTML(c.title)}</div>
+          <div class="comp-desc">${sanitizeHTML(c.description||'')}</div>
         </div>
         <div class="comp-right">
-          <span class="comp-outcome">${c.outcome||'Participant'}</span>
-          <span class="comp-year">${c.year||''}</span>
+          <span class="comp-outcome">${sanitizeHTML(c.outcome||'Participant')}</span>
+          <span class="comp-year">${sanitizeHTML(c.year||'')}</span>
         </div>
       </div>
     </div>`).join('');
@@ -100,9 +101,9 @@ async function init() {
         <div class="learned-grid reveal">
           ${withLearned.map(c=>`
             <div class="learned-card">
-              <div class="lc-comp">${c.title}</div>
-              <div class="lc-title">${c.outcome||'Participation'}</div>
-              <div class="lc-body">${c.learned}</div>
+              <div class="lc-comp">${sanitizeHTML(c.title)}</div>
+              <div class="lc-title">${sanitizeHTML(c.outcome||'Participation')}</div>
+              <div class="lc-body">${sanitizeHTML(c.learned)}</div>
             </div>`).join('')}
         </div>
       </div>`;

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Software projects by Bavly Badr — full-stack web platforms, engineering tools, and open-source work.">
 <title>Projects — Bavly Badr</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
@@ -144,7 +145,7 @@
 
 <footer class="footer"><div class="wrapper footer-inner">
   <span class="footer-name">Bavly Badr</span>
-  <span class="footer-copy">© 2025 · BEVO copyright reserved</span>
+  <span class="footer-copy" id="footer-year">© 2025 · BEVO copyright reserved</span>
   <div class="footer-links">
     <a href="https://github.com/BEVOOO1" target="_blank">GitHub</a>
     <a href="admin.html" class="footer-admin-btn">⚙ Admin</a>
@@ -235,7 +236,7 @@ function openProject(idx) {
       ${images.map((img,i) => {
         const url = typeof img === 'string' ? img : img.url;
         const label = typeof img === 'string' ? '' : (img.label || '');
-        return `<div class="pm-gallery-item" data-img="${i}"><img src="${escAttr(url)}" alt="${escAttr(label)}" loading="lazy"></div>`;
+        return `<div class="pm-gallery-item" data-img="${i}"><img class="lazy-img" data-src="${escAttr(url)}" alt="${escAttr(label)}" loading="lazy"></div>`;
       }).join('')}
     </div>` : '';
 
@@ -296,7 +297,7 @@ async function init() {
       <div class="p-preview-strip">
         ${images.slice(0,5).map((img,i) => {
           const url = typeof img==='string'?img:img.url;
-          return `<div class="p-strip-thumb" data-proj="${idx}" data-img="${i}"><img src="${escAttr(url)}" alt="" loading="lazy"></div>`;
+          return `<div class="p-strip-thumb" data-proj="${idx}" data-img="${i}"><img class="lazy-img" data-src="${escAttr(url)}" alt="" loading="lazy"></div>`;
         }).join('')}
         ${images.length>5?`<div class="p-strip-more p-strip-thumb" data-proj="${idx}" data-img="5"><div class="p-strip-more-num">+${images.length-5}</div><div class="p-strip-more-txt">more</div></div>`:''}
       </div>` : '';
@@ -327,6 +328,9 @@ async function init() {
   }).join('');
 
   // Event delegation for all clicks on the list
+  // Activate lazy image loading for rendered thumbnails
+  if (window.initLazyImages) initLazyImages();
+
   el.addEventListener('click', e => {
     // Image strip click → open in modal at that image
     const stripThumb = e.target.closest('.p-strip-thumb');

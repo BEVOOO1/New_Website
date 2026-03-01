@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Video work by Bavly Badr — cinematic edits, church productions, and documentary-style storytelling.">
 <title>Video — Bavly Badr</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
@@ -208,7 +209,7 @@
 
 <footer class="footer"><div class="wrapper footer-inner">
   <span class="footer-name">Bavly Badr</span>
-  <span class="footer-copy">© 2025 · BEVO copyright reserved</span>
+  <span class="footer-copy" id="footer-year">© 2025 · BEVO copyright reserved</span>
   <div class="footer-links">
     <a href="https://github.com/BEVOOO1" target="_blank">GitHub</a>
     <a href="admin.html" class="footer-admin-btn">⚙ Admin</a>
@@ -325,6 +326,11 @@ function loadEmbed(idx) {
 }
 
 function loadEmbedDirect(url) {
+  if (!isSafeEmbedUrl(url)) {
+    document.getElementById('vlbVideoWrap').innerHTML =
+      `<div class="vlb-no-embed"><div class="vlb-no-embed-icon">⚠️</div><div class="vlb-no-embed-txt">Unsupported embed source</div></div>`;
+    return;
+  }
   document.getElementById('vlbVideoWrap').innerHTML =
     `<iframe src="${escAttr(url)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>`;
 }
