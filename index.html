@@ -38,8 +38,24 @@
 .pbadge::before{content:'◆';font-size:.45rem;}
 .work-preview{padding:clamp(2.5rem,5vw,4rem) 0 clamp(4rem,8vw,8rem);}
 .work-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;}
-.work-card{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:3/4;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);cursor:pointer;text-decoration:none;display:block;transition:all .5s cubic-bezier(.23,1,.32,1);backdrop-filter:blur(12px);box-shadow:0 4px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.07);}
-.work-card:hover{transform:translateY(-10px) scale(1.02);border-color:rgba(212,175,120,.3);box-shadow:0 32px 80px rgba(0,0,0,.55),0 0 0 1px rgba(212,175,120,.12),inset 0 1px 0 rgba(255,255,255,.10);}
+.work-card{
+  position:relative;border-radius:20px;overflow:hidden;aspect-ratio:3/4;
+  /* Glass material — background-image from cursor CSS var, color as fallback */
+  background-color:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.12);
+  border-bottom-color:rgba(255,255,255,.04);
+  cursor:pointer;text-decoration:none;display:block;
+  transition:all .48s cubic-bezier(.23,1,.32,1);
+  backdrop-filter:blur(16px) saturate(180%);
+  -webkit-backdrop-filter:blur(16px) saturate(180%);
+  box-shadow:0 6px 28px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.12);
+}
+/* Top specular highlight on each work card */
+.work-card::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;z-index:10;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.6) 40%,rgba(255,255,255,.8) 50%,rgba(255,255,255,.6) 60%,transparent);
+}
+.work-card:hover{transform:translateY(-10px) scale(1.02);border-color:rgba(212,175,120,.32);border-bottom-color:rgba(212,175,120,.10);box-shadow:0 32px 80px rgba(0,0,0,.55),0 0 0 1px rgba(212,175,120,.14),inset 0 1px 0 rgba(255,255,255,.18);}
 .wc-bg{position:absolute;inset:0;opacity:.6;transition:opacity .5s,transform .5s;}
 .work-card:hover .wc-bg{opacity:1;transform:scale(1.05);}
 .wc1 .wc-bg{background:linear-gradient(135deg,#1a0a2e,#0d1b3e,#162032);}

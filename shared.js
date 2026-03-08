@@ -33,8 +33,7 @@
     b: Math.random() * Math.PI * 2,
   }));
 
-  let mx = .5, my = .5;
-  document.addEventListener('mousemove', e => { mx = e.clientX / W; my = e.clientY / H; }, { passive: true });
+  // Mouse glow removed — caused jitter and performance issues
 
   let t = 0;
   const draw = () => {
@@ -55,14 +54,6 @@
       ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.fill();
     });
-
-    const mg = ctx.createRadialGradient(mx * W, my * H, 0, mx * W, my * H, 240);
-    mg.addColorStop(0, 'rgba(212,175,120,0.045)');
-    mg.addColorStop(1, 'transparent');
-    ctx.fillStyle = mg;
-    ctx.beginPath();
-    ctx.arc(mx * W, my * H, 240, 0, Math.PI * 2);
-    ctx.fill();
 
     dust.forEach(p => {
       p.x += p.vx + Math.sin(t * .8 + p.b) * .00007;
@@ -121,53 +112,76 @@
   update();
 })();
 
-// ── LIQUID GLASS NAV ──
+// ── LIQUID GLASS NAV + SLIDER ──
 (function () {
   const nav = document.getElementById('main-nav');
   if (!nav) return;
 
-  // Scroll glass effect
+  // Scroll glass deepening
   const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 30);
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // Wrap nav-links in pill track + inject slider
   const linksDiv = nav.querySelector('.nav-links');
   if (!linksDiv) return;
 
-  // Rename to pill track
+  // Upgrade to pill track
   linksDiv.classList.add('nav-pill-track');
   linksDiv.classList.remove('nav-links');
 
-  // Create slider element
+  // Inject slider
   const slider = document.createElement('div');
   slider.className = 'nav-slider';
   linksDiv.insertBefore(slider, linksDiv.firstChild);
 
-  // Move slider under active link
-  function positionSlider(targetEl) {
-    if (!targetEl) { slider.style.opacity = '0'; return; }
-    const trackRect = linksDiv.getBoundingClientRect();
-    const linkRect  = targetEl.getBoundingClientRect();
+  let _hoverTarget = null;
+
+  function positionSlider(el, instant) {
+    if (!el) { slider.style.opacity = '0'; return; }
+    // Get positions relative to the track itself (not viewport)
+    // Use offsetLeft which is layout-stable and doesn't need rects
+    const left  = el.offsetLeft;
+    const width = el.offsetWidth;
+    if (!width) { slider.style.opacity = '0'; return; }
+    if (instant) slider.style.transition = 'none';
     slider.style.opacity = '1';
-    slider.style.left  = (linkRect.left - trackRect.left) + 'px';
-    slider.style.width = linkRect.width + 'px';
+    slider.style.left    = left + 'px';
+    slider.style.width   = width + 'px';
+    if (instant) {
+      // Force reflow then re-enable transition
+      slider.getBoundingClientRect();
+      slider.style.transition = '';
+    }
   }
 
-  // Init on active link
-  const activeLink = linksDiv.querySelector('a.active');
-  // Delay so layout is settled
-  requestAnimationFrame(() => positionSlider(activeLink));
+  const active = linksDiv.querySelector('a.active');
 
-  // Hover preview
+  // Wait for fonts + layout then set initial position instantly
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => positionSlider(active, true));
+  } else {
+    window.addEventListener('load', () => positionSlider(active, true));
+  }
+
+  // Hover — preview slider on hover
   linksDiv.querySelectorAll('a').forEach(a => {
-    a.addEventListener('mouseenter', () => positionSlider(a));
-    a.addEventListener('mouseleave', () => positionSlider(linksDiv.querySelector('a.active')));
+    a.addEventListener('mouseenter', () => {
+      _hoverTarget = a;
+      positionSlider(a);
+    });
+    a.addEventListener('mouseleave', () => {
+      _hoverTarget = null;
+      positionSlider(linksDiv.querySelector('a.active'));
+    });
   });
 
-  // Reposition on resize
+  // Stable resize handler — debounced
+  let _resizeTimer;
   window.addEventListener('resize', () => {
-    positionSlider(linksDiv.querySelector('a.active'));
+    clearTimeout(_resizeTimer);
+    _resizeTimer = setTimeout(() => {
+      positionSlider(_hoverTarget || linksDiv.querySelector('a.active'), true);
+    }, 80);
   }, { passive: true });
 })();
 
@@ -397,3 +411,83 @@ function safeUrl(url) {
   return '#';
 }
 window.safeUrl = safeUrl;
+
+
+// ══════════════════════════════════════════════════════
+//  LIQUID GLASS — SVG Filter Injection
+//  Injects the feTurbulence displacement filter into the DOM.
+//  This is what gives the authentic lens-warp / refraction
+//  look on the nav pill and glass cards.
+// ══════════════════════════════════════════════════════
+(function () {
+  // Inject hidden SVG with filter definitions
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('width', '0');
+  svg.setAttribute('height', '0');
+  svg.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;';
+  svg.innerHTML = `
+    <defs>
+      <!-- Subtle displacement for glass lens effect on nav pill -->
+      <filter id="lg-nav-filter" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" seed="2" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <!-- Stronger displacement for glass cards -->
+      <filter id="lg-card-filter" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.80" numOctaves="2" seed="8" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>`;
+  document.body.appendChild(svg);
+
+  // Apply filter to nav pill once it exists
+  function applyNavFilter() {
+    const track = document.querySelector('.nav-pill-track');
+    if (track) {
+      // We apply the filter only to the ::before highlight layer via a wrapper
+      // Avoid applying to the whole track or text becomes unreadable
+      track.style.filter = 'url(#lg-nav-filter)';
+      // But backdrop-filter and filter can't both work well together,
+      // so we use a subtle approach: only apply on hover
+      track.addEventListener('mouseenter', () => {
+        track.style.filter = 'url(#lg-nav-filter)';
+      });
+      track.addEventListener('mouseleave', () => {
+        track.style.filter = '';
+      });
+    }
+  }
+
+  // ── Subtle cursor-reactive light spot on glass elements ──
+  // Uses CSS custom properties — no layout reads, no jitter
+  let _raf = null;
+  let _tx = -200, _ty = -200; // off-screen default
+  let _cx = -200, _cy = -200; // current (lerped)
+
+  document.addEventListener('mousemove', e => {
+    _tx = e.clientX;
+    _ty = e.clientY;
+    if (!_raf) {
+      _raf = requestAnimationFrame(function tick() {
+        // Lerp for smooth following — no sudden jumps
+        _cx += (_tx - _cx) * 0.12;
+        _cy += (_ty - _cy) * 0.12;
+        document.documentElement.style.setProperty('--cursor-x', _cx.toFixed(1) + 'px');
+        document.documentElement.style.setProperty('--cursor-y', _cy.toFixed(1) + 'px');
+        // Continue until close enough to target
+        if (Math.abs(_tx - _cx) > 0.5 || Math.abs(_ty - _cy) > 0.5) {
+          _raf = requestAnimationFrame(tick);
+        } else {
+          _raf = null;
+        }
+      });
+    }
+  }, { passive: true });
+
+  // Hide cursor spot when mouse leaves window
+  document.addEventListener('mouseleave', () => {
+    _tx = -200; _ty = -200;
+  });
+
+  document.addEventListener('DOMContentLoaded', applyNavFilter);
+})();

@@ -602,75 +602,136 @@ img.lazy-img.loaded {
   transform: scale(1);
 }
 
-/* ════════════════════════════════════════════════════
-   LIQUID GLASS NAVIGATION — v14
-   Pill container · Sliding active indicator · Blur glass
-════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════
+   AUTHENTIC LIQUID GLASS SYSTEM — v15
+   Based on Apple WWDC 2025 three-layer model:
+   1. Highlight  — specular light on top surface
+   2. Shadow     — depth separation from background
+   3. Illumination — the flexible translucent material
 
-/* Override old nav-links styling */
+   Key technique: SVG feTurbulence + feDisplacementMap
+   gives the lens-distortion warp that makes it feel
+   like real glass, not just a frosted pane.
+════════════════════════════════════════════════════════ */
+
+/* ── HIDDEN SVG FILTER DEFINITIONS ─────────────────── */
+/* Injected into DOM by shared.js, referenced via url(#lg-filter) */
+
+/* ── PILL TRACK — the nav container ─────────────────── */
 .nav-links { gap: 0; position: relative; }
 
-/* The glass pill container wrapping all nav links */
 .nav-pill-track {
   position: relative;
   display: flex;
   align-items: center;
   gap: 0;
-  background: rgba(255,255,255,0.045);
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 100px;
   padding: 5px;
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow:
-    0 2px 20px rgba(0,0,0,0.35),
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    inset 0 -1px 0 rgba(0,0,0,0.15);
-  overflow: hidden;
+  border-radius: 100px;
   max-width: calc(100vw - 10rem);
+  overflow: visible;
+
+  /* Layer 3: Illumination — the base translucent material */
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(28px) saturate(200%) brightness(1.08);
+  -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.08);
+
+  /* Layer 2: Shadow — separation from content behind */
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.40),
+    0 1px  3px rgba(0,0,0,0.25),
+    inset 0 -1px 0 rgba(0,0,0,0.18);
+
+  /* Layer 1: Highlight border — top specular */
+  border: 1px solid rgba(255,255,255,0.18);
+  border-bottom-color: rgba(255,255,255,0.06);
 }
 
-/* Liquid glass shimmer layer on pill track */
+/* Top-edge specular highlight — the "glass catches light" line */
 .nav-pill-track::before {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: 100px;
-  background: linear-gradient(
-    105deg,
-    rgba(255,255,255,0.06) 0%,
-    rgba(255,255,255,0.01) 40%,
-    rgba(212,175,120,0.04) 100%
+  top: 0; left: 8%; right: 8%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.55) 30%,
+    rgba(255,255,255,0.75) 50%,
+    rgba(255,255,255,0.55) 70%,
+    transparent 100%
   );
+  border-radius: 100px;
   pointer-events: none;
+  z-index: 2;
 }
 
-/* The sliding gold active indicator */
+/* Bottom-edge shadow line */
+.nav-pill-track::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 12%; right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(0,0,0,0.25) 40%,
+    rgba(0,0,0,0.35) 50%,
+    rgba(0,0,0,0.25) 60%,
+    transparent
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── SLIDER — the active indicator pill ─────────────── */
 .nav-slider {
   position: absolute;
   top: 5px;
   left: 5px;
   height: calc(100% - 10px);
   border-radius: 100px;
-  background: linear-gradient(135deg,
-    rgba(212,175,120,0.22) 0%,
-    rgba(212,175,120,0.10) 100%
-  );
-  border: 1px solid rgba(212,175,120,0.35);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow:
-    0 2px 12px rgba(212,175,120,0.18),
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    inset 0 0 20px rgba(212,175,120,0.06);
-  transition: left 0.38s cubic-bezier(0.34,1.26,0.64,1),
-              width 0.38s cubic-bezier(0.34,1.26,0.64,1),
-              opacity 0.2s;
   pointer-events: none;
   z-index: 0;
+  opacity: 0;
+
+  /* Material: warm gold-tinted glass */
+  background: linear-gradient(160deg,
+    rgba(212,175,120,0.28) 0%,
+    rgba(212,175,120,0.12) 50%,
+    rgba(212,175,120,0.18) 100%
+  );
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(212,175,120,0.40);
+  border-bottom-color: rgba(212,175,120,0.20);
+
+  /* Glow */
+  box-shadow:
+    0 2px 16px rgba(212,175,120,0.22),
+    0 0  40px rgba(212,175,120,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.20),
+    inset 0 -1px 0 rgba(0,0,0,0.10);
+
+  /* Spring transition — overshoot like iOS */
+  transition:
+    left    0.42s cubic-bezier(0.34, 1.28, 0.64, 1),
+    width   0.42s cubic-bezier(0.34, 1.28, 0.64, 1),
+    opacity 0.18s ease;
 }
 
-/* Nav links inside pill track */
+/* Specular highlight on slider top */
+.nav-slider::before {
+  content: '';
+  position: absolute;
+  top: 1px; left: 15%; right: 15%;
+  height: 35%;
+  background: linear-gradient(to bottom,
+    rgba(255,255,255,0.30) 0%,
+    rgba(255,255,255,0.05) 100%
+  );
+  border-radius: 100px;
+  pointer-events: none;
+}
+
+/* ── NAV LINKS ──────────────────────────────────────── */
 .nav-pill-track a {
   position: relative;
   z-index: 1;
@@ -678,38 +739,57 @@ img.lazy-img.loaded {
   font-size: 0.72rem;
   letter-spacing: 0.10em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: rgba(240,236,228,0.50);
   text-decoration: none;
-  padding: 0.42rem 1.05rem;
+  padding: 0.44rem 1.1rem;
   border-radius: 100px;
   border: none;
   background: none;
-  transition: color 0.25s;
+  transition: color 0.22s;
   white-space: nowrap;
+  user-select: none;
 }
-.nav-pill-track a:hover { color: var(--text-muted); }
-.nav-pill-track a.active { color: var(--gold); }
+.nav-pill-track a:hover  { color: rgba(240,236,228,0.80); }
+.nav-pill-track a.active { color: var(--gold); font-weight: 500; }
 
-/* Liquid glass effect — refraction highlight on active */
-.nav-pill-track a.active::after {
-  content: '';
-  position: absolute;
-  top: 2px; left: 10%;
-  width: 80%; height: 40%;
-  background: linear-gradient(to bottom,
-    rgba(255,255,255,0.15),
-    transparent
-  );
-  border-radius: 100px;
-  pointer-events: none;
+/* ── NAV LOGO ───────────────────────────────────────── */
+.nav-logo {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-bottom-color: rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 0.32rem 0.85rem;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  transition: all 0.28s cubic-bezier(0.23,1,0.32,1);
+  box-shadow:
+    0 2px 12px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.18);
+}
+.nav-logo:hover {
+  background: rgba(212,175,120,0.10);
+  border-color: rgba(212,175,120,0.38);
+  box-shadow:
+    0 4px 20px rgba(212,175,120,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.22);
+  transform: translateY(-1px);
 }
 
-/* ── MOBILE MENU — glass panel ── */
+/* ── NAV SCROLLED ───────────────────────────────────── */
+.nav.scrolled {
+  background: rgba(7,8,15,0.72) !important;
+  backdrop-filter: blur(40px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(220%) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.07) !important;
+  box-shadow: 0 1px 0 rgba(212,175,120,0.08), 0 4px 40px rgba(0,0,0,0.35);
+}
+
+/* ── MOBILE MENU ────────────────────────────────────── */
 .mobile-menu {
-  background: rgba(7,8,15,0.82) !important;
-  backdrop-filter: blur(40px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
-  border-bottom: 1px solid rgba(212,175,120,0.12) !important;
+  background: rgba(7,8,15,0.88) !important;
+  backdrop-filter: blur(50px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(50px) saturate(220%) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
   box-shadow: 0 20px 60px rgba(0,0,0,0.5);
 }
 .mobile-menu a {
@@ -718,75 +798,75 @@ img.lazy-img.loaded {
   padding: 1rem 0 !important;
 }
 
-/* ── NAV LOGO liquid glass badge ── */
-.nav-logo-wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-.nav-logo {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(212,175,120,0.2);
-  border-radius: 12px;
-  padding: 0.3rem 0.8rem;
-  backdrop-filter: blur(12px);
-  transition: all 0.3s;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
-}
-.nav-logo:hover {
-  background: rgba(212,175,120,0.08);
-  border-color: rgba(212,175,120,0.35);
-  box-shadow: 0 4px 16px rgba(212,175,120,0.15),
-              inset 0 1px 0 rgba(255,255,255,0.12);
-}
-
-/* ── NAV scrolled — deeper glass ── */
-.nav.scrolled {
-  background: rgba(7,8,15,0.75) !important;
-  backdrop-filter: blur(32px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
-  border-bottom: 1px solid rgba(212,175,120,0.10) !important;
-  box-shadow: 0 1px 40px rgba(0,0,0,0.4);
-}
-
-/* ════════════════════════════════════════════════════
-   LIQUID GLASS CARDS & COMPONENTS
-════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════
+   LIQUID GLASS CARD COMPONENT
+   Used on homepage work cards, gallery items, etc.
+══════════════════════════════════════════════════════ */
 .lg-card {
-  background: rgba(255,255,255,0.028);
-  border: 1px solid rgba(255,255,255,0.09);
-  border-radius: 20px;
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  box-shadow:
-    0 8px 32px rgba(0,0,0,0.3),
-    inset 0 1px 0 rgba(255,255,255,0.07),
-    inset 0 -1px 0 rgba(0,0,0,0.1);
   position: relative;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+  border-radius: 20px;
+
+  /* Material */
+  background: rgba(255,255,255,0.032);
+  backdrop-filter: blur(24px) saturate(180%) brightness(1.05);
+  -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(1.05);
+
+  /* Shadow layer */
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.32),
+    0 2px  6px rgba(0,0,0,0.18),
+    inset 0 -1px 0 rgba(0,0,0,0.12);
+
+  /* Highlight border */
+  border: 1px solid rgba(255,255,255,0.14);
+  border-bottom-color: rgba(255,255,255,0.05);
+
+  transition: all 0.42s cubic-bezier(0.23,1,0.32,1);
 }
+
+/* Top specular highlight */
 .lg-card::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0; left: 5%; right: 5%;
   height: 1px;
   background: linear-gradient(90deg,
     transparent,
-    rgba(255,255,255,0.15) 30%,
-    rgba(212,175,120,0.2) 50%,
-    rgba(255,255,255,0.15) 70%,
+    rgba(255,255,255,0.50) 30%,
+    rgba(255,255,255,0.70) 50%,
+    rgba(255,255,255,0.50) 70%,
     transparent
   );
+  z-index: 1;
+  pointer-events: none;
 }
+
+/* Inner tint gradient — illumination layer */
+.lg-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+    rgba(255,255,255,0.04) 0%,
+    transparent 50%,
+    rgba(0,0,0,0.04) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
 .lg-card:hover {
-  border-color: rgba(212,175,120,0.25);
-  background: rgba(255,255,255,0.045);
+  background: rgba(255,255,255,0.052);
+  border-color: rgba(212,175,120,0.30);
+  border-bottom-color: rgba(212,175,120,0.10);
   box-shadow:
-    0 20px 60px rgba(0,0,0,0.45),
-    0 0 0 1px rgba(212,175,120,0.12),
-    inset 0 1px 0 rgba(255,255,255,0.10);
-  transform: translateY(-4px);
+    0 22px 64px rgba(0,0,0,0.48),
+    0 4px 12px rgba(0,0,0,0.22),
+    0 0 0 1px rgba(212,175,120,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 -1px 0 rgba(0,0,0,0.08);
+  transform: translateY(-5px);
 }
 
 /* ════════════════════════════════════════════════════
@@ -1132,4 +1212,77 @@ img.lazy-img.loaded {
     padding-bottom: calc(2.5rem + env(safe-area-inset-bottom)) !important;
   }
   body { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* ══════════════════════════════════════════════════════
+   CURSOR-REACTIVE GLASS LIGHT SPOT
+   Uses CSS custom properties set by shared.js mousemove.
+   Creates a soft specular highlight that follows the cursor
+   on glass elements — like how real glass catches light.
+   No JS layout reads, no jitter, pure CSS vars + radial-gradient.
+══════════════════════════════════════════════════════ */
+:root {
+  --cursor-x: -200px;
+  --cursor-y: -200px;
+}
+
+/* Applied to nav pill track */
+.nav-pill-track {
+  --glass-light: radial-gradient(
+    circle 80px at var(--cursor-x) var(--cursor-y),
+    rgba(255,255,255,0.10) 0%,
+    rgba(255,255,255,0.03) 50%,
+    transparent 100%
+  );
+}
+
+/* The light spot renders via a pseudo element that reads cursor position */
+/* We use background-image layering — no position: fixed needed */
+.nav-pill-track {
+  background-image: var(--glass-light);
+  background-color: rgba(255,255,255,0.06);
+}
+
+/* Work cards on homepage get the same treatment */
+.work-card {
+  --glass-light-card: radial-gradient(
+    circle 120px at var(--cursor-x) var(--cursor-y),
+    rgba(255,255,255,0.07) 0%,
+    transparent 70%
+  );
+  background-image: var(--glass-light-card);
+}
+
+/* Glass cards */
+.glass-card, .lg-card {
+  --glass-light-c: radial-gradient(
+    circle 100px at var(--cursor-x) var(--cursor-y),
+    rgba(255,255,255,0.06) 0%,
+    transparent 70%
+  );
+  background-image: var(--glass-light-c);
+}
+
+/* ── Remove old broken glass-card hover that conflicts ── */
+.glass-card {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: all 0.4s var(--anim-ease);
+  position: relative;
+  overflow: hidden;
+}
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.glass-card:hover {
+  border-color: var(--border-gold);
+  transform: translateY(-5px);
+  box-shadow: 0 24px 70px rgba(0,0,0,0.45), 0 0 0 1px rgba(212,175,120,0.12);
 }
