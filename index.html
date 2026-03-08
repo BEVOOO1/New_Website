@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><link rel="icon" type="image/x-icon" href="favicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Bavly Badr — Computer Engineering student, church designer, video editor, and violinist. Portfolio of software projects, creative design, and music.">
 <title>Bavly Badr</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -9,19 +10,23 @@
 <link rel="stylesheet" href="shared.css">
 <style>
 .hero{min-height:100vh;display:flex;align-items:center;padding-top:var(--nav-h);position:relative;overflow:hidden;}
+/* availability badge */
+.avail-badge{display:inline-flex;align-items:center;gap:.55rem;padding:.4rem 1rem .4rem .6rem;border-radius:100px;background:rgba(56,200,130,.08);border:1px solid rgba(56,200,130,.25);margin-bottom:1.5rem;font-family:'Tenor Sans',sans-serif;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(56,200,130,.85);}
+.avail-dot{width:7px;height:7px;border-radius:50%;background:#38d9a9;box-shadow:0 0 8px #38d9a9;animation:pulse-green 2s ease-in-out infinite;}
+@keyframes pulse-green{0%,100%{box-shadow:0 0 4px #38d9a9;}50%{box-shadow:0 0 14px #38d9a9;}}
 .hero-shape{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;animation:hdrift 14s ease-in-out infinite alternate;}
 .hs1{width:700px;height:700px;background:radial-gradient(circle,rgba(212,175,120,.1) 0%,transparent 70%);top:-200px;right:-150px;}
 .hs2{width:500px;height:500px;background:radial-gradient(circle,rgba(255,255,255,.04) 0%,transparent 70%);bottom:-100px;left:-100px;animation-delay:-5s;}
 .hs3{width:300px;height:300px;background:radial-gradient(circle,rgba(180,210,255,.06) 0%,transparent 70%);top:40%;left:30%;animation-delay:-3s;}
 @keyframes hdrift{from{transform:translate(0,0) scale(1);}to{transform:translate(40px,30px) scale(1.08);}}
-.hero-inner{display:grid;grid-template-columns:1fr 400px;gap:5rem;align-items:center;padding:5rem 0;width:100%;}
+.hero-inner{display:grid;grid-template-columns:1fr 400px;gap:clamp(2rem,5vw,5rem);align-items:center;padding:clamp(2.5rem,6vw,5rem) 0;width:100%;}
 .hero-eyebrow{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;}
 .eyebrow-line{width:40px;height:1px;background:var(--gold);}
 .eyebrow-text{font-family:'Tenor Sans',sans-serif;font-size:.72rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);}
-.hero-name{font-family:'Cinzel',serif;font-size:clamp(3.8rem,8vw,7rem);font-weight:400;line-height:.95;letter-spacing:-.02em;margin-bottom:.5rem;background:linear-gradient(135deg,#fff 30%,rgba(212,175,120,.8) 70%,#fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% auto;animation:shimmer 7s linear infinite;}
+.hero-name{font-family:'Cinzel',serif;font-size:clamp(2.8rem,8vw,7rem);font-weight:400;line-height:.95;letter-spacing:-.02em;margin-bottom:.5rem;background:linear-gradient(135deg,#fff 30%,rgba(212,175,120,.8) 70%,#fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% auto;animation:shimmer 7s linear infinite;}
 @keyframes shimmer{to{background-position:200% center;}}
 .hero-sub{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1rem,2vw,1.3rem);color:var(--text-muted);margin-bottom:2.5rem;}
-.hero-desc{font-family:'Tenor Sans',sans-serif;font-size:.88rem;line-height:1.9;color:var(--text-dim);max-width:480px;margin-bottom:3rem;}
+.hero-desc{font-family:'Tenor Sans',sans-serif;font-size:clamp(.82rem,1.2vw,.95rem);line-height:1.9;color:var(--text-dim);max-width:480px;margin-bottom:3rem;}
 .hero-cta-row{display:flex;gap:1rem;flex-wrap:wrap;}
 .portrait-card{position:relative;animation:fadeUp 1s .3s ease both;}
 .portrait-glow{position:absolute;inset:-2px;border-radius:26px;background:linear-gradient(135deg,rgba(212,175,120,.3),transparent 50%,rgba(180,210,255,.15));z-index:-1;filter:blur(8px);}
@@ -31,10 +36,10 @@
 .portrait-badges{position:absolute;bottom:1.5rem;left:1.5rem;right:1.5rem;z-index:10;display:flex;flex-direction:column;gap:.5rem;}
 .pbadge{background:rgba(6,8,16,.78);backdrop-filter:blur(20px);border:1px solid rgba(212,175,120,.2);border-radius:100px;padding:.4rem 1rem;font-family:'Tenor Sans',sans-serif;font-size:.67rem;letter-spacing:.1em;color:rgba(212,175,120,.8);display:inline-flex;align-items:center;gap:.5rem;width:fit-content;}
 .pbadge::before{content:'◆';font-size:.45rem;}
-.work-preview{padding:4rem 0 8rem;}
+.work-preview{padding:clamp(2.5rem,5vw,4rem) 0 clamp(4rem,8vw,8rem);}
 .work-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;}
-.work-card{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:3/4;background:var(--glass);border:1px solid var(--border);cursor:pointer;text-decoration:none;display:block;transition:all .5s cubic-bezier(.23,1,.32,1);}
-.work-card:hover{transform:translateY(-8px) scale(1.02);border-color:var(--border-gold);box-shadow:0 30px 80px rgba(0,0,0,.5);}
+.work-card{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:3/4;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);cursor:pointer;text-decoration:none;display:block;transition:all .5s cubic-bezier(.23,1,.32,1);backdrop-filter:blur(12px);box-shadow:0 4px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.07);}
+.work-card:hover{transform:translateY(-10px) scale(1.02);border-color:rgba(212,175,120,.3);box-shadow:0 32px 80px rgba(0,0,0,.55),0 0 0 1px rgba(212,175,120,.12),inset 0 1px 0 rgba(255,255,255,.10);}
 .wc-bg{position:absolute;inset:0;opacity:.6;transition:opacity .5s,transform .5s;}
 .work-card:hover .wc-bg{opacity:1;transform:scale(1.05);}
 .wc1 .wc-bg{background:linear-gradient(135deg,#1a0a2e,#0d1b3e,#162032);}
@@ -56,8 +61,9 @@
 .rc-type{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.5rem;}
 .rc-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text);margin-bottom:.3rem;}
 .rc-date{font-size:.68rem;color:var(--text-dim);}
-@media(max-width:900px){.hero-inner{grid-template-columns:1fr;}.portrait-card{display:none;}.work-grid{grid-template-columns:repeat(2,1fr);}.recent-grid{grid-template-columns:1fr;}}
+/* responsive handled in shared.css */
 </style>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
@@ -81,7 +87,6 @@
   <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html">Video</a>
   <a href="violin.html">Violin</a><a href="projects.html">Projects</a>
   <a href="competitions.html">Competitions</a><a href="blog.html">Blog</a>
-  <a href="admin.html">⚙ Admin</a>
 </div>
 
 <section class="hero">
@@ -89,6 +94,7 @@
   <div class="wrapper">
     <div class="hero-inner">
       <div style="animation:fadeUp .9s ease both;">
+        <div class="avail-badge"><span class="avail-dot"></span>Open to opportunities</div>
         <div class="hero-eyebrow"><div class="eyebrow-line"></div><span class="eyebrow-text">Portfolio · 2025</span></div>
         <h1 class="hero-name">Bavly<br>Badr</h1>
         <p class="hero-sub">Engineer, Designer &amp; Musician</p>
@@ -96,6 +102,20 @@
         <div class="hero-cta-row">
           <a href="projects.html" class="btn-gold">View Projects</a>
           <a href="design.html" class="btn-ghost">See Creative Work</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <span class="hero-stat-num" id="stat-projects">—</span>
+            <span class="hero-stat-label">Projects</span>
+          </div>
+          <div>
+            <span class="hero-stat-num" id="stat-designs">—</span>
+            <span class="hero-stat-label">Designs</span>
+          </div>
+          <div>
+            <span class="hero-stat-num" id="stat-posts">—</span>
+            <span class="hero-stat-label">Blog Posts</span>
+          </div>
         </div>
       </div>
       <div>
@@ -160,6 +180,27 @@ async function loadRecent() {
     </a>`).join('');
   initReveal();
 }
+
+async function loadStats() {
+  const [projects, designs, posts] = await Promise.all([
+    DB.projects.getAll(), DB.design.getAll(), DB.blog.getAll()
+  ]);
+  function animCount(el, target) {
+    if (!el) return;
+    let n = 0;
+    const step = Math.max(1, Math.ceil(target / 30));
+    const t = setInterval(() => {
+      n = Math.min(n + step, target);
+      el.textContent = n + (target >= 10 ? '+' : '');
+      if (n >= target) clearInterval(t);
+    }, 40);
+  }
+  animCount(document.getElementById('stat-projects'), projects.length);
+  animCount(document.getElementById('stat-designs'),  designs.length);
+  animCount(document.getElementById('stat-posts'),    posts.length);
+}
+
 loadRecent();
+loadStats();
 </script>
 </body></html>

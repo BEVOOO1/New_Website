@@ -107,13 +107,68 @@
   draw();
 })();
 
-// ── NAV SCROLL ──
+// ── SCROLL PROGRESS BAR ──
+(function () {
+  const bar = document.createElement('div');
+  bar.className = 'scroll-progress';
+  document.body.prepend(bar);
+  const update = () => {
+    const h = document.documentElement;
+    const pct = (window.scrollY / (h.scrollHeight - h.clientHeight)) * 100;
+    bar.style.width = Math.min(pct, 100) + '%';
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+// ── LIQUID GLASS NAV ──
 (function () {
   const nav = document.getElementById('main-nav');
   if (!nav) return;
-  const f = () => nav.classList.toggle('scrolled', window.scrollY > 30);
-  window.addEventListener('scroll', f, { passive: true });
-  f();
+
+  // Scroll glass effect
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 30);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Wrap nav-links in pill track + inject slider
+  const linksDiv = nav.querySelector('.nav-links');
+  if (!linksDiv) return;
+
+  // Rename to pill track
+  linksDiv.classList.add('nav-pill-track');
+  linksDiv.classList.remove('nav-links');
+
+  // Create slider element
+  const slider = document.createElement('div');
+  slider.className = 'nav-slider';
+  linksDiv.insertBefore(slider, linksDiv.firstChild);
+
+  // Move slider under active link
+  function positionSlider(targetEl) {
+    if (!targetEl) { slider.style.opacity = '0'; return; }
+    const trackRect = linksDiv.getBoundingClientRect();
+    const linkRect  = targetEl.getBoundingClientRect();
+    slider.style.opacity = '1';
+    slider.style.left  = (linkRect.left - trackRect.left) + 'px';
+    slider.style.width = linkRect.width + 'px';
+  }
+
+  // Init on active link
+  const activeLink = linksDiv.querySelector('a.active');
+  // Delay so layout is settled
+  requestAnimationFrame(() => positionSlider(activeLink));
+
+  // Hover preview
+  linksDiv.querySelectorAll('a').forEach(a => {
+    a.addEventListener('mouseenter', () => positionSlider(a));
+    a.addEventListener('mouseleave', () => positionSlider(linksDiv.querySelector('a.active')));
+  });
+
+  // Reposition on resize
+  window.addEventListener('resize', () => {
+    positionSlider(linksDiv.querySelector('a.active'));
+  }, { passive: true });
 })();
 
 // ── MOBILE MENU ──

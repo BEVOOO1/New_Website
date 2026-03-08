@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Video work by Bavly Badr — cinematic edits, church productions, and documentary-style storytelling.">
 <title>Video — Bavly Badr</title>
@@ -157,18 +158,9 @@
 .vlb-link:hover{border-color:var(--border-gold);background:rgba(212,175,120,.1);}
 
 /* ── MOBILE ── */
-@media(max-width:768px){
-  .video-grid{grid-template-columns:1fr;}
-  .vc:first-child{flex-direction:column;}
-  .vc:first-child .vc-thumb{min-height:200px;flex:unset;}
-  .vc:first-child .vc-info{padding:1.4rem;}
-  .vc:first-child .vc-title{font-size:1.2rem;}
-  .vlb-video-wrap{width:96vw;}
-  .vlb-info,.vlb-links{width:96vw;}
-  .vlb-nav{display:none;}
-  .vlb-title{font-size:1.1rem;}
-}
+/* responsive in shared.css */
 </style>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
@@ -177,9 +169,14 @@
 <nav class="nav" id="main-nav"><div class="nav-inner">
   <a href="index.html" class="nav-logo">B<span>.</span></a>
   <div class="nav-links">
-    <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html" class="active">Video</a>
-    <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a><a href="blog.html">Blog</a>
-  </div>
+      <a href="index.html">Home</a>
+      <a href="design.html">Design</a>
+      <a href="video.html" class="active">Video</a>
+      <a href="violin.html">Violin</a>
+      <a href="projects.html">Projects</a>
+      <a href="competitions.html">Competitions</a>
+      <a href="blog.html">Blog</a>
+    </div>
   <button class="nav-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
 </div></nav>
 <div class="mobile-menu" id="mobileMenu">

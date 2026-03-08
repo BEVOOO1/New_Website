@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><link rel="icon" type="image/x-icon" href="favicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Blog by Bavly Badr — engineering write-ups, competition reflections, music thoughts, and personal stories.">
 <title>Blog — Bavly Badr</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +27,7 @@
 .bc-tags{display:flex;gap:.4rem;flex-wrap:wrap;}
 .post-reader{max-width:740px;margin:0 auto;position:relative;z-index:2;}
 .post-header{margin-bottom:3rem;}
-.post-back{display:inline-flex;align-items:center;gap:.5rem;font-family:'Tenor Sans',sans-serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dim);text-decoration:none;margin-bottom:2rem;transition:color .2s;}
+.post-back{display:inline-flex;align-items:center;gap:.5rem;font-family:'Tenor Sans',sans-serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dim);text-decoration:none;margin-bottom:2rem;transition:color .2s;background:none;border:none;cursor:pointer;padding:0;}
 .post-back:hover{color:var(--gold);}
 .post-cat{font-family:'Tenor Sans',sans-serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem;}
 .post-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:400;line-height:1.1;color:var(--text);margin-bottom:.8rem;}
@@ -40,17 +41,23 @@
 .post-content em{font-style:italic;color:var(--gold-dim);}
 .post-content code{font-family:monospace;font-size:.82rem;background:rgba(255,255,255,.06);padding:.15rem .5rem;border-radius:4px;color:var(--gold-light);}
 .post-tags{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border);display:flex;gap:.5rem;flex-wrap:wrap;}
-@media(max-width:768px){.blog-grid{grid-template-columns:1fr;}.blog-card.featured{grid-template-columns:1fr;}}
+/* responsive in shared.css */
 </style>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas><div class="grain"></div>
 <nav class="nav" id="main-nav"><div class="nav-inner">
   <a href="index.html" class="nav-logo">B<span>.</span></a>
   <div class="nav-links">
-    <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html">Video</a>
-    <a href="violin.html">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a><a href="blog.html" class="active">Blog</a>
-  </div>
+      <a href="index.html">Home</a>
+      <a href="design.html">Design</a>
+      <a href="video.html">Video</a>
+      <a href="violin.html">Violin</a>
+      <a href="projects.html">Projects</a>
+      <a href="competitions.html">Competitions</a>
+      <a href="blog.html" class="active">Blog</a>
+    </div>
   <button class="nav-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
 </div></nav>
 <div class="mobile-menu" id="mobileMenu">
@@ -113,15 +120,16 @@ async function showList() {
   initReveal();
 }
 
-async function showPost(id) {
+async function showPost(id, pushState = true) {
   const post = await DB.blog.get(id);
   if (!post) { showList(); return; }
-  window.location.hash = id;
-  document.getElementById('hero-content').innerHTML = '';
-  const tags = (post.tags||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('');
+  if (pushState) history.pushState({ postId: id }, '', '#' + id);
+  const heroEl = document.getElementById('hero-content');
+  if (heroEl) heroEl.style.display = 'none';
+  const tags = (post.tags||[]).map(t=>`<span class="tag-pill">${sanitizeHTML(t)}</span>`).join('');
   document.getElementById('main-content').innerHTML = `
     <div class="post-reader reveal">
-      <a class="post-back" href="#" onclick="window.location.hash='';showList();return false;">← Back to Blog</a>
+      <button class="post-back" onclick="goBackToList()">← Back to Blog</button>
       <div class="post-header">
         <div class="post-cat">${sanitizeHTML(post.category||'Blog')}</div>
         <h1 class="post-title">${sanitizeHTML(post.title)}</h1>
@@ -135,7 +143,20 @@ async function showPost(id) {
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+function goBackToList() {
+  history.pushState({}, '', window.location.pathname);
+  const heroEl = document.getElementById('hero-content');
+  if (heroEl) heroEl.style.display = '';
+  showList();
+}
+
+// Handle browser back/forward buttons
+window.addEventListener('popstate', () => {
+  const id = window.location.hash.slice(1);
+  if (id) { showPost(id, false); } else { goBackToList(); }
+});
+
 const hash = window.location.hash.slice(1);
-if (hash) { showPost(hash); } else { showList(); }
+if (hash) { showPost(hash, false); } else { showList(); }
 </script>
 </body></html>

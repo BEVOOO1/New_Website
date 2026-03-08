@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Software projects by Bavly Badr — full-stack web platforms, engineering tools, and open-source work.">
 <title>Projects — Bavly Badr</title>
@@ -101,13 +102,9 @@
 #ilbPrev{left:1.5rem;}
 #ilbNext{right:1.5rem;}
 
-@media(max-width:768px){
-  .p-header{grid-template-columns:60px 1fr;}
-  .p-header-info,.p-body{padding:1.5rem;}
-  .pm-gallery{grid-template-columns:repeat(2,1fr);}
-  .pm-inner{padding:2rem 1.2rem 5rem;}
-}
+/* responsive in shared.css */
 </style>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
@@ -116,9 +113,14 @@
 <nav class="nav" id="main-nav"><div class="nav-inner">
   <a href="index.html" class="nav-logo">B<span>.</span></a>
   <div class="nav-links">
-    <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html">Video</a>
-    <a href="violin.html">Violin</a><a href="projects.html" class="active">Projects</a><a href="competitions.html">Competitions</a><a href="blog.html">Blog</a>
-  </div>
+      <a href="index.html">Home</a>
+      <a href="design.html">Design</a>
+      <a href="video.html">Video</a>
+      <a href="violin.html">Violin</a>
+      <a href="projects.html" class="active">Projects</a>
+      <a href="competitions.html">Competitions</a>
+      <a href="blog.html">Blog</a>
+    </div>
   <button class="nav-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
 </div></nav>
 <div class="mobile-menu" id="mobileMenu">

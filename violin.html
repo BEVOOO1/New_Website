@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Violin performances by Bavly Badr — classical, sacred, and ensemble recordings.">
 <title>Violin — Bavly Badr</title>
@@ -123,7 +124,7 @@
 }
 /* The vinyl canvas — same border-radius as the design photo */
 #mlbVinyl{
-  width:300px;height:300px;
+  width:clamp(180px,28vw,300px);height:clamp(180px,28vw,300px);
   border-radius:50%;
   display:block;
   box-shadow:0 30px 100px rgba(0,0,0,.8), 0 0 0 1px rgba(212,175,120,.12);
@@ -131,7 +132,7 @@
 }
 /* Frequency bars canvas below */
 #mlbBars{
-  width:300px;height:64px;
+  width:clamp(180px,28vw,300px);height:clamp(48px,6vw,64px);
   display:block;
   border-radius:8px;
 }
@@ -211,17 +212,11 @@
 .mlb-no-media a{color:var(--gold);}
 
 /* ── MOBILE ── */
-@media(max-width:720px){
-  .mlb-layout{flex-direction:column;gap:2rem;width:96vw;align-items:center;}
-  #mlbVinyl{width:220px;height:220px;}
-  #mlbBars{width:220px;height:52px;}
-  .mlb-info{width:100%;}
-  .mlb-title{font-size:1.6rem;}
-  .mlb-nav{display:none;}
-}
-@media(max-width:900px){.perf-grid{grid-template-columns:1fr 1fr;}}
-@media(max-width:560px){.perf-grid{grid-template-columns:1fr;}}
+/* responsive in shared.css */
+
+
 </style>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
@@ -230,9 +225,14 @@
 <nav class="nav" id="main-nav"><div class="nav-inner">
   <a href="index.html" class="nav-logo">B<span>.</span></a>
   <div class="nav-links">
-    <a href="index.html">Home</a><a href="design.html">Design</a><a href="video.html">Video</a>
-    <a href="violin.html" class="active">Violin</a><a href="projects.html">Projects</a><a href="competitions.html">Competitions</a><a href="blog.html">Blog</a>
-  </div>
+      <a href="index.html">Home</a>
+      <a href="design.html">Design</a>
+      <a href="video.html">Video</a>
+      <a href="violin.html" class="active">Violin</a>
+      <a href="projects.html">Projects</a>
+      <a href="competitions.html">Competitions</a>
+      <a href="blog.html">Blog</a>
+    </div>
   <button class="nav-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
 </div></nav>
 <div class="mobile-menu" id="mobileMenu">

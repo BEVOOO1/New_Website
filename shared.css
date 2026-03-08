@@ -538,13 +538,7 @@ body {
 img { opacity: 1; }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 768px) {
-  .nav-links      { display: none; }
-  .nav-menu-btn   { display: flex; }
-  .wrapper        { padding: 0 1.5rem; }
-  .section-title  { font-size: 2rem; }
-  .footer-inner   { flex-direction: column; text-align: center; }
-}
+/* replaced by full responsive system below */
 
 /* ════════════════════════════════════════
    SKELETON LOADING CARDS
@@ -606,4 +600,536 @@ img.lazy-img.loaded {
   opacity: 1;
   filter: none;
   transform: scale(1);
+}
+
+/* ════════════════════════════════════════════════════
+   LIQUID GLASS NAVIGATION — v14
+   Pill container · Sliding active indicator · Blur glass
+════════════════════════════════════════════════════ */
+
+/* Override old nav-links styling */
+.nav-links { gap: 0; position: relative; }
+
+/* The glass pill container wrapping all nav links */
+.nav-pill-track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 100px;
+  padding: 5px;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    0 2px 20px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -1px 0 rgba(0,0,0,0.15);
+  overflow: hidden;
+  max-width: calc(100vw - 10rem);
+}
+
+/* Liquid glass shimmer layer on pill track */
+.nav-pill-track::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  background: linear-gradient(
+    105deg,
+    rgba(255,255,255,0.06) 0%,
+    rgba(255,255,255,0.01) 40%,
+    rgba(212,175,120,0.04) 100%
+  );
+  pointer-events: none;
+}
+
+/* The sliding gold active indicator */
+.nav-slider {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  height: calc(100% - 10px);
+  border-radius: 100px;
+  background: linear-gradient(135deg,
+    rgba(212,175,120,0.22) 0%,
+    rgba(212,175,120,0.10) 100%
+  );
+  border: 1px solid rgba(212,175,120,0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow:
+    0 2px 12px rgba(212,175,120,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 0 20px rgba(212,175,120,0.06);
+  transition: left 0.38s cubic-bezier(0.34,1.26,0.64,1),
+              width 0.38s cubic-bezier(0.34,1.26,0.64,1),
+              opacity 0.2s;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Nav links inside pill track */
+.nav-pill-track a {
+  position: relative;
+  z-index: 1;
+  font-family: 'Tenor Sans', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-decoration: none;
+  padding: 0.42rem 1.05rem;
+  border-radius: 100px;
+  border: none;
+  background: none;
+  transition: color 0.25s;
+  white-space: nowrap;
+}
+.nav-pill-track a:hover { color: var(--text-muted); }
+.nav-pill-track a.active { color: var(--gold); }
+
+/* Liquid glass effect — refraction highlight on active */
+.nav-pill-track a.active::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 10%;
+  width: 80%; height: 40%;
+  background: linear-gradient(to bottom,
+    rgba(255,255,255,0.15),
+    transparent
+  );
+  border-radius: 100px;
+  pointer-events: none;
+}
+
+/* ── MOBILE MENU — glass panel ── */
+.mobile-menu {
+  background: rgba(7,8,15,0.82) !important;
+  backdrop-filter: blur(40px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
+  border-bottom: 1px solid rgba(212,175,120,0.12) !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.mobile-menu a {
+  font-size: 0.95rem !important;
+  letter-spacing: 0.08em;
+  padding: 1rem 0 !important;
+}
+
+/* ── NAV LOGO liquid glass badge ── */
+.nav-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.nav-logo {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(212,175,120,0.2);
+  border-radius: 12px;
+  padding: 0.3rem 0.8rem;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.nav-logo:hover {
+  background: rgba(212,175,120,0.08);
+  border-color: rgba(212,175,120,0.35);
+  box-shadow: 0 4px 16px rgba(212,175,120,0.15),
+              inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+/* ── NAV scrolled — deeper glass ── */
+.nav.scrolled {
+  background: rgba(7,8,15,0.75) !important;
+  backdrop-filter: blur(32px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
+  border-bottom: 1px solid rgba(212,175,120,0.10) !important;
+  box-shadow: 0 1px 40px rgba(0,0,0,0.4);
+}
+
+/* ════════════════════════════════════════════════════
+   LIQUID GLASS CARDS & COMPONENTS
+════════════════════════════════════════════════════ */
+.lg-card {
+  background: rgba(255,255,255,0.028);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 20px;
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    inset 0 -1px 0 rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+}
+.lg-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255,255,255,0.15) 30%,
+    rgba(212,175,120,0.2) 50%,
+    rgba(255,255,255,0.15) 70%,
+    transparent
+  );
+}
+.lg-card:hover {
+  border-color: rgba(212,175,120,0.25);
+  background: rgba(255,255,255,0.045);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.45),
+    0 0 0 1px rgba(212,175,120,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.10);
+  transform: translateY(-4px);
+}
+
+/* ════════════════════════════════════════════════════
+   HOMEPAGE STATS ROW
+════════════════════════════════════════════════════ */
+.hero-stats {
+  display: flex;
+  gap: 2.5rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.hero-stat-num {
+  font-family: 'Cinzel', serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--gold);
+  line-height: 1;
+  display: block;
+}
+.hero-stat-label {
+  font-family: 'Tenor Sans', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 0.3rem;
+  display: block;
+}
+
+/* ════════════════════════════════════════════════════
+   SCROLL PROGRESS BAR
+════════════════════════════════════════════════════ */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  z-index: 9999;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px rgba(212,175,120,0.6);
+}
+
+/* ════════════════════════════════════════════════════════════
+   FULL RESPONSIVE SYSTEM — v14
+   Breakpoints:
+     xs:  0–479px      (small phones)
+     sm:  480–767px    (large phones)
+     md:  768–1023px   (tablets portrait)
+     lg:  1024–1279px  (tablets landscape / small laptops)
+     xl:  1280–1535px  (laptops / desktops)  ← base design
+     2xl: 1536–1919px  (large desktops)
+     tv:  1920px+      (TVs / large monitors)
+════════════════════════════════════════════════════════════ */
+
+/* ── GLOBAL FLUID TOKENS ── */
+:root {
+  --nav-h: clamp(60px, 6vw, 88px);
+  --wrapper-pad: clamp(1rem, 4vw, 3rem);
+  --section-gap: clamp(3rem, 7vw, 9rem);
+}
+
+.wrapper {
+  padding: 0 var(--wrapper-pad);
+  max-width: min(1140px, 100%);
+}
+
+/* ── NAV ── */
+/* TV / large screens — bigger nav */
+@media (min-width: 1920px) {
+  .nav-inner { max-width: 1600px; }
+  .nav-logo  { font-size: 2rem; }
+  .nav-pill-track a { font-size: 0.82rem; padding: 0.55rem 1.3rem; }
+}
+
+/* Tablet — keep pill nav but shrink */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .nav-pill-track a { font-size: 0.65rem; padding: 0.38rem 0.75rem; letter-spacing: 0.08em; }
+}
+
+/* Phone — hide pill, show hamburger */
+@media (max-width: 767px) {
+  .nav-links, .nav-pill-track { display: none !important; }
+  .nav-menu-btn { display: flex !important; }
+  .nav-logo { font-size: 1.4rem; }
+}
+
+/* ── MOBILE MENU ── */
+@media (max-width: 767px) {
+  .mobile-menu {
+    padding: 1.2rem var(--wrapper-pad) 2.5rem !important;
+    gap: 0 !important;
+  }
+  .mobile-menu a {
+    font-size: 1.05rem !important;
+    padding: 0.9rem 0 !important;
+    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  }
+}
+
+/* ── SECTION TYPOGRAPHY ── */
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 3.5rem) !important;
+}
+.section-label {
+  font-size: clamp(0.6rem, 1.2vw, 0.72rem);
+}
+
+/* ── PAGE HERO ── */
+.page-hero {
+  min-height: clamp(28vh, 35vh, 42vh);
+  padding-bottom: clamp(2.5rem, 5vw, 5rem);
+}
+
+/* ══════════════════════════════════
+   INDEX — HOMEPAGE
+══════════════════════════════════ */
+
+/* TV */
+@media (min-width: 1920px) {
+  .hero-inner { grid-template-columns: 1fr 520px; gap: 8rem; }
+  .hero-name  { font-size: 9rem !important; }
+  .work-grid  { grid-template-columns: repeat(5,1fr); gap: 1.5rem; }
+  .wrapper    { max-width: 1600px; }
+}
+
+/* Large desktop */
+@media (min-width: 1536px) and (max-width: 1919px) {
+  .hero-inner { grid-template-columns: 1fr 460px; gap: 6rem; }
+  .work-grid  { grid-template-columns: repeat(5,1fr); }
+}
+
+/* Tablet landscape */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .hero-inner  { grid-template-columns: 1fr 300px; gap: 3rem; }
+  .work-grid   { grid-template-columns: repeat(3,1fr); }
+  .recent-grid { grid-template-columns: 1fr 1fr; }
+  .hero-stats  { gap: 1.8rem; }
+}
+
+/* Tablet portrait + large phone */
+@media (max-width: 767px) and (min-width: 480px) {
+  .hero-inner      { grid-template-columns: 1fr; gap: 2rem; }
+  .portrait-card   { display: none !important; }
+  .work-grid       { grid-template-columns: repeat(2,1fr); gap: 0.8rem; }
+  .recent-grid     { grid-template-columns: 1fr; }
+  .hero-stats      { gap: 1.4rem; flex-wrap: wrap; }
+  .hero-cta-row    { flex-direction: column; align-items: flex-start; gap: 0.7rem; }
+}
+
+/* Small phone */
+@media (max-width: 479px) {
+  .hero-inner      { grid-template-columns: 1fr; gap: 1.5rem; }
+  .portrait-card   { display: none !important; }
+  .work-grid       { grid-template-columns: 1fr 1fr; gap: 0.65rem; }
+  .recent-grid     { grid-template-columns: 1fr; }
+  .hero-stats      { gap: 1.2rem; flex-wrap: wrap; }
+  .hero-cta-row    { flex-direction: column; align-items: flex-start; gap: 0.7rem; }
+  .work-card       { aspect-ratio: 4/5; }
+  .wc-icon         { font-size: 1.8rem; }
+}
+
+/* ══════════════════════════════════
+   DESIGN PAGE
+══════════════════════════════════ */
+@media (min-width: 1920px) {
+  .design-grid { grid-template-columns: repeat(4,1fr) !important; gap: 1.5rem; }
+}
+@media (min-width: 1280px) and (max-width: 1919px) {
+  .design-grid { grid-template-columns: repeat(3,1fr) !important; }
+}
+@media (max-width: 1023px) and (min-width: 640px) {
+  .design-grid { grid-template-columns: 1fr 1fr !important; }
+  .design-card.featured { grid-column: 1/-1; }
+}
+@media (max-width: 639px) {
+  .design-grid { grid-template-columns: 1fr !important; }
+  .design-card.featured { grid-column: auto; }
+}
+
+/* ══════════════════════════════════
+   BLOG PAGE
+══════════════════════════════════ */
+@media (min-width: 1920px) {
+  .blog-grid { grid-template-columns: 1fr 1fr !important; }
+  .blog-card.featured { grid-template-columns: 1fr 1fr; }
+  .bc-title   { font-size: 1.5rem !important; }
+  .post-reader { max-width: 900px; }
+  .post-content { font-size: 1.15rem !important; line-height: 2; }
+}
+@media (max-width: 1023px) and (min-width: 640px) {
+  .blog-grid { grid-template-columns: 1fr 1fr !important; }
+  .blog-card.featured { grid-column: 1/-1; grid-template-columns: 1fr !important; }
+}
+@media (max-width: 639px) {
+  .blog-grid { grid-template-columns: 1fr !important; }
+  .blog-card.featured { grid-template-columns: 1fr !important; }
+  .blog-card { padding: 1.4rem !important; }
+  .bc-title { font-size: 1.1rem !important; }
+  .post-title { font-size: clamp(1.6rem, 5vw, 2.5rem) !important; }
+  .post-content { font-size: 0.95rem !important; }
+}
+
+/* ══════════════════════════════════
+   VIDEO PAGE
+══════════════════════════════════ */
+@media (min-width: 1920px) {
+  .video-grid { grid-template-columns: repeat(3,1fr) !important; gap: 2rem; }
+  .vc:first-child .vc-thumb { min-height: 440px !important; }
+  .vlb-video-wrap { width: min(1400px, 88vw) !important; }
+  .vlb-info { width: min(1400px, 88vw) !important; }
+}
+@media (max-width: 1023px) and (min-width: 640px) {
+  .video-grid { grid-template-columns: 1fr 1fr !important; }
+  .vc:first-child { grid-column: 1/-1; }
+  .vc:first-child .vc-thumb { min-height: 240px !important; }
+}
+@media (max-width: 639px) {
+  .video-grid { grid-template-columns: 1fr !important; }
+  .vc:first-child { flex-direction: column !important; }
+  .vc:first-child .vc-thumb { min-height: 190px !important; flex: unset !important; }
+  .vc:first-child .vc-title { font-size: 1.15rem !important; }
+  .vlb-video-wrap { width: 100vw !important; border-radius: 0 !important; }
+  .vlb-info, .vlb-links { width: 96vw !important; }
+  .vlb-nav { display: none !important; }
+  .vlb-title { font-size: 1rem !important; }
+  .vlb-close { top: 0.75rem !important; right: 0.75rem !important; width: 38px !important; height: 38px !important; }
+}
+@media (max-width: 479px) {
+  .vc-info { padding: 1rem 1.1rem 1.2rem !important; }
+  .vc-title { font-size: 0.95rem !important; }
+}
+
+/* ══════════════════════════════════
+   VIOLIN PAGE
+══════════════════════════════════ */
+@media (min-width: 1920px) {
+  .perf-grid { grid-template-columns: repeat(4,1fr) !important; gap: 1.5rem; }
+  .mlb-layout { width: min(1260px, 90vw) !important; gap: 7rem; }
+  #mlbVinyl { width: 380px !important; height: 380px !important; }
+  #mlbBars  { width: 380px !important; height: 80px !important; }
+}
+@media (max-width: 1023px) and (min-width: 640px) {
+  .perf-grid { grid-template-columns: 1fr 1fr !important; }
+  .mlb-layout { gap: 3rem !important; }
+  #mlbVinyl { width: 240px !important; height: 240px !important; }
+  #mlbBars  { width: 240px !important; height: 56px !important; }
+}
+@media (max-width: 639px) {
+  .perf-grid { grid-template-columns: 1fr !important; }
+  .mlb-layout { flex-direction: column !important; gap: 1.5rem !important; width: 94vw !important; align-items: center !important; }
+  #mlbVinyl { width: 200px !important; height: 200px !important; }
+  #mlbBars  { width: 200px !important; height: 48px !important; }
+  .mlb-info { width: 100% !important; }
+  .mlb-title { font-size: 1.4rem !important; }
+  .mlb-nav  { display: none !important; }
+  .mlb-close { top: 0.75rem !important; right: 0.75rem !important; }
+}
+
+/* ══════════════════════════════════
+   PROJECTS PAGE
+══════════════════════════════════ */
+@media (min-width: 1920px) {
+  .pm-inner { max-width: 1100px !important; padding: 4rem 3rem 8rem !important; }
+  .pm-gallery { grid-template-columns: repeat(4,1fr) !important; }
+  .p-body { padding: 2.5rem 3.5rem !important; }
+}
+@media (max-width: 1023px) and (min-width: 640px) {
+  .p-header { grid-template-columns: 70px 1fr !important; }
+  .p-body { padding: 1.6rem 2rem !important; }
+  .pm-gallery { grid-template-columns: repeat(3,1fr) !important; }
+}
+@media (max-width: 639px) {
+  .p-header { grid-template-columns: 56px 1fr !important; }
+  .p-header-info, .p-body { padding: 1.1rem 1.2rem !important; }
+  .pm-inner { padding: 1.5rem 1rem 5rem !important; }
+  .pm-gallery { grid-template-columns: repeat(2,1fr) !important; }
+  .pm-close { top: 0.75rem !important; right: 0.75rem !important; width: 38px !important; height: 38px !important; }
+  .p-icon-col { display: none !important; }
+  .p-header { grid-template-columns: 1fr !important; }
+}
+
+/* ══════════════════════════════════
+   COMPETITIONS PAGE
+══════════════════════════════════ */
+@media (min-width: 1920px) {
+  .learned-grid { grid-template-columns: repeat(3,1fr) !important; gap: 1.5rem; }
+  .comp-card { margin-bottom: 1.5rem; }
+}
+@media (max-width: 639px) {
+  .comp-card { grid-template-columns: 56px 1fr !important; }
+  .comp-body { padding: 1.2rem 1.1rem !important; flex-direction: column; gap: 0.8rem; }
+  .comp-right { align-items: flex-start !important; }
+  .learned-grid { grid-template-columns: 1fr !important; }
+  .comp-title { font-size: 1rem !important; }
+}
+
+/* ══════════════════════════════════
+   FOOTER — ALL SCREENS
+══════════════════════════════════ */
+@media (max-width: 639px) {
+  .footer-inner { flex-direction: column; align-items: center; text-align: center; gap: 1rem; }
+  .footer-links { gap: 1.2rem; flex-wrap: wrap; justify-content: center; }
+}
+@media (min-width: 1920px) {
+  .footer { padding: 3.5rem 0; }
+  .footer-name { font-size: 1.1rem; }
+}
+
+/* ══════════════════════════════════
+   TOUCH — bigger tap targets
+══════════════════════════════════ */
+@media (pointer: coarse) {
+  .nav-menu-btn { padding: 12px; }
+  .mobile-menu a { padding: 1rem 0 !important; min-height: 48px; display: flex; align-items: center; }
+  .btn-gold, .btn-ghost { padding: 1rem 2rem; min-height: 48px; }
+  .gallery-item-overlay { opacity: 1; } /* always show overlay on touch */
+  .work-card:hover { transform: none; } /* disable hover lift on touch */
+  .action-btn, .tag-pill { min-height: 40px; padding: 0.5rem 0.8rem; }
+  .vlb-close, .pm-close, .mlb-close { width: 48px !important; height: 48px !important; }
+}
+
+/* ══════════════════════════════════
+   TV / LARGE DISPLAYS — global
+══════════════════════════════════ */
+@media (min-width: 1920px) {
+  :root { --nav-h: 88px; --wrapper-pad: 4rem; }
+  body { font-size: 1.05rem; }
+  .wrapper { max-width: 1600px; }
+  .section-title { font-size: clamp(3rem, 3.5vw, 5rem) !important; }
+  .section-label { font-size: 0.82rem !important; letter-spacing: 0.3em; }
+  .btn-gold, .btn-ghost { padding: 1.1rem 2.5rem; font-size: 0.88rem; }
+  .footer-inner { max-width: 1600px; margin: 0 auto; }
+}
+
+/* ══════════════════════════════════
+   SAFE AREA — notch / home bar
+══════════════════════════════════ */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .mobile-menu {
+    padding-bottom: calc(2.5rem + env(safe-area-inset-bottom)) !important;
+  }
+  body { padding-bottom: env(safe-area-inset-bottom); }
 }
