@@ -100,15 +100,7 @@ body {
   align-items: center;
   justify-content: space-between;
 }
-.nav-logo {
-  font-family: 'Cinzel', serif;
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: var(--text);
-  text-decoration: none;
-  letter-spacing: 0.05em;
-}
-.nav-logo span { color: var(--gold); }
+/* nav-logo: defined in nav glass section */
 .nav-links {
   display: flex;
   gap: 0.2rem;
@@ -1047,8 +1039,7 @@ img.lazy-img.loaded {
    real lens-warp look — no fake borders, no logo outline.
 ════════════════════════════════════════════════════════ */
 
-/* Reset nav-links gap so pill padding handles spacing */
-.nav-links { gap: 0; }
+/* nav-links gap: reset by pill track JS */
 
 /* ── Pill container ── */
 .nav-pill-track {
@@ -1148,7 +1139,6 @@ img.lazy-img.loaded {
   border: none !important;
   box-shadow: none !important;
 }
-.nav-logo span { color: var(--gold); }
 
 /* ── Scrolled state ── */
 .nav.scrolled {
