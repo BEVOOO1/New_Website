@@ -2,10 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><link rel="icon" type="image/x-icon" href="favicon.ico"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07080f">
+<meta property="og:title" content="Bavly Badr — Portfolio">
+<meta property="og:description" content="Computer Engineering student, church designer, video editor, and violinist.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://bavlybadr.vercel.app/index.html">
+<meta property="og:image" content="https://bavlybadr.vercel.app/myimage.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="description" content="Bavly Badr — Computer Engineering student, church designer, video editor, and violinist. Portfolio of software projects, creative design, and music.">
 <title>Bavly Badr</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Tenor+Sans&family=Cinzel:wght@400;600&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="shared.css">
 <style>
 .hero{min-height:100vh;display:flex;align-items:center;padding-top:var(--nav-h);position:relative;overflow:hidden;}
@@ -56,7 +65,26 @@
 .rc-type{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.5rem;}
 .rc-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text);margin-bottom:.3rem;}
 .rc-date{font-size:.68rem;color:var(--text-dim);}
-@media(max-width:900px){.hero-inner{grid-template-columns:1fr;}.portrait-card{display:none;}.work-grid{grid-template-columns:repeat(2,1fr);}.recent-grid{grid-template-columns:1fr;}}
+/* Tablet */
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;}
+  .portrait-card{display:none;}
+  .work-grid{grid-template-columns:repeat(3,1fr);}
+  .recent-grid{grid-template-columns:1fr;}
+}
+/* Large phone */
+@media(max-width:600px){
+  .work-grid{grid-template-columns:repeat(2,1fr);gap:.7rem;}
+  .work-card{aspect-ratio:1/1;}
+  .wc-icon{font-size:2rem;}
+  .hero-cta-row{flex-direction:column;align-items:flex-start;}
+  .work-preview{padding:2.5rem 0 5rem;}
+}
+/* Small phone */
+@media(max-width:400px){
+  .work-grid{grid-template-columns:1fr 1fr;gap:.5rem;}
+  .wc-title{font-size:.68rem;}
+}
 </style>
   <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
@@ -138,7 +166,7 @@
 
 <footer class="footer"><div class="wrapper footer-inner">
   <span class="footer-name">Bavly Badr</span>
-  <span class="footer-copy" id="footer-year">© 2025 · BEVO copyright reserved</span>
+  <span class="footer-copy" id="footer-year">© <span id="yr"></span> · BEVO copyright reserved</span>
   <div class="footer-links">
     <a href="https://github.com/BEVOOO1" target="_blank">GitHub</a>
     <a href="https://www.facebook.com/bavlyd.badr" target="_blank">Facebook</a>
@@ -146,6 +174,7 @@
   </div>
 </div></footer>
 
+<script>document.getElementById("yr").textContent=new Date().getFullYear();</script>
 <script src="db.js"></script><script src="shared.js"></script>
 <script>
 async function loadRecent() {

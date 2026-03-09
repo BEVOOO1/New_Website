@@ -6,12 +6,15 @@
    + Security helpers (XSS sanitizer)
 ════════════════════════════════════════ */
 
-// ── CANVAS BACKGROUND (throttled & paused when hidden) ──
+// ── CANVAS BACKGROUND (throttled to 24fps, paused when hidden) ──
 (function () {
   const canvas = document.getElementById('bg-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  let W, H, animId;
+  let W, H, animId, lastFrame = 0;
+  const INTERVAL = 1000 / 24; // 24fps — orbs move slowly, no need for 60fps
+  const isMobile = window.matchMedia('(max-width:767px)').matches;
+
   const resize = () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; };
   resize();
   const ro = new ResizeObserver(resize);
@@ -24,7 +27,11 @@
     { x: .9,  y: .7,  r: .35, hue: 270, s: 55, base: .025, phase: .9  },
     { x: .05, y: .75, r: .3,  hue: 195, s: 60, base: .025, phase: 2.4 },
   ];
-  const dust = Array.from({ length: 45 }, () => ({
+
+  // Fewer particles on mobile to save GPU
+  const DUST_COUNT = isMobile ? 20 : 38;
+  const CONNECT_DIST = isMobile ? 0 : 90; // skip connections on mobile entirely
+  const dust = Array.from({ length: DUST_COUNT }, () => ({
     x: Math.random(), y: Math.random(),
     r: .3 + Math.random() * 1.1,
     vx: (Math.random() - .5) * .00012,
@@ -33,10 +40,11 @@
     b: Math.random() * Math.PI * 2,
   }));
 
-  // Mouse glow removed — caused jitter and performance issues
-
   let t = 0;
-  const draw = () => {
+  const draw = (ts) => {
+    animId = requestAnimationFrame(draw);
+    if (ts - lastFrame < INTERVAL) return; // throttle
+    lastFrame = ts;
     ctx.clearRect(0, 0, W, H);
     t += .004;
 
@@ -69,33 +77,33 @@
       ctx.fill();
     });
 
-    // Draw connections (fewer iterations for perf)
-    for (let i = 0; i < dust.length; i++) {
-      for (let j = i + 1; j < dust.length; j++) {
-        const dx = (dust[i].x - dust[j].x) * W;
-        const dy = (dust[i].y - dust[j].y) * H;
-        const d = Math.sqrt(dx * dx + dy * dy);
-        if (d < 90) {
-          ctx.beginPath();
-          ctx.moveTo(dust[i].x * W, dust[i].y * H);
-          ctx.lineTo(dust[j].x * W, dust[j].y * H);
-          ctx.strokeStyle = `rgba(212,175,120,${(1 - d / 90) * .05})`;
-          ctx.lineWidth = .5;
-          ctx.stroke();
+    // Particle connections — desktop only, uses squared distance (no sqrt)
+    if (CONNECT_DIST > 0) {
+      const distSq = CONNECT_DIST * CONNECT_DIST;
+      for (let i = 0; i < dust.length; i++) {
+        for (let j = i + 1; j < dust.length; j++) {
+          const dx = (dust[i].x - dust[j].x) * W;
+          const dy = (dust[i].y - dust[j].y) * H;
+          const dSq = dx * dx + dy * dy;
+          if (dSq < distSq) {
+            ctx.beginPath();
+            ctx.moveTo(dust[i].x * W, dust[i].y * H);
+            ctx.lineTo(dust[j].x * W, dust[j].y * H);
+            ctx.strokeStyle = `rgba(212,175,120,${(1 - Math.sqrt(dSq) / CONNECT_DIST) * .05})`;
+            ctx.lineWidth = .5;
+            ctx.stroke();
+          }
         }
       }
     }
-
-    animId = requestAnimationFrame(draw);
   };
 
-  // Pause when tab is not visible (saves CPU/battery)
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { cancelAnimationFrame(animId); }
-    else { draw(); }
+    if (document.hidden) { cancelAnimationFrame(animId); animId = null; }
+    else if (!animId) animId = requestAnimationFrame(draw);
   });
 
-  draw();
+  animId = requestAnimationFrame(draw);
 })();
 
 // ── SCROLL PROGRESS BAR ──
