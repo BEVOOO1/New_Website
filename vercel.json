@@ -48,8 +48,5 @@
         { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
       ]
     }
-  ],
-  "redirects": [
-    { "source": "/", "destination": "/index.html", "permanent": false }
   ]
 }
