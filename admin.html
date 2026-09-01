@@ -707,19 +707,18 @@ function openModal(title, bodyHTML, onSave) {
         if (progressEl) { progressEl.style.display = 'block'; }
         if (progressEl) progressEl.querySelector('.upload-progress-fill').style.width = '30%';
 
-        const dataUrl = await DB.upload.processImage(file);
+        const { url, kb } = await DB.upload.imageFile(file, 900, 900, 0.78, pct => {
+          if (progressEl) progressEl.querySelector('.upload-progress-fill').style.width = pct + '%';
+        });
 
-        if (progressEl) progressEl.querySelector('.upload-progress-fill').style.width = '100%';
         setTimeout(() => { if (progressEl) progressEl.style.display = 'none'; }, 600);
 
         const prev = document.getElementById(previewId);
-        if (prev) { prev.src = dataUrl; prev.style.display = 'block'; }
+        if (prev) { prev.src = url; prev.style.display = 'block'; }
 
         const urlField = document.getElementById(urlFieldId);
-        if (urlField) urlField.value = dataUrl;
+        if (urlField) urlField.value = url;
 
-        // Show compressed size
-        const kb = Math.round(dataUrl.length * .75 / 1024);
         if (sizeInfoEl) sizeInfoEl.textContent = `Compressed: ~${kb} KB`;
 
         toast('Image uploaded & optimized', 'success');
@@ -1092,12 +1091,11 @@ async function addImageFromUpload(fileInputId, listId) {
   const progressWrap = uploadArea?.nextElementSibling;
 
   try {
-    toast('Processing image…', 'info');
-    const dataUrl = await DB.upload.processImage(file);
-    tempImages.push({ url: dataUrl, label: file.name });
+    toast('Uploading image…', 'info');
+    const { url, kb } = await DB.upload.imageFile(file, 900, 900, 0.78);
+    tempImages.push({ url, label: file.name });
     inp.value = '';
     renderImageList(listId, tempImages);
-    const kb = Math.round(dataUrl.length * .75 / 1024);
     toast(`Image added (~${kb} KB compressed)`, 'success');
   } catch(err) {
     toast(err.message || 'Upload failed', 'error');
