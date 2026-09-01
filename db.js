@@ -380,6 +380,79 @@ const DB = (() => {
     });
   }
 
+  // ── SUPABASE STORAGE — IMAGE UPLOAD ─────────────
+  // Compresses an image client-side, then uploads it to the "images" storage
+  // bucket and returns a lightweight public URL — instead of embedding the
+  // whole image as base64 text in the database row. Embedding base64 makes
+  // every getAll() fetch download every image's full bytes inline in the JSON
+  // response, even for images never scrolled into view (lazy-loading only
+  // defers painting, not that initial network transfer). Real files fetched
+  // by URL let the browser request/cache/lazy-load each image separately.
+  // The "images" bucket must be created in Supabase first (see supabase-setup.sql).
+  async function uploadImageFile(file, maxWidth = 900, maxHeight = 900, quality = 0.78, onProgress) {
+    const allowed = ['image/jpeg','image/jpg','image/png','image/webp','image/gif'];
+    if (!allowed.includes(file.type)) throw new Error('Invalid file type. Only JPG, PNG, WebP, and GIF are allowed.');
+    if (file.size > 10 * 1024 * 1024) throw new Error('File too large. Maximum size is 10MB.');
+
+    // Resize/compress via canvas (same logic as processImageUpload), but end
+    // in a Blob instead of a base64 data URL.
+    const { blob, type } = await new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        let { width, height } = img;
+        if (width > maxWidth || height > maxHeight) {
+          const ratio = Math.min(maxWidth / width, maxHeight / height);
+          width  = Math.round(width  * ratio);
+          height = Math.round(height * ratio);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        const outType = file.type === 'image/png' ? 'image/png' : 'image/webp';
+        canvas.toBlob(b => {
+          if (!b) { reject(new Error('Failed to compress image.')); return; }
+          resolve({ blob: b, type: outType });
+        }, outType, quality);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Failed to load image.')); };
+      img.src = url;
+    });
+
+    const ext  = type === 'image/png' ? 'png' : 'webp';
+    const path = `images/${Date.now()}-${Math.random().toString(36).slice(2,6)}.${ext}`;
+    const uploadUrl = `${SUPABASE_URL}/storage/v1/object/images/${path}`;
+
+    const publicUrl = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', uploadUrl);
+      xhr.setRequestHeader('apikey',        SUPABASE_KEY);
+      xhr.setRequestHeader('Authorization', `Bearer ${SUPABASE_KEY}`);
+      xhr.setRequestHeader('Content-Type',  type);
+      xhr.setRequestHeader('x-upsert',      'true');
+
+      if (onProgress) {
+        xhr.upload.onprogress = e => {
+          if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 95));
+        };
+      }
+
+      xhr.onload = () => {
+        if (xhr.status === 200 || xhr.status === 201) {
+          resolve(`${SUPABASE_URL}/storage/v1/object/public/images/${path}`);
+        } else {
+          reject(new Error(`Upload failed: ${xhr.status} — ${xhr.responseText}`));
+        }
+      };
+      xhr.onerror = () => reject(new Error('Network error during upload.'));
+      xhr.send(blob);
+    });
+
+    if (onProgress) onProgress(100);
+    return { url: publicUrl, kb: Math.round(blob.size / 1024) };
+  }
+
   // ── SUPABASE STORAGE — AUDIO UPLOAD ─────────────
   // Uploads an audio file to the "audio" storage bucket and returns the public URL.
   // The bucket must be created in Supabase first (see supabase-setup.sql).
@@ -442,7 +515,7 @@ const DB = (() => {
     projects:     makeAPI('projects'),
 
     sanitize: { string: sanitizeString, url: sanitizeUrl, tags: sanitizeTags },
-    upload:   { processImage: processImageUpload, audioFile: uploadAudioFile },
+    upload:   { processImage: processImageUpload, imageFile: uploadImageFile, audioFile: uploadAudioFile },
 
     // Export everything as JSON (for backup)
     async exportAll() {
