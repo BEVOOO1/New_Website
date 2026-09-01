@@ -1188,7 +1188,7 @@ function addVideoLink() {
 // ── OPEN FORM ──
 async function openForm(collection, id) {
   editingId = id;
-  const item = id ? await DB[collection].get(id) : null;
+  const item = id ? await DB[collection].get(id) : undefined;
   const isEdit = !!item;
 
   tempImages     = item?.images    ? JSON.parse(JSON.stringify(item.images))    : [];
